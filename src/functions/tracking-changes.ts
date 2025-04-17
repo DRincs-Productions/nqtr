@@ -19,7 +19,7 @@ export function addTempHistoryItem() {
     }
     switch (lastEvent?.type) {
         case "editroom":
-            console.log("restore room", lastEvent.prev);
+            storage.setVariable(CURRENT_ROOM_MEMORY_KEY, lastEvent.prev);
             narration.addCurrentStepToHistory();
             storage.setVariable(CURRENT_ROOM_MEMORY_KEY, currentRoom.id);
             break;
