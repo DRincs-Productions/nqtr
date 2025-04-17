@@ -51,6 +51,7 @@ export default class NavigatorManager {
 
         setLastEvent({
             type: "editroom",
+            prev: prevRoom,
             value: room,
         });
         storage.setVariable(CURRENT_ROOM_MEMORY_KEY, room);

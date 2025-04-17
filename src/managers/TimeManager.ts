@@ -65,7 +65,8 @@ export default class TimeManager {
         return this.minDayHours;
     }
     set currentHour(value: number | undefined) {
-        let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+        let prev = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+        let data = { ...prev };
         if (typeof value === "number") {
             data.currentHour = value;
         } else {
@@ -73,6 +74,7 @@ export default class TimeManager {
         }
         setLastEvent({
             type: "edittime",
+            prev: prev,
             value: data,
         });
         storage.setVariable(TIME_DATA_KEY, data);
@@ -88,7 +90,8 @@ export default class TimeManager {
         return 0;
     }
     set currentDay(value: number | undefined) {
-        let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+        let prev = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+        let data = { ...prev };
         if (typeof value === "number") {
             data.currentDay = value;
         } else {
@@ -96,6 +99,7 @@ export default class TimeManager {
         }
         setLastEvent({
             type: "edittime",
+            prev: prev,
             value: data,
         });
         storage.setVariable(TIME_DATA_KEY, data);

@@ -1,4 +1,5 @@
 import { StoredClassModel } from "@drincs/pixi-vn";
+import { addTempHistoryItem } from "../functions/tracking-changes";
 import { ActivityInterface } from "../interface";
 import { ActivityBaseInternalInterface } from "../interface/ActivityInterface";
 import { timeTracker } from "../managers";
@@ -48,7 +49,10 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
     }
 
     get run(): (props: OnRunProps) => void {
-        return (props) => this._onRun(this as any, props);
+        return (props) => {
+            addTempHistoryItem();
+            this._onRun(this as any, props);
+        };
     }
 
     get expired(): boolean {
