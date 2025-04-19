@@ -51,7 +51,7 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
     get run(): (props: OnRunProps) => void {
         return (props) => {
             addTempHistoryItem();
-            this._onRun(this as any, props);
+            return this._onRun(this as any, props);
         };
     }
 
