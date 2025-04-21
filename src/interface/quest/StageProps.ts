@@ -1,6 +1,5 @@
-import { OnRunProps } from "@drincs/nqtr";
 import { StageInterface } from "..";
-import { QuestsRequiredType } from "../../types";
+import { OnRunEvent, QuestsRequiredType } from "../../types";
 import StageFlags from "./StageFlags";
 
 export default interface StageProps {
@@ -51,9 +50,9 @@ export default interface StageProps {
     /**
      * The function that will be executed when the stage starts.
      */
-    onStart?: (stage: StageInterface, props: OnRunProps) => void;
+    onStart?: OnRunEvent<StageInterface>;
     /**
      * The function that will be executed when the stage ends.
      */
-    onEnd?: (stage: StageInterface, props: OnRunProps) => void;
+    onEnd?: OnRunEvent<StageInterface>;
 }

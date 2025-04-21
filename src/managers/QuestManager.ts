@@ -51,11 +51,13 @@ export default class QuestManager {
     /**
      * Start the quests that must start on the current stage.
      */
-    startsStageMustBeStarted(props: OnRunProps) {
-        Object.values(registeredQuests).forEach((quest) => {
+    async startsStageMustBeStarted(props: OnRunProps) {
+        let promises: Promise<void>[] = Object.values(registeredQuests).map((quest) => {
             if (quest.currentStageMustStart) {
-                quest.startCurrentStage(props);
+                return quest.startCurrentStage(props);
             }
+            return Promise.resolve();
         });
+        await Promise.all(promises);
     }
 }

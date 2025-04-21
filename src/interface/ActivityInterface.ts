@@ -1,4 +1,5 @@
-import { OnRunProps, ActivityInterface as OverrideActivityInterface } from "@drincs/nqtr";
+import { ActivityInterface as OverrideActivityInterface } from "@drincs/nqtr";
+import { OnRunAsyncFunction } from "../types";
 
 export default interface ActivityInterface extends ActivityBaseInternalInterface, OverrideActivityInterface {}
 
@@ -26,7 +27,7 @@ export interface ActivityBaseInternalInterface {
     /**
      * The function that is called when the activity/commitment is runned.
      */
-    readonly run: (props: OnRunProps) => void;
+    readonly run: OnRunAsyncFunction;
     /**
      * Whether the activity/commitment is a deadline.
      */

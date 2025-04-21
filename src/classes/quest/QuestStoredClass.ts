@@ -2,6 +2,7 @@ import { OnRunProps } from "@drincs/nqtr";
 import { StoredClassModel } from "@drincs/pixi-vn";
 import { QuestInterface, StageInterface } from "../../interface";
 import { QuestBaseInternalInterface } from "../../interface/quest/QuestInterface";
+import { OnRunEvent } from "../../types";
 import StageStoredClass from "./StageStoredClass";
 
 const QUEST_CATEGORY = "__nqtr-quest__";
@@ -13,11 +14,11 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
             /**
              * The function that will be executed when the quest starts.
              */
-            onStart?: (stage: QuestInterface, props: OnRunProps) => void;
+            onStart?: OnRunEvent<QuestInterface>;
             /**
              * The function that will be executed when a stage end in the quest.
              */
-            onNextStage?: (stage: QuestInterface, props: OnRunProps) => void;
+            onNextStage?: OnRunEvent<QuestInterface>;
         } = {}
     ) {
         super(QUEST_CATEGORY, id);
@@ -72,17 +73,17 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         this.setStorageProperty("failed", value);
     }
 
-    private _onStart?: (stage: QuestInterface, props: OnRunProps) => void;
-    get onStart(): undefined | ((stage: QuestInterface, props: OnRunProps) => void) {
+    private _onStart?: OnRunEvent<QuestInterface>;
+    get onStart(): undefined | OnRunEvent<QuestInterface> {
         return this._onStart;
     }
 
-    private _onNextStage?: (stage: QuestInterface, props: OnRunProps) => void;
-    get onNextStage(): undefined | ((stage: QuestInterface, props: OnRunProps) => void) {
+    private _onNextStage?: OnRunEvent<QuestInterface>;
+    get onNextStage(): undefined | OnRunEvent<QuestInterface> {
         return this._onNextStage;
     }
 
-    start(props: OnRunProps): void {
+    async start(props: OnRunProps): Promise<void> {
         if (this.started) {
             console.warn(`[NQTR] Quest ${this.id} is already started`);
             return;
@@ -94,14 +95,14 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         this.currentStageIndex = 0;
         let currentStage = this.currentStage;
         if (currentStage && currentStage.start) {
-            this.onStart && this.onStart(this as any as QuestInterface, props);
-            return currentStage.start(props);
+            this.onStart && (await this.onStart(this as any as QuestInterface, props));
+            return await currentStage.start(props);
         } else {
             console.error(`[NQTR] Quest ${this.id} has no start stage`);
         }
     }
 
-    tryToGoNextStage(props: OnRunProps): boolean {
+    async tryToGoNextStage(props: OnRunProps): Promise<boolean> {
         if (!this.inProgress) {
             return false;
         }
@@ -111,22 +112,22 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
             return false;
         }
         if (currentStage.completed) {
-            return this.goNextStage(props);
+            return await this.goNextStage(props);
         }
         return false;
     }
 
-    completeCurrentStageAndGoNext(props: OnRunProps): boolean {
+    async completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean> {
         let currentStage = this.currentStage;
         if (!currentStage) {
             console.error(`[NQTR] Quest ${this.id} has no current stage`);
             return false;
         }
         currentStage.completed = true;
-        return this.goNextStage(props);
+        return await this.goNextStage(props);
     }
 
-    goNextStage(props: OnRunProps): boolean {
+    async goNextStage(props: OnRunProps): Promise<boolean> {
         if (!this.inProgress) {
             console.warn(`[NQTR] Quest ${this.id} is not in progress`);
             return false;
@@ -138,15 +139,15 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
             return false;
         }
         this.currentStageIndex = currentStageIndex + 1;
-        this.onNextStage && this.onNextStage(this as any as QuestInterface, props);
+        this.onNextStage && (await this.onNextStage(this as any as QuestInterface, props));
         if (prevStage && prevStage.onEnd) {
-            prevStage.onEnd(prevStage, props);
+            await prevStage.onEnd(prevStage, props);
         }
         let nextCurrentStage = this.currentStage;
         if (nextCurrentStage) {
             (nextCurrentStage as any as StageStoredClass).inizialize();
             if (this.currentStageMustStart) {
-                this.startCurrentStage(props);
+                await this.startCurrentStage(props);
             }
         }
 
@@ -161,10 +162,10 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         return !currentStage.started && currentStage.canStart && !currentStage.completed;
     }
 
-    startCurrentStage(props: OnRunProps): void {
+    async startCurrentStage(props: OnRunProps): Promise<void> {
         let newCurrentStage = this.currentStage;
         if (newCurrentStage && this.currentStageMustStart) {
-            newCurrentStage.start(props);
+            await newCurrentStage.start(props);
         } else {
             console.warn(`[NQTR] Quest ${this.id} can't start the current stage`);
         }

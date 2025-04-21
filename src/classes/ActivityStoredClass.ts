@@ -3,7 +3,7 @@ import { addTempHistoryItem } from "../functions/tracking-changes";
 import { ActivityInterface } from "../interface";
 import { ActivityBaseInternalInterface } from "../interface/ActivityInterface";
 import { timeTracker } from "../managers";
-import { OnRunEvent, OnRunProps } from "../types/OnRunEvent";
+import { OnRunAsyncFunction, OnRunEvent } from "../types";
 
 const ACTIVITY_CATEGORY = "__nqtr-activity__";
 export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
@@ -48,10 +48,10 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         return this._toDay;
     }
 
-    get run(): (props: OnRunProps) => void {
-        return (props) => {
+    get run(): OnRunAsyncFunction {
+        return async (props) => {
             addTempHistoryItem();
-            return this._onRun(this as any, props);
+            return await this._onRun(this as any, props);
         };
     }
 

@@ -3,7 +3,7 @@ import { StoredClassModel } from "@drincs/pixi-vn";
 import { StageInterface } from "../../interface";
 import { StageBaseInternalInterface } from "../../interface/quest/StageInterface";
 import { timeTracker } from "../../managers";
-import { QuestsRequiredType } from "../../types";
+import { OnRunEvent, QuestsRequiredType } from "../../types";
 
 const STAGE_CATEGORY = "__nqtr-stage__";
 export default class StageStoredClass extends StoredClassModel implements StageBaseInternalInterface {
@@ -13,11 +13,11 @@ export default class StageStoredClass extends StoredClassModel implements StageB
             /**
              * The function that will be executed when the stage starts.
              */
-            onStart?: (stage: StageInterface, props: OnRunProps) => void;
+            onStart?: OnRunEvent<StageInterface>;
             /**
              * The function that will be executed when the stage ends.
              */
-            onEnd?: (stage: StageInterface, props: OnRunProps) => void;
+            onEnd?: OnRunEvent<StageInterface>;
             /**
              * The day required to start the stage.
              * @example If the value is 3, and the previous stage ends on day 1, the stage will start on day 4.
@@ -37,13 +37,13 @@ export default class StageStoredClass extends StoredClassModel implements StageB
         this._questsRequiredToStart = options.questsRequiredToStart || [];
     }
 
-    private _onStart?: (stage: StageInterface, props: OnRunProps) => void;
-    get onStart(): undefined | ((stage: StageInterface, props: OnRunProps) => void) {
+    private _onStart?: OnRunEvent<StageInterface>;
+    get onStart(): undefined | OnRunEvent<StageInterface> {
         return this._onStart;
     }
 
-    private _onEnd?: (stage: StageInterface, props: OnRunProps) => void;
-    get onEnd(): undefined | ((stage: StageInterface, props: OnRunProps) => void) {
+    private _onEnd?: OnRunEvent<StageInterface>;
+    get onEnd(): undefined | OnRunEvent<StageInterface> {
         return this._onEnd;
     }
 
@@ -105,11 +105,11 @@ export default class StageStoredClass extends StoredClassModel implements StageB
         }
     }
 
-    start(props: OnRunProps) {
+    async start(props: OnRunProps) {
         if (this.canStart) {
             this.started = true;
             if (this.onStart) {
-                this.onStart(this as any as StageInterface, props);
+                await this.onStart(this as any as StageInterface, props);
             }
         } else {
             console.warn(`[NQTR] Stage ${this.id} can't start`);

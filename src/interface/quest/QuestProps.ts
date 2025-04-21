@@ -1,5 +1,5 @@
-import { OnRunProps } from "@drincs/nqtr";
 import { QuestInterface } from "..";
+import { OnRunEvent } from "../../types";
 
 export default interface QuestProps {
     /**
@@ -29,9 +29,9 @@ export default interface QuestProps {
     /**
      * The function that will be executed when the quest starts.
      */
-    onStart?: (quest: QuestInterface, props: OnRunProps) => void;
+    onStart?: OnRunEvent<QuestInterface>;
     /**
      * The function that will be executed when a stage end in the quest.
      */
-    onNextStage?: (quest: QuestInterface, props: OnRunProps) => void;
+    onNextStage?: OnRunEvent<QuestInterface>;
 }

@@ -2,7 +2,7 @@ import { CharacterInterface } from "@drincs/pixi-vn";
 import { ActivityInterface, CommitmentInterface, LocationInterface } from "../../interface";
 import { RoomBaseInternalInterface } from "../../interface/navigation/RoomInterface";
 import { routine } from "../../managers";
-import { OnRunProps } from "../../types";
+import { OnRunAsyncFunction } from "../../types";
 import NavigationAbstractClass from "./NavigationAbstractClass";
 
 const ROOM_CATEGORY = "__nqtr-room__";
@@ -33,7 +33,13 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
         return characters;
     }
 
-    get automaticFunction(): ((props: OnRunProps) => void) | undefined {
-        return this.routine.find((commitment) => commitment.executionType === "automatic")?.run;
+    get automaticFunction(): OnRunAsyncFunction | undefined {
+        let run = this.routine.find((commitment) => commitment.executionType === "automatic")?.run;
+        if (run) {
+            return async (props) => {
+                await run(props);
+            };
+        }
+        return undefined;
     }
 }

@@ -1,6 +1,7 @@
-import { OnRunProps, RoomInterface as OverrideRoomInterface } from "@drincs/nqtr";
+import { RoomInterface as OverrideRoomInterface } from "@drincs/nqtr";
 import { CharacterInterface } from "@drincs/pixi-vn";
 import { CommitmentInterface, LocationInterface as LocationInterfaceInt } from "..";
+import { OnRunAsyncFunction } from "../../types";
 import NavigationAbstractInterface from "./NavigationAbstractClass";
 
 export default interface RoomInterface extends RoomBaseInternalInterface, OverrideRoomInterface {}
@@ -25,5 +26,5 @@ export interface RoomBaseInternalInterface extends NavigationAbstractInterface {
     /**
      * Get the function that will be executed when the room is visited.
      */
-    readonly automaticFunction: ((props: OnRunProps) => void) | undefined;
+    readonly automaticFunction: OnRunAsyncFunction | undefined;
 }
