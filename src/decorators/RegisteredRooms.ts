@@ -4,7 +4,7 @@ import { RoomInterface } from "../interface";
  * A Map that contains all rooms registered and available to be used.
  * The key is the id of the room and the value is the room itself.
  */
-export const registeredRooms = new Map<string, RoomInterface>();
+const registeredRooms = new Map<string, RoomInterface>();
 
 namespace RegisteredRooms {
     /**
