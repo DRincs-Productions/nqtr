@@ -1,4 +1,4 @@
-export { getActivityById, saveActivity } from "./ActivityDecorator";
-export { saveCommitment } from "./CommitmentDecorator";
-export { saveQuest } from "./QuestDecorator";
-export { saveRoom } from "./RoomDecorator";
+export { getCommitmentById, saveCommitment } from "./CommitmentDecorator";
+export { getQuestById, saveQuest } from "./QuestDecorator";
+export { default as RegisteredActivities } from "./RegisteredActivities";
+export { getRoomById, saveRoom } from "./RoomDecorator";
