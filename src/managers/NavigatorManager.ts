@@ -1,6 +1,6 @@
 import { storage } from "@drincs/pixi-vn";
 import { CURRENT_ROOM_MEMORY_KEY } from "../constants";
-import { getRoomById, registeredRooms } from "../decorators/RoomDecorator";
+import { getRoomById, registeredRooms } from "../decorators/RegisteredRooms";
 import { setLastEvent } from "../functions/tracking-changes";
 import { LocationInterface, MapInterface, RoomInterface } from "../interface";
 

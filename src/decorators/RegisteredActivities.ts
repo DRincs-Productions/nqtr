@@ -7,11 +7,9 @@ import { ActivityInterface } from "../interface";
 const registeredActivities = new Map<string, ActivityInterface>();
 
 namespace RegisteredActivities {
-    export function saveActivity(activities: ActivityInterface | ActivityInterface[]) {
+    export function add(activities: ActivityInterface | ActivityInterface[]) {
         if (Array.isArray(activities)) {
-            activities.forEach((activity) => {
-                registeredActivities.set(activity.id, activity);
-            });
+            activities.forEach((activity) => RegisteredActivities.add(activity));
             return;
         }
         registeredActivities.set(activities.id, activities);
@@ -22,7 +20,7 @@ namespace RegisteredActivities {
      * @param id The id of the activity.
      * @returns The activity or undefined if not found.
      */
-    export function getActivityById(id: string): ActivityInterface | undefined {
+    export function get(id: string): ActivityInterface | undefined {
         try {
             let activity = registeredActivities.get(id);
             if (!activity) {
