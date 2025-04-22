@@ -45,5 +45,14 @@ namespace RegisteredRooms {
             return;
         }
     }
+
+    /**
+     * Get a list of all rooms registered.
+     * @returns An array of rooms.
+     * @example
+     */
+    export function values(): RoomInterface[] {
+        return Array.from(registeredRooms.values());
+    }
 }
 export default RegisteredRooms;
