@@ -1,5 +1,5 @@
 import { StoredClassModel } from "@drincs/pixi-vn";
-import { getActivityById } from "../../decorators";
+import { RegisteredActivities } from "../../decorators";
 import { ActivityInterface } from "../../interface";
 import NavigationAbstractInterface from "../../interface/navigation/NavigationAbstractClass";
 import { timeTracker } from "../../managers";
@@ -195,7 +195,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     get activities(): ActivityInterface[] {
         let res: ActivityInterface[] = [];
         Object.entries(this.activeActivityScheduling).forEach(([activityId, scheduling]) => {
-            let activity = getActivityById(activityId);
+            let activity = RegisteredActivities.get(activityId);
             const {
                 fromDay = activity?.fromDay,
                 fromHour = activity?.fromHour,
@@ -212,7 +212,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             }
         });
         Object.entries(this.excludedActivitiesScheduling).forEach(([activityId, scheduling]) => {
-            let activity = getActivityById(activityId);
+            let activity = RegisteredActivities.get(activityId);
             if (activity && activity.isActive && !(scheduling.toDay && scheduling.toDay >= timeTracker.currentDay)) {
                 res.push(activity);
             }
