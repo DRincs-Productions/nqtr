@@ -8,6 +8,11 @@ import { ActivityInterface } from "../interface";
 const registeredActivities = new CachedMap<string, ActivityInterface>({ cacheSize: 20 });
 
 namespace RegisteredActivities {
+    /**
+     * Save an activity in the registered activities. If the activity already exists, it will be overwritten.
+     * @param activity The activity to save.
+     * @returns
+     */
     export function add(activities: ActivityInterface | ActivityInterface[]) {
         if (Array.isArray(activities)) {
             activities.forEach((activity) => RegisteredActivities.add(activity));

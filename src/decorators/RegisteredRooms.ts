@@ -12,10 +12,6 @@ namespace RegisteredRooms {
      * Save a room in the registered rooms. If the room already exists, it will be overwritten.
      * @param room The room to save.
      * @returns
-     * @example
-     * ```ts
-     * saveRoom([mcRoom, aliceRoom, annRoom, bathroom, lounge, terrace, gymRoom]);
-     * ```
      */
     export function add(room: RoomInterface | RoomInterface[]) {
         if (Array.isArray(room)) {

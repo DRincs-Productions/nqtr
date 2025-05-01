@@ -1,9 +1,18 @@
 import { CachedMap } from "@drincs/pixi-vn";
 import { QuestInterface } from "../interface";
 
+/**
+ * A Map that contains all quests registered and available to be used.
+ * The key is the id of the quest and the value is the quest itself.
+ */
 const registeredQuests = new CachedMap<string, QuestInterface>({ cacheSize: 5 });
 
 namespace RegisteredQuest {
+    /**
+     * Save a quest in the registered quests. If the quest already exists, it will be overwritten.
+     * @param quest The quest to save.
+     * @returns
+     */
     export function add(quests: QuestInterface | QuestInterface[]) {
         if (Array.isArray(quests)) {
             quests.forEach((quest) => RegisteredQuest.add(quest));
