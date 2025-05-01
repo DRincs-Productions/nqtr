@@ -1,5 +1,5 @@
 import { OnRunProps } from "@drincs/nqtr";
-import { getQuestById, registeredQuests } from "../decorators/QuestDecorator";
+import { getQuestById, registeredQuests } from "../decorators/RegisteredQuests";
 import { QuestInterface } from "../interface";
 
 export default class QuestManager {

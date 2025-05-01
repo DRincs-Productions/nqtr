@@ -44,6 +44,6 @@
     "vn"
   ],
   "peerDependencies": {
-    "@drincs/pixi-vn": ">=0.10.15"
+    "@drincs/pixi-vn": ">=1.1.0"
   }
 }

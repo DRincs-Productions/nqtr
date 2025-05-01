@@ -1,0 +1,48 @@
+import { CachedMap } from "@drincs/pixi-vn";
+import { QuestInterface } from "../interface";
+
+const registeredQuests = new CachedMap<string, QuestInterface>({ cacheSize: 5 });
+
+namespace RegisteredQuest {
+    export function add(quests: QuestInterface | QuestInterface[]) {
+        if (Array.isArray(quests)) {
+            quests.forEach((quest) => RegisteredQuest.add(quest));
+            return;
+        }
+        registeredQuests.set(quests.id, quests);
+    }
+    /**
+     * Get a quest by its id.
+     * @param id The id of the quest.
+     * @returns The quest or undefined if not found.
+     */
+    export function get(id: string): QuestInterface | undefined {
+        try {
+            let quest = registeredQuests.get(id);
+            if (!quest) {
+                console.warn(`[NQTR] Quest ${id} not found, you should register it first`);
+                return;
+            }
+            return quest;
+        } catch (e) {
+            console.error(`[NQTR] Error while getting Quest ${id}`, e);
+            return;
+        }
+    }
+    /**
+     * Get a list of all quests registered.
+     * @returns An array of quests.
+     */
+    export function values(): QuestInterface[] {
+        return Array.from(registeredQuests.values());
+    }
+    /**
+     * Check if a quest is registered.
+     * @param id The id of the quest.
+     * @returns True if the quest is registered, false otherwise.
+     */
+    export function has(id: string): boolean {
+        return registeredQuests.has(id);
+    }
+}
+export default RegisteredQuest;
