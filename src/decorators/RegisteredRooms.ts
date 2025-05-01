@@ -1,10 +1,11 @@
+import { CachedMap } from "@drincs/pixi-vn";
 import { RoomInterface } from "../interface";
 
 /**
  * A Map that contains all rooms registered and available to be used.
  * The key is the id of the room and the value is the room itself.
  */
-const registeredRooms = new Map<string, RoomInterface>();
+const registeredRooms = new CachedMap<string, RoomInterface>({ cacheSize: 20 });
 
 namespace RegisteredRooms {
     /**
@@ -36,7 +37,7 @@ namespace RegisteredRooms {
         try {
             let room = registeredRooms.get(id);
             if (!room) {
-                console.error(`[NQTR] Room ${id} not found`);
+                console.warn(`[NQTR] Room ${id} not found, you should register it first`);
                 return;
             }
             return room;
@@ -49,10 +50,18 @@ namespace RegisteredRooms {
     /**
      * Get a list of all rooms registered.
      * @returns An array of rooms.
-     * @example
      */
     export function values(): RoomInterface[] {
         return Array.from(registeredRooms.values());
+    }
+
+    /**
+     * Check if a room is registered.
+     * @param id The id of the room.
+     * @returns True if the room is registered, false otherwise.
+     */
+    export function has(id: string): boolean {
+        return registeredRooms.has(id);
     }
 }
 export default RegisteredRooms;

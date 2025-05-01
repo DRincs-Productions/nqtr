@@ -1,10 +1,11 @@
+import { CachedMap } from "@drincs/pixi-vn";
 import { ActivityInterface } from "../interface";
 
 /**
  * A Map that contains all activities registered and available to be used.
  * The key is the id of the activity and the value is the activity itself.
  */
-const registeredActivities = new Map<string, ActivityInterface>();
+const registeredActivities = new CachedMap<string, ActivityInterface>({ cacheSize: 20 });
 
 namespace RegisteredActivities {
     export function add(activities: ActivityInterface | ActivityInterface[]) {
@@ -24,7 +25,7 @@ namespace RegisteredActivities {
         try {
             let activity = registeredActivities.get(id);
             if (!activity) {
-                console.error(`[NQTR] Activity ${id} not found`);
+                console.warn(`[NQTR] Activity ${id} not found, you should register it first`);
                 return;
             }
             return activity;
@@ -32,6 +33,23 @@ namespace RegisteredActivities {
             console.error(`[NQTR] Error while getting Activity ${id}`, e);
             return;
         }
+    }
+
+    /**
+     * Get a list of all activities registered.
+     * @returns An array of activities.
+     */
+    export function values(): ActivityInterface[] {
+        return Array.from(registeredActivities.values());
+    }
+
+    /**
+     * Check if an activity is registered.
+     * @param id The id of the activity.
+     * @returns True if the activity is registered, false otherwise.
+     */
+    export function has(id: string): boolean {
+        return registeredActivities.has(id);
     }
 }
 export default RegisteredActivities;
