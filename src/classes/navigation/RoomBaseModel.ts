@@ -1,12 +1,12 @@
 import { storage } from "@drincs/pixi-vn";
-import { saveRoom } from "../../decorators";
+import { RegisteredRooms } from "../../decorators";
 import { CommitmentInterface, LocationInterface, RoomBaseModelProps } from "../../interface";
 import { routine } from "../../managers";
 import RoomStoredClass from "./RoomStoredClass";
 
 /**
  * The base model of a room. I suggest you extend this class to create your own room model.
- * **You must use the {@link saveRoom} function to save the room in the registered rooms.**
+ * **You must use the {@link RegisteredRooms.add} function to save the room in the registered rooms.**
  * @example
  * ```ts
  * export const mcRoom = new RoomBaseModel('mc_room', mcHome, {
@@ -14,7 +14,7 @@ import RoomStoredClass from "./RoomStoredClass";
  *     icon: "https://icon.jpg",
  *     image: "https://image.jpg",
  * })
- * saveRoom(mcRoom)
+ * RegisteredRooms.add(mcRoom)
  * ```
  */
 export default class RoomBaseModel extends RoomStoredClass {
