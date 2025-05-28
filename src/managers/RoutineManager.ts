@@ -1,6 +1,6 @@
 import { CharacterInterface, storage } from "@drincs/pixi-vn";
 import { navigator } from ".";
-import RegisteredCommitments, { fixedCommitments } from "../decorators/RegisteredCommitments";
+import RegisteredCommitments, { fixedCommitments, registeredCommitments } from "../decorators/RegisteredCommitments";
 import { CommitmentInterface } from "../interface";
 
 const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
@@ -96,7 +96,7 @@ export default class RoutineManager {
     clearExpiredRoutine() {
         RegisteredCommitments.values().forEach((commitment) => {
             if (commitment.expired) {
-                delete registeredCommitments[commitment.id];
+                registeredCommitments.delete(commitment.id);
             }
         });
     }
