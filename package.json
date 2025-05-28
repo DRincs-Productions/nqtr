@@ -1,8 +1,7 @@
 {
-  "name": "@drincs/pixi-vn",
-  "version": "1.2.13",
-  "type": "module",
-  "description": "Pixi'VN is a npm package that provides various features for creating visual novels.",
+  "name": "@drincs/nqtr",
+  "version": "0.3.7",
+  "description": "A complete system introducing the concepts of location, time and event, producing the framework of a not-quite-point-and-click adventure game.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -23,49 +22,36 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DRincs-Productions/pixi-vn.git"
+    "url": "git+https://github.com/DRincs-Productions/nqtr-pixi-vn.git"
   },
   "author": "DRincs-Productions",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/DRincs-Productions/pixi-vn/issues"
+    "url": "https://github.com/DRincs-Productions/nqtr-pixi-vn/issues"
   },
-  "homepage": "https://pixi-vn.web.app/",
-  "funding": "https://github.com/DRincs-Productions/pixi-vn?sponsor=1",
-  "dependencies": {
-    "@pixi/devtools": "^2.0.1",
-    "@pixi/sound": "^6.0.1",
-    "pixi.js": "^8.9.2"
-  },
+  "homepage": "https://github.com/DRincs-Productions/nqtr-pixi-vn#readme",
   "devDependencies": {
-    "@types/crypto-js": "^4.2.2",
-    "@types/deep-diff": "^1.0.5",
-    "crypto-js": "^4.2.0",
-    "deep-diff": "^1.0.2",
-    "jsdom": "^26.1.0",
-    "keyv": "^5.3.3",
-    "lru-cache": "^11.1.0",
-    "microdiff": "^1.5.0",
+    "jsdom": "^26.0.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.5.0",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.4"
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.7"
   },
   "keywords": [
-    "2d",
-    "canvas",
-    "development",
-    "engine",
     "game",
-    "game-development",
-    "game-engine",
-    "games",
     "js",
+    "navigation",
     "novel",
     "pixi",
-    "pixi-js",
+    "pixi-vn",
+    "quest",
+    "routine",
+    "time",
     "visual",
     "visual-novel",
-    "webgl"
-  ]
+    "vn"
+  ],
+  "peerDependencies": {
+    "@drincs/pixi-vn": ">=1.1.0"
+  }
 }
