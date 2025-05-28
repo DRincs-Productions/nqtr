@@ -1,6 +1,6 @@
 import { CharacterInterface, storage } from "@drincs/pixi-vn";
 import { navigator } from ".";
-import { fixedCommitments, getCommitmentById, registeredCommitments } from "../decorators/RegisteredCommitments";
+import RegisteredCommitments, { fixedCommitments } from "../decorators/RegisteredCommitments";
 import { CommitmentInterface } from "../interface";
 
 const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
@@ -13,10 +13,10 @@ export default class RoutineManager {
      */
     set fixedRoutine(commitments: CommitmentInterface[]) {
         commitments.forEach((c) => {
-            if (fixedCommitments[c.id]) {
+            if (fixedCommitments.has(c.id)) {
                 console.warn(`[NQTR] Commitment id ${c.id} already exists, it will be overwritten`);
             }
-            fixedCommitments[c.id] = c;
+            fixedCommitments.set(c.id, c);
         });
     }
 
@@ -30,7 +30,7 @@ export default class RoutineManager {
             return [];
         }
         let commitments = commitmentsIds
-            .map((id) => getCommitmentById(id))
+            .map((id) => RegisteredCommitments.get(id))
             .filter((commitment) => commitment !== undefined);
         return commitments;
     }
@@ -49,7 +49,7 @@ export default class RoutineManager {
         }
         let commitmentsIds = commitment
             .map((commitment) => {
-                let commitmentTest = getCommitmentById(commitment.id);
+                let commitmentTest = RegisteredCommitments.get(commitment.id);
                 if (!commitmentTest) {
                     console.warn(`[NQTR] Commitment ${commitment.id} not found, it will be ignored`);
                     return undefined;
@@ -67,7 +67,7 @@ export default class RoutineManager {
      * @returns The commitment or undefined if not found.
      */
     find(id: string): CommitmentInterface | undefined {
-        return getCommitmentById(id);
+        return RegisteredCommitments.get(id);
     }
 
     /**
@@ -94,7 +94,7 @@ export default class RoutineManager {
      * Clear all the expired commitments.
      */
     clearExpiredRoutine() {
-        Object.values(registeredCommitments).forEach((commitment) => {
+        RegisteredCommitments.values().forEach((commitment) => {
             if (commitment.expired) {
                 delete registeredCommitments[commitment.id];
             }

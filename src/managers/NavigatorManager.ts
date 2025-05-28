@@ -22,8 +22,11 @@ export default class NavigatorManager {
         });
         return Object.values(result);
     }
+    get currentRoomId(): string | undefined {
+        return storage.getVariable<string>(CURRENT_ROOM_MEMORY_KEY);
+    }
     get currentRoom(): RoomInterface | undefined {
-        let roomId = storage.getVariable<string>(CURRENT_ROOM_MEMORY_KEY);
+        let roomId = this.currentRoomId;
         if (!roomId) {
             console.error(`[NQTR] The current room has not yet been set`);
             return;

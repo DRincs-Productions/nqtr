@@ -1,5 +1,5 @@
 import { OnRunProps } from "@drincs/nqtr";
-import { getQuestById, registeredQuests } from "../decorators/RegisteredQuests";
+import RegisteredQuest from "../decorators/RegisteredQuests";
 import { QuestInterface } from "../interface";
 
 export default class QuestManager {
@@ -7,7 +7,7 @@ export default class QuestManager {
      * The quests registered in the game.
      */
     get quests(): QuestInterface[] {
-        return Object.values(registeredQuests);
+        return RegisteredQuest.values();
     }
     /**
      * The quests that are started, so they are in progress or completed or failed.
@@ -45,14 +45,14 @@ export default class QuestManager {
      * @returns The quest with the id.
      */
     find(id: string): QuestInterface | undefined {
-        return getQuestById(id);
+        return RegisteredQuest.get(id);
     }
 
     /**
      * Start the quests that must start on the current stage.
      */
     async startsStageMustBeStarted(props: OnRunProps) {
-        let promises: Promise<void>[] = Object.values(registeredQuests).map((quest) => {
+        let promises: Promise<void>[] = this.quests.map((quest) => {
             if (quest.currentStageMustStart) {
                 return quest.startCurrentStage(props);
             }
