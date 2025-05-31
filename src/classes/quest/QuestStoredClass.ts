@@ -3,6 +3,7 @@ import { StoredClassModel } from "@drincs/pixi-vn";
 import { QuestInterface, StageInterface } from "../../interface";
 import { QuestBaseInternalInterface } from "../../interface/quest/QuestInterface";
 import { OnRunEvent } from "../../types";
+import { logger } from "../../utils/log-utility";
 import StageStoredClass from "./StageStoredClass";
 
 const QUEST_CATEGORY = "__nqtr-quest__";
@@ -89,7 +90,7 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
             return;
         }
         if (this.stages.length === 0) {
-            console.error(`[NQTR] Quest ${this.id} has no stages`);
+            logger.error(`Quest ${this.id} has no stages`);
             return;
         }
         this.currentStageIndex = 0;
@@ -98,7 +99,7 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
             this.onStart && (await this.onStart(this as any as QuestInterface, props));
             return await currentStage.start(props);
         } else {
-            console.error(`[NQTR] Quest ${this.id} has no start stage`);
+            logger.error(`Quest ${this.id} has no start stage`);
         }
     }
 
@@ -108,7 +109,7 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         }
         let currentStage = this.currentStage;
         if (!currentStage) {
-            console.error(`[NQTR] Quest ${this.id} has no current stage`);
+            logger.error(`Quest ${this.id} has no current stage`);
             return false;
         }
         if (currentStage.completed) {
@@ -120,7 +121,7 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
     async completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean> {
         let currentStage = this.currentStage;
         if (!currentStage) {
-            console.error(`[NQTR] Quest ${this.id} has no current stage`);
+            logger.error(`Quest ${this.id} has no current stage`);
             return false;
         }
         currentStage.completed = true;
@@ -135,7 +136,7 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         let prevStage = this.currentStage;
         let currentStageIndex = this.currentStageIndex;
         if (!prevStage || currentStageIndex === undefined) {
-            console.error(`[NQTR] Quest ${this.id} has no current stage`);
+            logger.error(`Quest ${this.id} has no current stage`);
             return false;
         }
         this.currentStageIndex = currentStageIndex + 1;

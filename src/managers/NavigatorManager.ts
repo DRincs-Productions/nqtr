@@ -3,6 +3,7 @@ import { CURRENT_ROOM_MEMORY_KEY } from "../constants";
 import { RegisteredRooms } from "../decorators";
 import { setLastEvent } from "../functions/tracking-changes";
 import { LocationInterface, MapInterface, RoomInterface } from "../interface";
+import { logger } from "../utils/log-utility";
 
 export default class NavigatorManager {
     get rooms() {
@@ -28,12 +29,12 @@ export default class NavigatorManager {
     get currentRoom(): RoomInterface | undefined {
         let roomId = this.currentRoomId;
         if (!roomId) {
-            console.error(`[NQTR] The current room has not yet been set`);
+            logger.error(`The current room has not yet been set`);
             return;
         }
         let room = RegisteredRooms.get(roomId);
         if (!room) {
-            console.error(`[NQTR] Current room ${roomId} not found`);
+            logger.error(`Current room ${roomId} not found`);
             return;
         }
         return room;
@@ -44,7 +45,7 @@ export default class NavigatorManager {
         }
         let roomRegistrated = RegisteredRooms.get(room);
         if (!roomRegistrated) {
-            console.error(`[NQTR] The room ${room} is not registered, so it can't be set as current room`);
+            logger.error(`The room ${room} is not registered, so it can't be set as current room`);
             return;
         }
         let prevRoom = storage.getVariable<string>(CURRENT_ROOM_MEMORY_KEY);

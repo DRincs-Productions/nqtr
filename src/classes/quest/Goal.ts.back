@@ -61,7 +61,7 @@ export class GoalStage extends Goal {
     }
     set have(value: number) {
         if (!this._stageId) {
-            console.error(`[NQTR] The stage id is not set for the goal ${this.id}, so the have value can't be set.`)
+            logger.error(`The stage id is not set for the goal ${this.id}, so the have value can't be set.`)
             return
         }
         this.setStorageProperty('have-' + this._stageId, value)

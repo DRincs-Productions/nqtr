@@ -1,5 +1,6 @@
 import { CachedMap } from "@drincs/pixi-vn";
 import { QuestInterface } from "../interface";
+import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all quests registered and available to be used.
@@ -34,7 +35,7 @@ namespace RegisteredQuest {
             }
             return quest;
         } catch (e) {
-            console.error(`[NQTR] Error while getting Quest ${id}`, e);
+            logger.error(`Error while getting Quest ${id}`, e);
             return;
         }
     }

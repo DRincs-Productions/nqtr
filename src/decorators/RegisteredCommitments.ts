@@ -1,5 +1,6 @@
 import { CachedMap } from "@drincs/pixi-vn";
 import { CommitmentInterface } from "../interface";
+import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all commitments registered and available to be used.
@@ -35,7 +36,7 @@ namespace RegisteredCommitments {
             }
             return commitment;
         } catch (e) {
-            console.error(`[NQTR] Error while getting Commitment ${id}`, e);
+            logger.error(`Error while getting Commitment ${id}`, e);
             return;
         }
     }

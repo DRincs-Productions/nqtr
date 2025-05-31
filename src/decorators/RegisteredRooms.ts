@@ -1,5 +1,6 @@
 import { CachedMap } from "@drincs/pixi-vn";
 import { RoomInterface } from "../interface";
+import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all rooms registered and available to be used.
@@ -38,7 +39,7 @@ namespace RegisteredRooms {
             }
             return room;
         } catch (e) {
-            console.error(`[NQTR] Error while getting Room ${id}`, e);
+            logger.error(`Error while getting Room ${id}`, e);
             return;
         }
     }

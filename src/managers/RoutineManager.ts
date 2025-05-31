@@ -2,6 +2,7 @@ import { CharacterInterface, storage } from "@drincs/pixi-vn";
 import { navigator } from ".";
 import RegisteredCommitments, { fixedCommitments, registeredCommitments } from "../decorators/RegisteredCommitments";
 import { CommitmentInterface } from "../interface";
+import { logger } from "../utils/log-utility";
 
 const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
 export default class RoutineManager {
@@ -125,7 +126,7 @@ export default class RoutineManager {
                         });
                     }
                 } else {
-                    console.error(`[NQTR] The commitment ${c.id} has no characters assigned`);
+                    logger.error(`The commitment ${c.id} has no characters assigned`);
                 }
             }
         });

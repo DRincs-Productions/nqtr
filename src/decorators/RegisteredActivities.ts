@@ -1,5 +1,6 @@
 import { CachedMap } from "@drincs/pixi-vn";
 import { ActivityInterface } from "../interface";
+import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all activities registered and available to be used.
@@ -35,7 +36,7 @@ namespace RegisteredActivities {
             }
             return activity;
         } catch (e) {
-            console.error(`[NQTR] Error while getting Activity ${id}`, e);
+            logger.error(`Error while getting Activity ${id}`, e);
             return;
         }
     }
