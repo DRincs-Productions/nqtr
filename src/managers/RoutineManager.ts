@@ -7,7 +7,7 @@ import { logger } from "../utils/log-utility";
 const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
 export default class RoutineManager {
     get fixedRoutine(): CommitmentInterface[] {
-        return Object.values(fixedCommitments);
+        return [...fixedCommitments.values()];
     }
     /**
      * Set a commitment as fixed, it will be always available. They cannot be deleted or edit during the game session.
@@ -113,7 +113,7 @@ export default class RoutineManager {
      */
     get currentRoutine(): CommitmentInterface[] {
         let character_commitments: { [character: string]: CommitmentInterface } = {};
-        [...this.temporaryRoutine, ...this.fixedRoutine].reverse().forEach((c) => {
+        [...this.fixedRoutine, ...this.temporaryRoutine].forEach((c) => {
             if (c.isActive) {
                 if (c.characters.length > 0) {
                     // all the characters don't already have commitments or the commitment has a higher priority

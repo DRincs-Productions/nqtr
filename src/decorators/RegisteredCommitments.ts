@@ -20,6 +20,7 @@ namespace RegisteredCommitments {
             commitments.forEach((commitment) => RegisteredCommitments.add(commitment));
             return;
         }
+        console.warn(`[NQTR] Registering commitment ${commitments.id}`, commitments);
         registeredCommitments.set(commitments.id, commitments);
     }
     /**
