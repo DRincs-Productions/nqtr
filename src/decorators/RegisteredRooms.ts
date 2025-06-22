@@ -1,5 +1,5 @@
 import { CachedMap } from "@drincs/pixi-vn";
-import { RoomInterface } from "../interface";
+import { LocationInterface, MapInterface, RoomInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
 /**
@@ -7,6 +7,8 @@ import { logger } from "../utils/log-utility";
  * The key is the id of the room and the value is the room itself.
  */
 const registeredRooms = new CachedMap<string, RoomInterface>({ cacheSize: 20 });
+export const registeredLocations = new CachedMap<string, LocationInterface>({ cacheSize: 20 });
+export const registeredMaps = new CachedMap<string, MapInterface>({ cacheSize: 20 });
 
 namespace RegisteredRooms {
     /**
@@ -23,6 +25,12 @@ namespace RegisteredRooms {
             console.warn(`[NQTR] Room id ${room.id} already exists, it will be overwritten`);
         }
         registeredRooms.set(room.id, room);
+        let location = room.location;
+        registeredLocations.set(location.id, location);
+        let map = location?.map;
+        if (map) {
+            registeredMaps.set(map.id, map);
+        }
     }
 
     /**

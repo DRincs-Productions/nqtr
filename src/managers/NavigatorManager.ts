@@ -1,6 +1,7 @@
 import { storage } from "@drincs/pixi-vn";
 import { CURRENT_ROOM_MEMORY_KEY } from "../constants";
 import { RegisteredRooms } from "../decorators";
+import { registeredLocations, registeredMaps } from "../decorators/RegisteredRooms";
 import { setLastEvent } from "../functions/tracking-changes";
 import { LocationInterface, MapInterface, RoomInterface } from "../interface";
 import { logger } from "../utils/log-utility";
@@ -10,18 +11,16 @@ export default class NavigatorManager {
         return RegisteredRooms.values();
     }
     get locations() {
-        let result: { [id: string]: LocationInterface } = {};
-        RegisteredRooms.values().forEach((room) => {
-            result[room.location.id] = room.location;
-        });
-        return Object.values(result);
+        return Array.from(registeredLocations.values());
+    }
+    getLocationById(id: string): LocationInterface | undefined {
+        return registeredLocations.get(id);
     }
     get maps() {
-        let result: { [id: string]: MapInterface } = {};
-        RegisteredRooms.values().forEach((room) => {
-            result[room.location.map.id] = room.location.map;
-        });
-        return Object.values(result);
+        return Array.from(registeredMaps.values());
+    }
+    getMapById(id: string): MapInterface | undefined {
+        return registeredMaps.get(id);
     }
     get currentRoomId(): string | undefined {
         return storage.getVariable<string>(CURRENT_ROOM_MEMORY_KEY);
