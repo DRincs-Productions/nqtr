@@ -1,7 +1,6 @@
 import { storage } from "@drincs/pixi-vn";
 import { CURRENT_ROOM_MEMORY_KEY } from "../constants";
-import { RegisteredMaps, RegisteredRooms } from "../decorators";
-import { registeredLocations } from "../decorators/RegisteredRooms";
+import { RegisteredLocations, RegisteredMaps, RegisteredRooms } from "../decorators";
 import { setLastEvent } from "../functions/tracking-changes";
 import { LocationInterface, MapInterface, RoomInterface } from "../interface";
 import { logger } from "../utils/log-utility";
@@ -11,16 +10,10 @@ export default class NavigatorManager {
         return RegisteredRooms.values();
     }
     get locations() {
-        return Array.from(registeredLocations.values());
-    }
-    getLocationById(id: string): LocationInterface | undefined {
-        return registeredLocations.get(id);
+        return RegisteredLocations.values();
     }
     get maps() {
-        return Array.from(RegisteredMaps.values());
-    }
-    getMapById(id: string): MapInterface | undefined {
-        return RegisteredMaps.get(id);
+        return RegisteredMaps.values();
     }
     get currentRoomId(): string | undefined {
         return storage.getVariable<string>(CURRENT_ROOM_MEMORY_KEY);

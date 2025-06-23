@@ -1,6 +1,7 @@
 import { CachedMap } from "@drincs/pixi-vn";
-import { LocationInterface, RoomInterface } from "../interface";
+import { RoomInterface } from "../interface";
 import { logger } from "../utils/log-utility";
+import RegisteredLocations from "./RegisteredLocations";
 import RegisteredMaps from "./RegisteredMaps";
 
 /**
@@ -8,11 +9,11 @@ import RegisteredMaps from "./RegisteredMaps";
  * The key is the id of the room and the value is the room itself.
  */
 const registeredRooms = new CachedMap<string, RoomInterface>({ cacheSize: 20 });
-export const registeredLocations = new CachedMap<string, LocationInterface>({ cacheSize: 20 });
 
 namespace RegisteredRooms {
     /**
-     * Save a room in the registered rooms. If the room already exists, it will be overwritten.
+     * Save a room in the registered rooms, and their location and map if they are not already registered.
+     * If the room already exists, it will be overwritten.
      * @param room The room to save.
      * @returns
      */
@@ -23,7 +24,7 @@ namespace RegisteredRooms {
         }
         registeredRooms.set(room.id, room);
         let location = room.location;
-        registeredLocations.set(location.id, location);
+        RegisteredLocations.add(location);
         let map = location?.map;
         if (map) {
             RegisteredMaps.add(map);
