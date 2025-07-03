@@ -194,14 +194,15 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
 
     get activities(): ActivityInterface[] {
         let res: ActivityInterface[] = [];
-        Object.entries(this.activeActivityScheduling).forEach(([activityId, scheduling]) => {
+        let activeActivityScheduling = this.activeActivityScheduling;
+        this.additionalActivitiesIds.concat(this.defaultActivitiesIds).forEach((activityId) => {
             let activity = RegisteredActivities.get(activityId);
             const {
                 fromDay = activity?.fromDay,
                 fromHour = activity?.fromHour,
                 toDay = activity?.toDay,
                 toHour = activity?.toHour,
-            } = scheduling;
+            } = activeActivityScheduling[activityId] || {};
             if (
                 activity &&
                 timeTracker.nowIsBetween(fromHour, toHour) &&
