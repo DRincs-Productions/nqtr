@@ -1,6 +1,6 @@
 {
   "name": "@drincs/nqtr",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "A complete system introducing the concepts of location, time and event, producing the framework of a not-quite-point-and-click adventure game.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
