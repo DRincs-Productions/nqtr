@@ -37,7 +37,7 @@ export default interface NavigationAbstractInterface extends StoredClassModel {
      * @param options
      */
     removeActivity(
-        activity: ActivityInterface,
+        activity: ActivityInterface | string,
         options?: {
             /**
              * The activity will be excluded from this class only for the specified days.
