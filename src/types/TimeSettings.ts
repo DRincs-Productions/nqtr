@@ -49,7 +49,7 @@ export type TimeSettings = {
     weekendStartDay?: number;
     /**
      * Week days name
-     * @param weekDayNumber The current week day number (from: 1 - to: {@link weekLength}).
+     * @param weekDayNumber The current week day number (from: 0 - to: {@link weekLength} - 1).
      * @returns The name of the week day.
      * @example
      * ```ts
