@@ -83,7 +83,7 @@ export default class StageStoredClass extends StoredClassModel implements StageB
             if (prevStageEndDay === undefined) {
                 return false;
             }
-            if (prevStageEndDay + daysRequired > timeTracker.currentDay) {
+            if (prevStageEndDay + daysRequired > timeTracker.currentDate) {
                 return false;
             }
         }
@@ -100,7 +100,7 @@ export default class StageStoredClass extends StoredClassModel implements StageB
 
     inizialize() {
         if (this.daysRequiredToStart > 0) {
-            this.prevStageEndDay = timeTracker.currentDay;
+            this.prevStageEndDay = timeTracker.currentDate;
             console.log(`[NQTR] Stage ${this.id} will start on day ${this.startDay}`);
         }
     }

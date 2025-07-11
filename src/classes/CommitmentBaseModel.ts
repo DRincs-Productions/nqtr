@@ -91,7 +91,7 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
      * Whether is hidden. You can also pass a Pixi'VN flag name.
      */
     get hidden(): boolean {
-        if (this.fromDay && this.fromDay > timeTracker.currentDay) {
+        if (this.fromDay && this.fromDay > timeTracker.currentDate) {
             return true;
         }
         if (!timeTracker.nowIsBetween(this.fromHour, this.toHour)) {

@@ -176,7 +176,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         additionalActivitiesIds.forEach((activityId) => {
             if (activityId in activeActivityScheduling) {
                 let { toDay } = activeActivityScheduling[activityId];
-                if (toDay && toDay < timeTracker.currentDay) {
+                if (toDay && toDay < timeTracker.currentDate) {
                     this.removeActivityScheduling(activityId);
                     additionalActivitiesIds = additionalActivitiesIds.filter((id) => id !== activityId);
                 }
@@ -185,7 +185,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         excludedActivitiesIds.forEach((activityId) => {
             if (activityId in excludedActivitiesScheduling) {
                 let { toDay } = excludedActivitiesScheduling[activityId];
-                if (toDay && toDay < timeTracker.currentDay) {
+                if (toDay && toDay < timeTracker.currentDate) {
                     this.removeActivityScheduling(activityId);
                     excludedActivitiesIds = excludedActivitiesIds.filter((id) => id !== activityId);
                 }
@@ -207,15 +207,15 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             if (
                 activity &&
                 timeTracker.nowIsBetween(fromHour, toHour) &&
-                !(fromDay && fromDay > timeTracker.currentDay) &&
-                !(toDay && toDay < timeTracker.currentDay)
+                !(fromDay && fromDay > timeTracker.currentDate) &&
+                !(toDay && toDay < timeTracker.currentDate)
             ) {
                 res.push(activity);
             }
         });
         Object.entries(this.excludedActivitiesScheduling).forEach(([activityId, scheduling]) => {
             let activity = RegisteredActivities.get(activityId);
-            if (activity && activity.isActive && !(scheduling.toDay && scheduling.toDay >= timeTracker.currentDay)) {
+            if (activity && activity.isActive && !(scheduling.toDay && scheduling.toDay >= timeTracker.currentDate)) {
                 res.push(activity);
             }
         });

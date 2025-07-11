@@ -80,22 +80,22 @@ export default class TimeManager {
         storage.setVariable(TIME_DATA_KEY, data);
     }
     /**
-     * Get the current day
+     * Get the current date
      */
-    get currentDay(): number {
+    get currentDate(): number {
         let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
-        if (data.hasOwnProperty("currentDay") && typeof data.currentDay === "number") {
-            return data.currentDay;
+        if (data.hasOwnProperty("currentDate") && typeof data.currentDate === "number") {
+            return data.currentDate;
         }
         return 0;
     }
-    set currentDay(value: number | undefined) {
+    set currentDate(value: number | undefined) {
         let prev = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
         let data = { ...prev };
         if (typeof value === "number") {
-            data.currentDay = value;
+            data.currentDate = value;
         } else {
-            delete data.currentDay;
+            delete data.currentDate;
         }
         setLastEvent({
             type: "edittime",
@@ -115,7 +115,7 @@ export default class TimeManager {
      * For example, if the week length is 7 and the current day is 10, then the result will be 4.
      */
     get currentWeekDayNumber(): number {
-        let result = this.currentDay % this.weekLength;
+        let result = this.currentDate % this.weekLength;
         return result + 1;
     }
     /**
@@ -123,7 +123,7 @@ export default class TimeManager {
      * For example, if the week days names are ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] and the current day is 10, then the result will be 'Thursday'.
      * @default ""
      */
-    get currentDayName(): string {
+    get currentDateName(): string {
         let weekDayNumber = this.currentWeekDayNumber - 1;
         if (weekDayNumber >= this.weekDaysNames.length) {
             console.warn(`[NQTR] Week day name is not defined for day ${weekDayNumber}`, this.weekDaysNames);
@@ -180,13 +180,13 @@ export default class TimeManager {
      * This function will increase the current day by the given days.
      * @param newDayHour is the hour of the new day (default: {@link minDayHours})
      * @param days is the number of days to increase (default: 1)
-     * @returns timeTracker.currentDay
+     * @returns timeTracker.currentDate
      */
     increaseDay(newDayHour: number = this.minDayHours, days: number = 1): number {
-        let newDay = this.currentDay + days;
-        this.currentDay = newDay;
+        let newDay = this.currentDate + days;
+        this.currentDate = newDay;
         this.currentHour = newDayHour;
-        return this.currentDay;
+        return this.currentDate;
     }
 
     /**

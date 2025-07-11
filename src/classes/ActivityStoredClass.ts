@@ -44,17 +44,17 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
     }
 
     get expired(): boolean {
-        if (this.dateScheduling?.to && this.dateScheduling.to <= timeTracker.currentDay) {
+        if (this.dateScheduling?.to && this.dateScheduling.to <= timeTracker.currentDate) {
             return true;
         }
         return false;
     }
 
     get isActive(): boolean {
-        if (this.dateScheduling?.from && this.dateScheduling.from > timeTracker.currentDay) {
+        if (this.dateScheduling?.from && this.dateScheduling.from > timeTracker.currentDate) {
             return false;
         }
-        if (this.dateScheduling?.to && this.dateScheduling.to < timeTracker.currentDay) {
+        if (this.dateScheduling?.to && this.dateScheduling.to < timeTracker.currentDate) {
             return false;
         }
         if (!timeTracker.nowIsBetween(this.timeSlot?.from, this.timeSlot?.to)) {
