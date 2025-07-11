@@ -35,10 +35,8 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
         super(id, character ? (Array.isArray(character) ? character : [character]) : [], room, props.onRun, {
             executionType: props.executionType,
             priority: props.priority,
-            fromHour: props.fromHour,
-            toHour: props.toHour,
-            fromDay: props.fromDay,
-            toDay: props.toDay,
+            timeSlot: props.timeSlot,
+            dateScheduling: props.dateScheduling,
         });
         this._name = props.name || "";
         this._image = props.image;
@@ -91,10 +89,10 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
      * Whether is hidden. You can also pass a Pixi'VN flag name.
      */
     get hidden(): boolean {
-        if (this.fromDay && this.fromDay > timeTracker.currentDate) {
+        if (this.dateScheduling?.from && this.dateScheduling.from > timeTracker.currentDate) {
             return true;
         }
-        if (!timeTracker.nowIsBetween(this.fromHour, this.toHour)) {
+        if (!timeTracker.nowIsBetween(this.timeSlot?.from, this.timeSlot?.to)) {
             return true;
         }
         if (!this.expired) {

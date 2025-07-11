@@ -1,6 +1,8 @@
 import { CharacterInterface } from "@drincs/pixi-vn";
 import { CommitmentInterface, RoomInterface } from "../interface";
 import { CommitmentBaseInternalInterface } from "../interface/CommitmentInterface";
+import DateSchedulingInterface from "../interface/DateSchedulingInterface";
+import TimeSchedulingInterface from "../interface/TimeSchedulingInterface";
 import { ExecutionType } from "../types";
 import { OnRunEvent } from "../types/OnRunEvent";
 import ActivityStoredClass from "./ActivityStoredClass";
@@ -18,10 +20,8 @@ export default class CommitmentStoredClass
         props: {
             executionType?: ExecutionType;
             priority?: number;
-            fromHour?: number;
-            toHour?: number;
-            fromDay?: number;
-            toDay?: number;
+            timeSlot?: TimeSchedulingInterface;
+            dateScheduling?: DateSchedulingInterface;
         }
     ) {
         onRun = onRun || (() => {});
