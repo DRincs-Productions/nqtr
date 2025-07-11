@@ -1,5 +1,5 @@
 type TimeDataType = {
-    currentHour?: number;
+    currentTime?: number;
     currentDate?: number;
 };
 export default TimeDataType;

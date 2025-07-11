@@ -14,7 +14,7 @@ export default class TimeManager {
             timeSlots = [],
             weekLength = 7,
             weekendStartDay = weekLength - 1,
-            weekDaysNames = [],
+            getDayName,
         } = settings;
         TimeManagerSettings.dayStartTime = dayStartTime;
         TimeManagerSettings.dayEndTime = dayEndTime;
@@ -26,11 +26,7 @@ export default class TimeManager {
         } else {
             TimeManagerSettings.weekendStartDay = weekendStartDay;
         }
-        if (weekDaysNames.length !== weekLength) {
-            console.warn(`[NQTR] Week days names should be equal to week length ${weekLength}, so will be ignored`);
-        } else {
-            TimeManagerSettings.weekDaysNames = weekDaysNames;
-        }
+        TimeManagerSettings.getDayName = getDayName;
     }
     get dayStartTime(): number {
         return TimeManagerSettings.dayStartTime;
@@ -50,8 +46,20 @@ export default class TimeManager {
     get weekendStartDay(): number {
         return TimeManagerSettings.weekendStartDay;
     }
-    get weekDaysNames(): string[] {
-        return TimeManagerSettings.weekDaysNames;
+    /**
+     * Week days name
+     * @param weekDayNumber The current week day number (from: 1 - to: {@link weekLength}).
+     * @returns The name of the week day.
+     * @example
+     * ```ts
+     * (weekDayNumber: Date) => {
+     *     const weekDaysNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+     *     return weekDaysNames[currentWeekDayNumber - 1];
+     * }
+     * ```
+     */
+    get getDayName() {
+        return TimeManagerSettings.getDayName;
     }
 
     /**
@@ -60,8 +68,8 @@ export default class TimeManager {
      */
     get currentTime(): number {
         let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
-        if (data.hasOwnProperty("currentHour") && typeof data.currentHour === "number") {
-            return data.currentHour;
+        if (data.hasOwnProperty("currentTime") && typeof data.currentTime === "number") {
+            return data.currentTime;
         }
         return this.dayStartTime;
     }
@@ -69,9 +77,9 @@ export default class TimeManager {
         let prev = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
         let data = { ...prev };
         if (typeof value === "number") {
-            data.currentHour = value;
+            data.currentTime = value;
         } else {
-            delete data.currentHour;
+            delete data.currentTime;
         }
         setLastEvent({
             type: "edittime",
@@ -113,7 +121,7 @@ export default class TimeManager {
         return this.currentWeekDayNumber >= this.weekendStartDay;
     }
     /**
-     * Get the current week day number (1 - {@link weekLength}).
+     * Get the current week day number (from: 1 - to: {@link weekLength}).
      * For example, if the week length is 7 and the current day is 10, then the result will be 4.
      */
     get currentWeekDayNumber(): number {
@@ -125,13 +133,12 @@ export default class TimeManager {
      * For example, if the week days names are ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] and the current day is 10, then the result will be 'Thursday'.
      * @default ""
      */
-    get currentDateName(): string {
-        let weekDayNumber = this.currentWeekDayNumber - 1;
-        if (weekDayNumber >= this.weekDaysNames.length) {
-            console.warn(`[NQTR] Week day name is not defined for day ${weekDayNumber}`, this.weekDaysNames);
+    get currentDayName(): string {
+        if (!this.getDayName) {
+            console.warn(`[NQTR] Week days names are not defined, so currentDayName will be empty`);
             return "";
         }
-        return this.weekDaysNames[weekDayNumber];
+        return this.getDayName(this.currentWeekDayNumber - 1);
     }
     /**
      * Get the current {@link timeSlots} index.
@@ -166,7 +173,7 @@ export default class TimeManager {
      * This function will increase the current hour by the given time spent.
      * If the new hour is greater than or equal to the max day hours, then it will increase the day and set the new hour.
      * @param delta is the time spent in hours (default: {@link defaultTimeSpent})
-     * @returns currentTimeSlot.currentHour
+     * @returns currentTimeSlot.currentTime
      */
     increaseHour(delta: number = this.defaultTimeSpent): number {
         let newHour = this.currentTime + delta;
@@ -193,7 +200,7 @@ export default class TimeManager {
 
     /**
      * This function will check if the current hour is between the given hours.
-     * @param fromHour the starting hour. If the {@link currentHour} is equal to this hour, the function will return true.
+     * @param fromHour the starting hour. If the {@link currentTime} is equal to this hour, the function will return true.
      * @param toHour the ending hour.
      * @returns true if the current hour is between the given hours, otherwise false.
      */
@@ -204,10 +211,10 @@ export default class TimeManager {
         if (toHour === undefined) {
             toHour = this.dayEndTime + 1;
         }
-        let currentHour = this.currentTime;
+        let currentTime = this.currentTime;
         if (fromHour < toHour) {
-            return currentHour >= fromHour && currentHour < toHour;
+            return currentTime >= fromHour && currentTime < toHour;
         }
-        return currentHour >= fromHour || currentHour < toHour;
+        return currentTime >= fromHour || currentTime < toHour;
     }
 }

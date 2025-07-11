@@ -7,5 +7,5 @@ export default class TimeManagerSettings implements TimeSettings {
     static timeSlots: ITimeStlot[] = [];
     static weekLength: number = 7;
     static weekendStartDay: number = this.weekLength - 1;
-    static weekDaysNames: string[] = [];
+    static getDayName?: (weekDayNumber: number) => string;
 }

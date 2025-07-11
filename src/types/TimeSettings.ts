@@ -48,12 +48,16 @@ export type TimeSettings = {
      */
     weekendStartDay?: number;
     /**
-     * Week days names
-     * @default []
+     * Week days name
+     * @param weekDayNumber The current week day number (from: 1 - to: {@link weekLength}).
+     * @returns The name of the week day.
      * @example
      * ```ts
-     * ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+     * (weekDayNumber: Date) => {
+     *     const weekDaysNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+     *     return weekDaysNames[currentWeekDayNumber - 1];
+     * }
      * ```
      */
-    weekDaysNames?: string[];
+    getDayName?: (weekDayNumber: number) => string;
 };
