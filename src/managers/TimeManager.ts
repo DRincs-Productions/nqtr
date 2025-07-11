@@ -8,16 +8,16 @@ import TimeManagerSettings from "./TimeManagerSettings";
 export default class TimeManager {
     initialize(settings: TimeSettings) {
         const {
-            minDayHours = 0,
-            maxDayHours = 24,
+            dayStartTime = 0,
+            dayEndTime = 24,
             defaultTimeSpent = 1,
             timeSlots = [],
             weekLength = 7,
             weekendStartDay = weekLength - 1,
             weekDaysNames = [],
         } = settings;
-        TimeManagerSettings.minDayHours = minDayHours;
-        TimeManagerSettings.maxDayHours = maxDayHours;
+        TimeManagerSettings.dayStartTime = dayStartTime;
+        TimeManagerSettings.dayEndTime = dayEndTime;
         TimeManagerSettings.defaultTimeSpent = defaultTimeSpent;
         TimeManagerSettings.timeSlots = timeSlots;
         TimeManagerSettings.weekLength = weekLength;
@@ -32,11 +32,11 @@ export default class TimeManager {
             TimeManagerSettings.weekDaysNames = weekDaysNames;
         }
     }
-    get minDayHours(): number {
-        return TimeManagerSettings.minDayHours;
+    get dayStartTime(): number {
+        return TimeManagerSettings.dayStartTime;
     }
-    get maxDayHours(): number {
-        return TimeManagerSettings.maxDayHours;
+    get dayEndTime(): number {
+        return TimeManagerSettings.dayEndTime;
     }
     get defaultTimeSpent(): number {
         return TimeManagerSettings.defaultTimeSpent;
@@ -55,14 +55,15 @@ export default class TimeManager {
     }
 
     /**
-     * Get the current hour
+     * Get the current time. Time is a numeric variable used to determine and manage time during a day/date.
+     * It's recommended to use currentTime as if it were the current hour. If you also want to manage minutes, you can use a float value.
      */
     get currentTime(): number {
         let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
         if (data.hasOwnProperty("currentHour") && typeof data.currentHour === "number") {
             return data.currentHour;
         }
-        return this.minDayHours;
+        return this.dayStartTime;
     }
     set currentTime(value: number | undefined) {
         let prev = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
@@ -80,7 +81,8 @@ export default class TimeManager {
         storage.setVariable(TIME_DATA_KEY, data);
     }
     /**
-     * Get the current date
+     * Get the current date. Date is a numeric variable used to determine and manage the number of days passed.
+     * It's recommended to use currentDate as if it were the current day.
      */
     get currentDate(): number {
         let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
@@ -168,9 +170,9 @@ export default class TimeManager {
      */
     increaseHour(delta: number = this.defaultTimeSpent): number {
         let newHour = this.currentTime + delta;
-        if (newHour >= this.maxDayHours) {
+        if (newHour >= this.dayEndTime) {
             this.increaseDate();
-            newHour = this.minDayHours + (newHour - this.maxDayHours);
+            newHour = this.dayStartTime + (newHour - this.dayEndTime);
         }
         this.currentTime = newHour;
         return this.currentTime;
@@ -178,11 +180,11 @@ export default class TimeManager {
 
     /**
      * This function will increase the current date by the given delta.
-     * @param time is the hour of the new day (default: {@link minDayHours})
+     * @param time is the hour of the new day (default: {@link dayStartTime})
      * @param delta is the number of days to increase (default: 1)
      * @returns timeTracker.currentDate
      */
-    increaseDate(time: number = this.minDayHours, delta: number = 1): number {
+    increaseDate(time: number = this.dayStartTime, delta: number = 1): number {
         let newDate = this.currentDate + delta;
         this.currentDate = newDate;
         this.currentTime = time;
@@ -197,10 +199,10 @@ export default class TimeManager {
      */
     nowIsBetween(fromHour: number | undefined, toHour: number | undefined): boolean {
         if (fromHour === undefined) {
-            fromHour = this.minDayHours - 1;
+            fromHour = this.dayStartTime - 1;
         }
         if (toHour === undefined) {
-            toHour = this.maxDayHours + 1;
+            toHour = this.dayEndTime + 1;
         }
         let currentHour = this.currentTime;
         if (fromHour < toHour) {

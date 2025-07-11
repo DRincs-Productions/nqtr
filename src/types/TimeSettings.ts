@@ -1,9 +1,9 @@
-import { timeTracker } from "../managers"
+import { timeTracker } from "../managers";
 
 export type ITimeStlot = {
-    name: string
-    startHour: number
-}
+    name: string;
+    startHour: number;
+};
 
 /**
  * Time Settings, which can be set using {@link timeTracker.editSettings}
@@ -13,17 +13,17 @@ export type TimeSettings = {
      * Minimum hour of the day
      * @default 0
      */
-    minDayHours?: number
+    dayStartTime?: number;
     /**
      * Maximum hour of the day
      * @default 24
      */
-    maxDayHours?: number
+    dayEndTime?: number;
     /**
      * Default time spent
      * @default 1
      */
-    defaultTimeSpent?: number
+    defaultTimeSpent?: number;
     /**
      * Time slots
      * @default []
@@ -36,17 +36,17 @@ export type TimeSettings = {
      *   { name: 'Night', startHour: 22 }
      * ]
      */
-    timeSlots?: ITimeStlot[]
+    timeSlots?: ITimeStlot[];
     /**
      * Week length
      * @default 7
      */
-    weekLength?: number
+    weekLength?: number;
     /**
      * Weekend start day. For example, if the real life weekend starts on Saturday, then the value should be 6
      * @default weekLength - 1
      */
-    weekendStartDay?: number
+    weekendStartDay?: number;
     /**
      * Week days names
      * @default []
@@ -55,5 +55,5 @@ export type TimeSettings = {
      * ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
      * ```
      */
-    weekDaysNames?: string[]
-}
+    weekDaysNames?: string[];
+};
