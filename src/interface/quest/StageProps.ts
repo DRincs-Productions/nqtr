@@ -28,20 +28,20 @@ export default interface StageProps {
      */
     image?: string;
     /**
-     * The day required to start the stage.
-     * @example If the value is 3, and the previous stage ends on day 1, the stage will start on day 4.
+     * The number of day/date required to start the stage.
+     * @example If the value is 3, and the previous stage ends on date 1, the stage will start on date 4.
      */
-    daysRequiredToStart?: number;
+    deltaDateRequired?: number;
     /**
      * The flags required to start the stage.
      * @default []
      */
-    flagsRequiredToStart?: StageFlags[];
+    flagsRequired?: StageFlags[];
     /**
      * The quests required to start the stage.
      * @default []
      */
-    questsRequiredToStart?: QuestsRequiredType[];
+    questsRequired?: QuestsRequiredType[];
     /**
      * The description to request to start the stage.
      * @default ""

@@ -19,22 +19,22 @@ export default class StageStoredClass extends StoredClassModel implements StageB
              */
             onEnd?: OnRunEvent<StageInterface>;
             /**
-             * The day required to start the stage.
+             * The number of day/date required to start the stage.
              * @example If the value is 3, and the previous stage ends on day 1, the stage will start on day 4.
              */
-            daysRequiredToStart?: number;
+            deltaDateRequired?: number;
             /**
              * The quests required to start the stage.
              * @default []
              */
-            questsRequiredToStart?: QuestsRequiredType[];
+            questsRequired?: QuestsRequiredType[];
         } = {}
     ) {
         super(STAGE_CATEGORY, id);
         this._onStart = options.onStart;
         this._onEnd = options.onEnd;
-        this._daysRequiredToStart = options.daysRequiredToStart;
-        this._questsRequiredToStart = options.questsRequiredToStart || [];
+        this._deltaDateRequired = options.deltaDateRequired;
+        this._questsRequired = options.questsRequired || [];
     }
 
     private _onStart?: OnRunEvent<StageInterface>;
@@ -61,37 +61,35 @@ export default class StageStoredClass extends StoredClassModel implements StageB
         this.setStorageProperty("started", value);
     }
 
-    private get prevStageEndDay(): number | undefined {
-        return this.getStorageProperty<number>("prevStageEndDay");
+    private get inizializeDate(): number | undefined {
+        return this.getStorageProperty<number>("inizializeDate");
     }
-    private set prevStageEndDay(value: number | undefined) {
-        this.setStorageProperty("prevStageEndDay", value);
+    private set inizializeDate(value: number | undefined) {
+        this.setStorageProperty("inizializeDate", value);
     }
 
-    get startDay(): number | undefined {
-        let prevStageEndDay = this.prevStageEndDay;
-        if (prevStageEndDay === undefined) {
+    get startDate(): number | undefined {
+        let inizializeDate = this.inizializeDate;
+        if (inizializeDate === undefined) {
             return undefined;
         }
-        return prevStageEndDay + this.daysRequiredToStart;
+        return inizializeDate + this.deltaDateRequired;
     }
 
     get canStart(): boolean {
-        let daysRequired = this.daysRequiredToStart;
-        if (daysRequired > 0) {
-            let prevStageEndDay = this.prevStageEndDay;
-            if (prevStageEndDay === undefined) {
+        let deltaDateRequired = this.deltaDateRequired;
+        if (deltaDateRequired > 0) {
+            let inizializeDate = this.inizializeDate;
+            if (inizializeDate === undefined) {
                 return false;
             }
-            if (prevStageEndDay + daysRequired > timeTracker.currentDay) {
+            if (inizializeDate + deltaDateRequired > timeTracker.currentDate) {
                 return false;
             }
         }
         if (
-            this.questsRequiredToStart.length > 0 &&
-            !this.questsRequiredToStart.every(
-                (q) => q.quest.currentStageIndex && q.quest.currentStageIndex >= q.stageNumber
-            )
+            this.questsRequired.length > 0 &&
+            !this.questsRequired.every((q) => q.quest.currentStageIndex && q.quest.currentStageIndex >= q.stageNumber)
         ) {
             return false;
         }
@@ -99,9 +97,9 @@ export default class StageStoredClass extends StoredClassModel implements StageB
     }
 
     inizialize() {
-        if (this.daysRequiredToStart > 0) {
-            this.prevStageEndDay = timeTracker.currentDay;
-            console.log(`[NQTR] Stage ${this.id} will start on day ${this.startDay}`);
+        if (this.deltaDateRequired > 0) {
+            this.inizializeDate = timeTracker.currentDate;
+            console.log(`[NQTR] Stage ${this.id} will start on date ${this.startDate}`);
         }
     }
 
@@ -116,13 +114,13 @@ export default class StageStoredClass extends StoredClassModel implements StageB
         }
     }
 
-    private _daysRequiredToStart?: number;
-    get daysRequiredToStart(): number {
-        return this._daysRequiredToStart || 0;
+    private _deltaDateRequired?: number;
+    get deltaDateRequired(): number {
+        return this._deltaDateRequired || 0;
     }
 
-    private _questsRequiredToStart: QuestsRequiredType[];
-    get questsRequiredToStart(): QuestsRequiredType[] {
-        return this._questsRequiredToStart || [];
+    private _questsRequired: QuestsRequiredType[];
+    get questsRequired(): QuestsRequiredType[] {
+        return this._questsRequired || [];
     }
 }

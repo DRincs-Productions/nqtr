@@ -186,7 +186,7 @@ declare module "@drincs/nqtr" {
         /**
          * The list of flags required to start the stage.
          */
-        readonly flagsRequiredToStart: StageFlags[];
+        readonly flagsRequired: StageFlags[];
         /**
          * The description of the request to start the stage.
          */

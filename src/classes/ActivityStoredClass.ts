@@ -2,6 +2,8 @@ import { StoredClassModel } from "@drincs/pixi-vn";
 import { addTempHistoryItem } from "../functions/tracking-changes";
 import { ActivityInterface } from "../interface";
 import { ActivityBaseInternalInterface } from "../interface/ActivityInterface";
+import DateSchedulingInterface from "../interface/DateSchedulingInterface";
+import TimeSchedulingInterface from "../interface/TimeSchedulingInterface";
 import { timeTracker } from "../managers";
 import { OnRunAsyncFunction, OnRunEvent } from "../types";
 
@@ -14,38 +16,24 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         id: string,
         private readonly _onRun: OnRunEvent<OnRunEventType>,
         props: {
-            fromHour?: number;
-            toHour?: number;
-            fromDay?: number;
-            toDay?: number;
+            timeSlot?: TimeSchedulingInterface;
+            dateScheduling?: DateSchedulingInterface;
         },
         category: string = ACTIVITY_CATEGORY
     ) {
         super(category, id);
-        this._fromHour = props.fromHour;
-        this._toHour = props.toHour;
-        this._fromDay = props.fromDay;
-        this._toDay = props.toDay;
+        this._timeSlot = props.timeSlot;
+        this._dateScheduling = props.dateScheduling;
     }
 
-    private _fromHour?: number;
-    get fromHour(): number | undefined {
-        return this._fromHour;
+    private _timeSlot?: TimeSchedulingInterface;
+    get timeSlot(): TimeSchedulingInterface | undefined {
+        return this._timeSlot;
     }
 
-    private _toHour?: number;
-    get toHour(): number | undefined {
-        return this._toHour;
-    }
-
-    private _fromDay?: number;
-    get fromDay(): number | undefined {
-        return this._fromDay;
-    }
-
-    private _toDay?: number;
-    get toDay(): number | undefined {
-        return this._toDay;
+    private _dateScheduling?: DateSchedulingInterface;
+    get dateScheduling(): DateSchedulingInterface | undefined {
+        return this._dateScheduling;
     }
 
     get run(): OnRunAsyncFunction {
@@ -56,20 +44,20 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
     }
 
     get expired(): boolean {
-        if (this.toDay && this.toDay <= timeTracker.currentDay) {
+        if (this.dateScheduling?.to && this.dateScheduling.to <= timeTracker.currentDate) {
             return true;
         }
         return false;
     }
 
     get isActive(): boolean {
-        if (this.fromDay && this.fromDay > timeTracker.currentDay) {
+        if (this.dateScheduling?.from && this.dateScheduling.from > timeTracker.currentDate) {
             return false;
         }
-        if (this.toDay && this.toDay < timeTracker.currentDay) {
+        if (this.dateScheduling?.to && this.dateScheduling.to < timeTracker.currentDate) {
             return false;
         }
-        if (!timeTracker.nowIsBetween(this.fromHour, this.toHour)) {
+        if (!timeTracker.nowIsBetween(this.timeSlot?.from, this.timeSlot?.to)) {
             return false;
         }
         return true;

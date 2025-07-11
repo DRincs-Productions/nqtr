@@ -19,8 +19,10 @@ import ActivityStoredClass from "./ActivityStoredClass";
  *     },
  *     {
  *         name: "Nap",
- *         fromHour: 5,
- *         toHour: 23,
+ *         timeSlot: {
+ *             from: 5,
+ *             to: 23,
+ *         },
  *         icon: "https://icon.jpg",
  *     }
  * )
@@ -34,10 +36,8 @@ export default class ActivityBaseModel extends ActivityStoredClass<ActivityInter
      */
     constructor(id: string, onRun: OnRunEvent<ActivityInterface>, props: ActivityProps) {
         super(id, onRun, {
-            fromHour: props.fromHour,
-            toHour: props.toHour,
-            fromDay: props.fromDay,
-            toDay: props.toDay,
+            dateScheduling: props.dateScheduling,
+            timeSlot: props.timeSlot,
         });
         this.defaultName = props.name || "";
         this.defaultDisabled = props.disabled || false;

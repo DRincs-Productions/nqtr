@@ -51,9 +51,9 @@ export interface StageBaseInternalInterface {
     started: boolean;
 
     /**
-     * The day when the stage starts.
+     * The date when the stage starts.
      */
-    readonly startDay?: number;
+    readonly startDate?: number;
 
     /**
      * Check if the stage can start.
@@ -61,7 +61,7 @@ export interface StageBaseInternalInterface {
      * ```ts
      * export default class Stage extends StageStoredClass {
      * 	override get canStart(): boolean {
-     * 		if (this.flagsRequiredToStart.length > 0 && !this.flagsRequiredToStart.every((flag) => storage.getFlag(flag.flag))) {
+     * 		if (this.flagsRequired.length > 0 && !this.flagsRequired.every((flag) => storage.getFlag(flag.flag))) {
      * 			return false;
      * 		}
      * 		return super.canStart;
@@ -77,12 +77,12 @@ export interface StageBaseInternalInterface {
     start(props: OnRunProps): Promise<void>;
 
     /**
-     * The number of days required to start the stage.
+     * The number of day/date required to start the stage.
      */
-    readonly daysRequiredToStart: number;
+    readonly deltaDateRequired: number;
 
     /**
      * The list of quests required to start the stage.
      */
-    readonly questsRequiredToStart: QuestsRequiredType[];
+    readonly questsRequired: QuestsRequiredType[];
 }
