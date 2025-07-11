@@ -7,13 +7,11 @@ import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
 import { timeTracker } from "../../managers";
 
 type ActiveScheduling = {
-    fromHour?: number;
-    toHour?: number;
-    fromDay?: number;
-    toDay?: number;
+    timeSlot: Partial<TimeSchedulingInterface>;
+    dateScheduling: Partial<DateSchedulingInterface>;
 };
 type ExcludedScheduling = {
-    toDay?: number;
+    dateScheduling: Pick<DateSchedulingInterface, "to">;
 };
 
 export default abstract class NavigationAbstractClass extends StoredClassModel implements NavigationAbstractInterface {
@@ -66,25 +64,28 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     ) {
         const { timeSlot, dateScheduling } = options;
         const { to: toTime = timeTracker.dayEndTime + 1 } = timeSlot || {};
-        let scheduling: ActiveScheduling = {};
+        let scheduling: ActiveScheduling = {
+            timeSlot: {},
+            dateScheduling: {},
+        };
         if (timeSlot) {
             if (timeSlot.from >= toTime) {
                 throw new Error(`[NQTR] The from hour must be less than the to hour.`);
             }
-            scheduling.fromHour = timeSlot.from;
+            scheduling.timeSlot.from = timeSlot.from;
         }
         if (
             dateScheduling?.from !== undefined &&
             dateScheduling?.to !== undefined &&
             dateScheduling?.from >= dateScheduling?.to
         ) {
-            throw new Error(`[NQTR] The from day must be less than the to day.`);
+            throw new Error(`[NQTR] The from day/date must be less than the to day/date.`);
         }
         if (dateScheduling?.from !== undefined) {
-            scheduling.fromDay = dateScheduling?.from;
+            scheduling.dateScheduling.from = dateScheduling?.from;
         }
         if (dateScheduling?.to !== undefined) {
-            scheduling.toDay = dateScheduling?.to;
+            scheduling.dateScheduling.to = dateScheduling?.to;
         }
 
         if (this.defaultActivitiesIds.includes(activity.id)) {
@@ -112,24 +113,14 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             this.editActivityScheduling(activity.id, scheduling);
         }
     }
-    removeActivity(
-        activity: ActivityInterface | string,
-        options: {
-            /**
-             * The activity will be excluded from this class only for the specified days.
-             * If to 3, the activity will be excluded from this class only for days 1, 2 and 3. So at day 4 it will be associated with this class.
-             */
-            toDay?: number;
-        } = {}
-    ) {
-        const { toDay } = options;
+    removeActivity(activity: ActivityInterface | string, options: Pick<DateSchedulingInterface, "to"> = {}) {
+        const { to } = options;
         const activityId = typeof activity === "string" ? activity : activity.id;
-        let scheduling: ExcludedScheduling = {};
-        if (toDay === 0) {
-            console.warn(`[NQTR] The to day must be greater than 0, so it will be ignored.`);
-        }
-        if (toDay) {
-            scheduling.toDay = toDay;
+        let scheduling: ExcludedScheduling = {
+            dateScheduling: {},
+        };
+        if (to !== undefined) {
+            scheduling.dateScheduling.to = to;
         }
 
         let additionalActivitiesIds = this.additionalActivitiesIds;
@@ -160,8 +151,8 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
 
         additionalActivitiesIds.forEach((activityId) => {
             if (activityId in activeActivityScheduling) {
-                let { toDay } = activeActivityScheduling[activityId];
-                if (toDay && toDay < timeTracker.currentDate) {
+                let { to: toDate } = activeActivityScheduling[activityId].dateScheduling || {};
+                if (toDate && toDate < timeTracker.currentDate) {
                     this.removeActivityScheduling(activityId);
                     additionalActivitiesIds = additionalActivitiesIds.filter((id) => id !== activityId);
                 }
@@ -169,8 +160,8 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         });
         excludedActivitiesIds.forEach((activityId) => {
             if (activityId in excludedActivitiesScheduling) {
-                let { toDay } = excludedActivitiesScheduling[activityId];
-                if (toDay && toDay < timeTracker.currentDate) {
+                let { to: toDate } = excludedActivitiesScheduling[activityId].dateScheduling || {};
+                if (toDate && toDate < timeTracker.currentDate) {
                     this.removeActivityScheduling(activityId);
                     excludedActivitiesIds = excludedActivitiesIds.filter((id) => id !== activityId);
                 }
@@ -183,24 +174,26 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         let activeActivityScheduling = this.activeActivityScheduling;
         this.additionalActivitiesIds.concat(this.defaultActivitiesIds).forEach((activityId) => {
             let activity = RegisteredActivities.get(activityId);
-            const {
-                fromDay = activity?.dateScheduling?.from,
-                fromHour = activity?.timeSlot?.from,
-                toDay = activity?.dateScheduling?.to,
-                toHour = activity?.timeSlot?.to,
-            } = activeActivityScheduling[activityId] || {};
+            const { dateScheduling, timeSlot } = activeActivityScheduling[activityId] || {};
+            const { from: fromDate = activity?.dateScheduling?.from, to: toDate = activity?.dateScheduling?.to } =
+                dateScheduling || {};
+            const { from: fromHour = activity?.timeSlot?.from, to: toHour = activity?.timeSlot?.to } = timeSlot || {};
             if (
                 activity &&
                 timeTracker.nowIsBetween(fromHour, toHour) &&
-                !(fromDay && fromDay > timeTracker.currentDate) &&
-                !(toDay && toDay < timeTracker.currentDate)
+                !(fromDate && fromDate > timeTracker.currentDate) &&
+                !(toDate && toDate < timeTracker.currentDate)
             ) {
                 res.push(activity);
             }
         });
         Object.entries(this.excludedActivitiesScheduling).forEach(([activityId, scheduling]) => {
             let activity = RegisteredActivities.get(activityId);
-            if (activity && activity.isActive && !(scheduling.toDay && scheduling.toDay >= timeTracker.currentDate)) {
+            if (
+                activity &&
+                activity.isActive &&
+                !(scheduling.dateScheduling.to !== undefined && scheduling.dateScheduling.to >= timeTracker.currentDate)
+            ) {
                 res.push(activity);
             }
         });

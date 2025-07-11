@@ -28,7 +28,7 @@ export default interface NavigationAbstractInterface extends StoredClassModel {
      * @param activity The activity to disconnect from the class.
      * @param options
      */
-    removeActivity(activity: ActivityInterface | string, options?: Pick<TimeSchedulingInterface, "to">): void;
+    removeActivity(activity: ActivityInterface | string, options?: Pick<DateSchedulingInterface, "to">): void;
     /**
      * Removes the useless activities.
      */
