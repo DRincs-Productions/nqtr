@@ -8,15 +8,15 @@ export default class StageBaseModel extends StageStoredClass {
         super(id, {
             onStart: props.onStart,
             onEnd: props.onEnd,
-            daysRequiredToStart: props.dateRequiredToStart,
-            questsRequiredToStart: props.questsRequiredToStart,
+            deltaDateRequired: props.deltaDateRequired,
+            questsRequired: props.questsRequired,
         });
         this._name = props.name || "";
         this._flags = props.flags || [];
         this._description = props.description || "";
         this._adviceDescription = props.adviceDescription || "";
         this._image = props.image;
-        this._flagsRequiredToStart = props.flagsRequiredToStart || [];
+        this._flagsRequired = props.flagsRequired || [];
         this._requestDescriptionToStart = props.requestDescriptionToStart || "";
     }
 
@@ -60,12 +60,12 @@ export default class StageBaseModel extends StageStoredClass {
         return this._flags;
     }
 
-    private _flagsRequiredToStart: StageFlags[];
+    private _flagsRequired: StageFlags[];
     /**
      * The list of flags required to start the stage.
      */
-    get flagsRequiredToStart(): StageFlags[] {
-        return this._flagsRequiredToStart;
+    get flagsRequired(): StageFlags[] {
+        return this._flagsRequired;
     }
 
     private _requestDescriptionToStart: string;
@@ -92,10 +92,7 @@ export default class StageBaseModel extends StageStoredClass {
         super.completed = value;
     }
     override get canStart(): boolean {
-        if (
-            this.flagsRequiredToStart.length > 0 &&
-            !this.flagsRequiredToStart.every((flag) => storage.getFlag(flag.flag))
-        ) {
+        if (this.flagsRequired.length > 0 && !this.flagsRequired.every((flag) => storage.getFlag(flag.flag))) {
             return false;
         }
         return super.canStart;
