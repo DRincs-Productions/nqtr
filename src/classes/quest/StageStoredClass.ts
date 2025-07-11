@@ -61,29 +61,29 @@ export default class StageStoredClass extends StoredClassModel implements StageB
         this.setStorageProperty("started", value);
     }
 
-    private get prevStageEndDay(): number | undefined {
-        return this.getStorageProperty<number>("prevStageEndDay");
+    private get inizializeDate(): number | undefined {
+        return this.getStorageProperty<number>("inizializeDate");
     }
-    private set prevStageEndDay(value: number | undefined) {
-        this.setStorageProperty("prevStageEndDay", value);
+    private set inizializeDate(value: number | undefined) {
+        this.setStorageProperty("inizializeDate", value);
     }
 
     get startDate(): number | undefined {
-        let prevStageEndDay = this.prevStageEndDay;
-        if (prevStageEndDay === undefined) {
+        let inizializeDate = this.inizializeDate;
+        if (inizializeDate === undefined) {
             return undefined;
         }
-        return prevStageEndDay + this.deltaDateRequired;
+        return inizializeDate + this.deltaDateRequired;
     }
 
     get canStart(): boolean {
         let deltaDateRequired = this.deltaDateRequired;
         if (deltaDateRequired > 0) {
-            let prevStageEndDay = this.prevStageEndDay;
-            if (prevStageEndDay === undefined) {
+            let inizializeDate = this.inizializeDate;
+            if (inizializeDate === undefined) {
                 return false;
             }
-            if (prevStageEndDay + deltaDateRequired > timeTracker.currentDate) {
+            if (inizializeDate + deltaDateRequired > timeTracker.currentDate) {
                 return false;
             }
         }
@@ -98,8 +98,8 @@ export default class StageStoredClass extends StoredClassModel implements StageB
 
     inizialize() {
         if (this.deltaDateRequired > 0) {
-            this.prevStageEndDay = timeTracker.currentDate;
-            console.log(`[NQTR] Stage ${this.id} will start on day ${this.startDate}`);
+            this.inizializeDate = timeTracker.currentDate;
+            console.log(`[NQTR] Stage ${this.id} will start on date ${this.startDate}`);
         }
     }
 
