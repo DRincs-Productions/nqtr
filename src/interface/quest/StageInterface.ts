@@ -51,9 +51,9 @@ export interface StageBaseInternalInterface {
     started: boolean;
 
     /**
-     * The day when the stage starts.
+     * The date when the stage starts.
      */
-    readonly startDay?: number;
+    readonly startDate?: number;
 
     /**
      * Check if the stage can start.

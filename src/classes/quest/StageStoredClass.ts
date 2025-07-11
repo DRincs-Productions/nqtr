@@ -68,7 +68,7 @@ export default class StageStoredClass extends StoredClassModel implements StageB
         this.setStorageProperty("prevStageEndDay", value);
     }
 
-    get startDay(): number | undefined {
+    get startDate(): number | undefined {
         let prevStageEndDay = this.prevStageEndDay;
         if (prevStageEndDay === undefined) {
             return undefined;
@@ -77,13 +77,13 @@ export default class StageStoredClass extends StoredClassModel implements StageB
     }
 
     get canStart(): boolean {
-        let daysRequired = this.deltaDateRequired;
-        if (daysRequired > 0) {
+        let deltaDateRequired = this.deltaDateRequired;
+        if (deltaDateRequired > 0) {
             let prevStageEndDay = this.prevStageEndDay;
             if (prevStageEndDay === undefined) {
                 return false;
             }
-            if (prevStageEndDay + daysRequired > timeTracker.currentDate) {
+            if (prevStageEndDay + deltaDateRequired > timeTracker.currentDate) {
                 return false;
             }
         }
@@ -99,7 +99,7 @@ export default class StageStoredClass extends StoredClassModel implements StageB
     inizialize() {
         if (this.deltaDateRequired > 0) {
             this.prevStageEndDay = timeTracker.currentDate;
-            console.log(`[NQTR] Stage ${this.id} will start on day ${this.startDay}`);
+            console.log(`[NQTR] Stage ${this.id} will start on day ${this.startDate}`);
         }
     }
 
