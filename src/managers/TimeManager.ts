@@ -57,14 +57,14 @@ export default class TimeManager {
     /**
      * Get the current hour
      */
-    get currentHour(): number {
+    get currentTime(): number {
         let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
         if (data.hasOwnProperty("currentHour") && typeof data.currentHour === "number") {
             return data.currentHour;
         }
         return this.minDayHours;
     }
-    set currentHour(value: number | undefined) {
+    set currentTime(value: number | undefined) {
         let prev = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
         let data = { ...prev };
         if (typeof value === "number") {
@@ -163,29 +163,29 @@ export default class TimeManager {
     /**
      * This function will increase the current hour by the given time spent.
      * If the new hour is greater than or equal to the max day hours, then it will increase the day and set the new hour.
-     * @param timeSpent is the time spent in hours (default: {@link defaultTimeSpent})
+     * @param delta is the time spent in hours (default: {@link defaultTimeSpent})
      * @returns currentTimeSlot.currentHour
      */
-    increaseHour(timeSpent: number = this.defaultTimeSpent): number {
-        let newHour = this.currentHour + timeSpent;
+    increaseHour(delta: number = this.defaultTimeSpent): number {
+        let newHour = this.currentTime + delta;
         if (newHour >= this.maxDayHours) {
-            this.increaseDay();
+            this.increaseDate();
             newHour = this.minDayHours + (newHour - this.maxDayHours);
         }
-        this.currentHour = newHour;
-        return this.currentHour;
+        this.currentTime = newHour;
+        return this.currentTime;
     }
 
     /**
-     * This function will increase the current day by the given days.
-     * @param newDayHour is the hour of the new day (default: {@link minDayHours})
-     * @param days is the number of days to increase (default: 1)
+     * This function will increase the current date by the given delta.
+     * @param time is the hour of the new day (default: {@link minDayHours})
+     * @param delta is the number of days to increase (default: 1)
      * @returns timeTracker.currentDate
      */
-    increaseDay(newDayHour: number = this.minDayHours, days: number = 1): number {
-        let newDay = this.currentDate + days;
-        this.currentDate = newDay;
-        this.currentHour = newDayHour;
+    increaseDate(time: number = this.minDayHours, delta: number = 1): number {
+        let newDate = this.currentDate + delta;
+        this.currentDate = newDate;
+        this.currentTime = time;
         return this.currentDate;
     }
 
@@ -202,7 +202,7 @@ export default class TimeManager {
         if (toHour === undefined) {
             toHour = this.maxDayHours + 1;
         }
-        let currentHour = this.currentHour;
+        let currentHour = this.currentTime;
         if (fromHour < toHour) {
             return currentHour >= fromHour && currentHour < toHour;
         }
