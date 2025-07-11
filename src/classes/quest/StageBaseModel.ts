@@ -8,7 +8,7 @@ export default class StageBaseModel extends StageStoredClass {
         super(id, {
             onStart: props.onStart,
             onEnd: props.onEnd,
-            daysRequiredToStart: props.daysRequiredToStart,
+            daysRequiredToStart: props.dateRequiredToStart,
             questsRequiredToStart: props.questsRequiredToStart,
         });
         this._name = props.name || "";
