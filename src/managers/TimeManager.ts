@@ -52,9 +52,9 @@ export default class TimeManager {
      * @returns The name of the week day.
      * @example
      * ```ts
-     * (weekDayNumber: Date) => {
+     * (weekDayNumber: number) => {
      *     const weekDaysNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-     *     return weekDaysNames[currentWeekDayNumber - 1];
+     *     return weekDaysNames[weekDayNumber];
      * }
      * ```
      */
