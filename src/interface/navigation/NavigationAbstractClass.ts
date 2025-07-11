@@ -1,5 +1,7 @@
 import { StoredClassModel } from "@drincs/pixi-vn";
 import { ActivityInterface } from "../../interface";
+import DateSchedulingInterface from "../DateSchedulingInterface";
+import TimeSchedulingInterface from "../TimeSchedulingInterface";
 
 export default interface NavigationAbstractInterface extends StoredClassModel {
     /**
@@ -12,23 +14,13 @@ export default interface NavigationAbstractInterface extends StoredClassModel {
         activity: ActivityInterface,
         options?: {
             /**
-             * the activity will be associated with this class only for the specified hours.
-             * If you set from 3 and to 5, the activity will be associated with this class only for hours 3, 4 and 5. soSo at 2 or 6 it will not be associated with this class.
+             * Time slot in which activity will be active.
              */
-            hours?: {
-                from: number;
-                to: number;
-            };
+            timeSlot?: TimeSchedulingInterface;
             /**
-             * the activity will be associated with this class from the specified day.
-             * If you set 3, the activity will be associated with this class from day 3. So at day 2 it will not be associated with this class.
+             * Used to schedule what date it will be added and removed.
              */
-            fromDay?: number;
-            /**
-             * the activity will be associated with this class to the specified day.
-             * If you set 3, the activity will be associated with this class until day 3. So at day 4 it will not be associated with this class.
-             */
-            toDay?: number;
+            dateScheduling?: DateSchedulingInterface;
         }
     ): void;
     /**

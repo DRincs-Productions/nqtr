@@ -1,7 +1,9 @@
 import { StoredClassModel } from "@drincs/pixi-vn";
 import { RegisteredActivities } from "../../decorators";
 import { ActivityInterface } from "../../interface";
+import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
 import NavigationAbstractInterface from "../../interface/navigation/NavigationAbstractClass";
+import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
 import { timeTracker } from "../../managers";
 
 type ActiveScheduling = {
@@ -58,48 +60,31 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     addActivity(
         activity: ActivityInterface,
         options: {
-            /**
-             * the activity will be associated with this class only for the specified hours.
-             * If you set from 3 and to 5, the activity will be associated with this class only for hours 3, 4 and 5. soSo at 2 or 6 it will not be associated with this class.
-             */
-            hours?: {
-                from: number;
-                to: number;
-            };
-            /**
-             * the activity will be associated with this class from the specified day.
-             * If you set 3, the activity will be associated with this class from day 3. So at day 2 it will not be associated with this class.
-             */
-            fromDay?: number;
-            /**
-             * the activity will be associated with this class to the specified day.
-             * If you set 3, the activity will be associated with this class until day 3. So at day 4 it will not be associated with this class.
-             */
-            toDay?: number;
+            timeSlot?: TimeSchedulingInterface;
+            dateScheduling?: DateSchedulingInterface;
         } = {}
     ) {
-        const { hours, fromDay, toDay } = options;
+        const { timeSlot, dateScheduling } = options;
+        const { to: toTime = timeTracker.dayEndTime + 1 } = timeSlot || {};
         let scheduling: ActiveScheduling = {};
-        if (hours) {
-            if (hours.from >= hours.to) {
+        if (timeSlot) {
+            if (timeSlot.from >= toTime) {
                 throw new Error(`[NQTR] The from hour must be less than the to hour.`);
             }
-            scheduling.fromHour = hours.from;
+            scheduling.fromHour = timeSlot.from;
         }
-        if (fromDay === 0) {
-            console.warn(`[NQTR] The from day must be greater than 0, so it will be ignored.`);
-        }
-        if (toDay === 0) {
-            console.warn(`[NQTR] The to day must be greater than 0, so it will be ignored.`);
-        }
-        if (fromDay && toDay && fromDay >= toDay) {
+        if (
+            dateScheduling?.from !== undefined &&
+            dateScheduling?.to !== undefined &&
+            dateScheduling?.from >= dateScheduling?.to
+        ) {
             throw new Error(`[NQTR] The from day must be less than the to day.`);
         }
-        if (fromDay) {
-            scheduling.fromDay = fromDay;
+        if (dateScheduling?.from !== undefined) {
+            scheduling.fromDay = dateScheduling?.from;
         }
-        if (toDay) {
-            scheduling.toDay = toDay;
+        if (dateScheduling?.to !== undefined) {
+            scheduling.toDay = dateScheduling?.to;
         }
 
         if (this.defaultActivitiesIds.includes(activity.id)) {
@@ -199,10 +184,10 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         this.additionalActivitiesIds.concat(this.defaultActivitiesIds).forEach((activityId) => {
             let activity = RegisteredActivities.get(activityId);
             const {
-                fromDay = activity?.fromDay,
-                fromHour = activity?.fromHour,
-                toDay = activity?.toDay,
-                toHour = activity?.toHour,
+                fromDay = activity?.dateScheduling?.from,
+                fromHour = activity?.timeSlot?.from,
+                toDay = activity?.dateScheduling?.to,
+                toHour = activity?.timeSlot?.to,
             } = activeActivityScheduling[activityId] || {};
             if (
                 activity &&

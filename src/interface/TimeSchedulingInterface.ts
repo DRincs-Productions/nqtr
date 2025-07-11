@@ -7,7 +7,7 @@ export default interface TimeSchedulingInterface {
     /**
      * The time when the item ends. If the item is ended yet, it will be hidden.
      * If you set 3, the item will be shown into times 1 and 2 and will be hidden from time 3.
-     * @default timeTracker.maxDayHours + 1
+     * @default timeTracker.dayEndTime + 1
      */
     to?: number;
 }
