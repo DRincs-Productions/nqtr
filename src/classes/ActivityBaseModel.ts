@@ -19,8 +19,10 @@ import ActivityStoredClass from "./ActivityStoredClass";
  *     },
  *     {
  *         name: "Nap",
- *         fromHour: 5,
- *         toHour: 23,
+ *         timeSlot: {
+ *             from: 5,
+ *             to: 23,
+ *         },
  *         icon: "https://icon.jpg",
  *     }
  * )

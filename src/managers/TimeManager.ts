@@ -2,7 +2,7 @@ import { storage } from "@drincs/pixi-vn";
 import { TIME_DATA_KEY } from "../constants";
 import { setLastEvent } from "../functions/tracking-changes";
 import TimeDataType from "../types/TimeDataType";
-import { ITimeStlot, TimeSettings } from "../types/TimeSettings";
+import { TimeSettings, TimeSlotInterface } from "../types/TimeSettings";
 import TimeManagerSettings from "./TimeManagerSettings";
 
 export default class TimeManager {
@@ -37,7 +37,7 @@ export default class TimeManager {
     get defaultTimeSpent(): number {
         return TimeManagerSettings.defaultTimeSpent;
     }
-    get timeSlots(): ITimeStlot[] {
+    get timeSlots(): TimeSlotInterface[] {
         return TimeManagerSettings.timeSlots;
     }
     get weekLength(): number {
@@ -64,7 +64,7 @@ export default class TimeManager {
 
     /**
      * Get the current time. Time is a numeric variable used to determine and manage time during a day/date.
-     * It's recommended to use currentTime as if it were the current hour. If you also want to manage minutes, you can use a float value.
+     * It's recommended to use currentTime as if it were the current time. If you also want to manage minutes, you can use a float value.
      */
     get currentTime(): number {
         let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
@@ -161,7 +161,7 @@ export default class TimeManager {
         for (let index = 0; index < this.timeSlots.length; index++) {
             let slot = this.timeSlots[index];
             if (this.timeSlots.length > index + 1) {
-                if (this.nowIsBetween(slot.startHour, this.timeSlots[index + 1].startHour)) {
+                if (this.nowIsBetween(slot.startTime, this.timeSlots[index + 1].startTime)) {
                     return index;
                 }
             }
@@ -170,24 +170,24 @@ export default class TimeManager {
     }
 
     /**
-     * This function will increase the current hour by the given time spent.
-     * If the new hour is greater than or equal to the max day hours, then it will increase the day and set the new hour.
-     * @param delta is the time spent in hours (default: {@link defaultTimeSpent})
+     * This function will increase the current time by the given time spent.
+     * If the new time is greater than or equal to the max day times, then it will increase the day and set the new time.
+     * @param delta is the time spent in times (default: {@link defaultTimeSpent})
      * @returns currentTimeSlot.currentTime
      */
-    increaseHour(delta: number = this.defaultTimeSpent): number {
-        let newHour = this.currentTime + delta;
-        if (newHour >= this.dayEndTime) {
+    increaseTime(delta: number = this.defaultTimeSpent): number {
+        let newTime = this.currentTime + delta;
+        if (newTime >= this.dayEndTime) {
             this.increaseDate();
-            newHour = this.dayStartTime + (newHour - this.dayEndTime);
+            newTime = this.dayStartTime + (newTime - this.dayEndTime);
         }
-        this.currentTime = newHour;
+        this.currentTime = newTime;
         return this.currentTime;
     }
 
     /**
      * This function will increase the current date by the given delta.
-     * @param time is the hour of the new day (default: {@link dayStartTime})
+     * @param time is the time of the new day (default: {@link dayStartTime})
      * @param delta is the number of days to increase (default: 1)
      * @returns timeTracker.currentDate
      */
@@ -199,22 +199,22 @@ export default class TimeManager {
     }
 
     /**
-     * This function will check if the current hour is between the given hours.
-     * @param fromHour the starting hour. If the {@link currentTime} is equal to this hour, the function will return true.
-     * @param toHour the ending hour.
-     * @returns true if the current hour is between the given hours, otherwise false.
+     * This function will check if the current time is between the given times.
+     * @param fromTime the starting time. If the {@link currentTime} is equal to this time, the function will return true.
+     * @param toTime the ending time.
+     * @returns true if the current time is between the given times, otherwise false.
      */
-    nowIsBetween(fromHour: number | undefined, toHour: number | undefined): boolean {
-        if (fromHour === undefined) {
-            fromHour = this.dayStartTime - 1;
+    nowIsBetween(fromTime: number | undefined, toTime: number | undefined): boolean {
+        if (fromTime === undefined) {
+            fromTime = this.dayStartTime - 1;
         }
-        if (toHour === undefined) {
-            toHour = this.dayEndTime + 1;
+        if (toTime === undefined) {
+            toTime = this.dayEndTime + 1;
         }
         let currentTime = this.currentTime;
-        if (fromHour < toHour) {
-            return currentTime >= fromHour && currentTime < toHour;
+        if (fromTime < toTime) {
+            return currentTime >= fromTime && currentTime < toTime;
         }
-        return currentTime >= fromHour || currentTime < toHour;
+        return currentTime >= fromTime || currentTime < toTime;
     }
 }

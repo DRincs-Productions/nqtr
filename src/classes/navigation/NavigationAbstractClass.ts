@@ -70,7 +70,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         };
         if (timeSlot) {
             if (timeSlot.from >= toTime) {
-                throw new Error(`[NQTR] The from hour must be less than the to hour.`);
+                throw new Error(`[NQTR] The from time must be less than the to time.`);
             }
             scheduling.timeSlot.from = timeSlot.from;
         }
@@ -177,10 +177,10 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             const { dateScheduling, timeSlot } = activeActivityScheduling[activityId] || {};
             const { from: fromDate = activity?.dateScheduling?.from, to: toDate = activity?.dateScheduling?.to } =
                 dateScheduling || {};
-            const { from: fromHour = activity?.timeSlot?.from, to: toHour = activity?.timeSlot?.to } = timeSlot || {};
+            const { from: fromTime = activity?.timeSlot?.from, to: toTime = activity?.timeSlot?.to } = timeSlot || {};
             if (
                 activity &&
-                timeTracker.nowIsBetween(fromHour, toHour) &&
+                timeTracker.nowIsBetween(fromTime, toTime) &&
                 !(fromDate && fromDate > timeTracker.currentDate) &&
                 !(toDate && toDate < timeTracker.currentDate)
             ) {

@@ -1,8 +1,8 @@
 import { timeTracker } from "../managers";
 
-export type ITimeStlot = {
+export type TimeSlotInterface = {
     name: string;
-    startHour: number;
+    startTime: number;
 };
 
 /**
@@ -10,12 +10,12 @@ export type ITimeStlot = {
  */
 export type TimeSettings = {
     /**
-     * Minimum hour of the day
+     * Minimum time of the day
      * @default 0
      */
     dayStartTime?: number;
     /**
-     * Maximum hour of the day
+     * Maximum time of the day
      * @default 24
      */
     dayEndTime?: number;
@@ -30,13 +30,13 @@ export type TimeSettings = {
      * @example
      * ```ts
      * [
-     *   { name: 'Morning', startHour: 5 },
-     *   { name: 'Afternoon', startHour: 12 },
-     *   { name: 'Evening', startHour: 18 },
-     *   { name: 'Night', startHour: 22 }
+     *   { name: 'Morning', startTime: 5 },
+     *   { name: 'Afternoon', startTime: 12 },
+     *   { name: 'Evening', startTime: 18 },
+     *   { name: 'Night', startTime: 22 }
      * ]
      */
-    timeSlots?: ITimeStlot[];
+    timeSlots?: TimeSlotInterface[];
     /**
      * Week length
      * @default 7
