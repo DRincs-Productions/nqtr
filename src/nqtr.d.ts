@@ -33,11 +33,11 @@ declare module "@drincs/nqtr" {
         /**
          * The image of the commitment.
          */
-        readonly image: string;
+        readonly image?: string;
         /**
          * The icon of the commitment.
          */
-        readonly icon: string;
+        readonly icon?: string;
         /**
          * Whether is disabled. If it is a string, it is a Pixi'VN flag name.
          */

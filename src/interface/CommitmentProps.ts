@@ -13,11 +13,11 @@ export default interface CommitmentProps {
     /**
      * Time slot in which activity/commitment will be active.
      */
-    readonly timeSlot: TimeSchedulingInterface | undefined;
+    readonly timeSlot?: TimeSchedulingInterface | undefined;
     /**
      * Used to schedule what date it will be added and removed.
      */
-    readonly dateScheduling: DateSchedulingInterface | undefined;
+    readonly dateScheduling?: DateSchedulingInterface | undefined;
     /**
      * The image ofthe Commitment.
      */
