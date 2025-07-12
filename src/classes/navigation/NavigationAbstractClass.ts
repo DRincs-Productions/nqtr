@@ -7,11 +7,11 @@ import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
 import { timeTracker } from "../../managers";
 
 type ActiveScheduling = {
-    timeSlot: Partial<TimeSchedulingInterface>;
-    dateScheduling: Partial<DateSchedulingInterface>;
+    timeSlot?: Partial<TimeSchedulingInterface>;
+    dateScheduling?: Partial<DateSchedulingInterface>;
 };
 type ExcludedScheduling = {
-    dateScheduling: Pick<DateSchedulingInterface, "to">;
+    dateScheduling?: Pick<DateSchedulingInterface, "to">;
 };
 
 export default abstract class NavigationAbstractClass extends StoredClassModel implements NavigationAbstractInterface {
@@ -64,15 +64,10 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     ) {
         const { timeSlot, dateScheduling } = options;
         const { to: toTime = timeTracker.dayEndTime + 1 } = timeSlot || {};
-        let scheduling: ActiveScheduling = {
-            timeSlot: {},
-            dateScheduling: {},
-        };
         if (timeSlot) {
             if (timeSlot.from >= toTime) {
                 throw new Error(`[NQTR] The from time must be less than the to time.`);
             }
-            scheduling.timeSlot.from = timeSlot.from;
         }
         if (
             dateScheduling?.from !== undefined &&
@@ -81,12 +76,6 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         ) {
             throw new Error(`[NQTR] The from day/date must be less than the to day/date.`);
         }
-        if (dateScheduling?.from !== undefined) {
-            scheduling.dateScheduling.from = dateScheduling?.from;
-        }
-        if (dateScheduling?.to !== undefined) {
-            scheduling.dateScheduling.to = dateScheduling?.to;
-        }
 
         if (this.defaultActivitiesIds.includes(activity.id)) {
             console.warn(`[NQTR] Activity with id ${activity.id} already exists, so it will be ignored.`);
@@ -94,47 +83,46 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         }
         let additionalActivitiesIds = this.additionalActivitiesIds;
         if (additionalActivitiesIds.includes(activity.id)) {
-            if (Object.keys(scheduling).length) {
-                this.editActivityScheduling(activity.id, scheduling);
-                return;
-            } else if (this.excludedActivitiesIds.includes(activity.id)) {
-                this.removeActivityScheduling(activity.id);
-                console.log(
-                    `[NQTR] Activity with id ${activity.id} was excluded, so it will be associated with this class again.`
-                );
-                return;
-            }
             console.warn(`[NQTR] Activity with id ${activity.id} already exists, so it will be ignored.`);
-            return;
+        } else {
+            additionalActivitiesIds.push(activity.id);
+            this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
         }
-        additionalActivitiesIds.push(activity.id);
-        this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
-        if (Object.keys(scheduling).length) {
-            this.editActivityScheduling(activity.id, scheduling);
+
+        if (this.excludedActivitiesIds.includes(activity.id)) {
+            this.removeActivityScheduling(activity.id);
+            console.log(
+                `[NQTR] Activity with id ${activity.id} was excluded, so it will be associated with this class again.`
+            );
+        }
+
+        if (timeSlot || dateScheduling) {
+            this.editActivityScheduling(activity.id, {
+                timeSlot: timeSlot,
+                dateScheduling: dateScheduling,
+            });
         }
     }
     removeActivity(activity: ActivityInterface | string, options: Pick<DateSchedulingInterface, "to"> = {}) {
         const { to } = options;
         const activityId = typeof activity === "string" ? activity : activity.id;
-        let scheduling: ExcludedScheduling = {
-            dateScheduling: {},
-        };
-        if (to !== undefined) {
-            scheduling.dateScheduling.to = to;
-        }
 
         let additionalActivitiesIds = this.additionalActivitiesIds;
         if (additionalActivitiesIds.includes(activityId)) {
-            if (Object.keys(scheduling).length) {
-                this.editExcludedActivityScheduling(activityId, scheduling);
+            if (to !== undefined) {
+                this.editExcludedActivityScheduling(activityId, {
+                    dateScheduling: { to },
+                });
                 return;
             }
             additionalActivitiesIds = additionalActivitiesIds.filter((id) => id !== activityId);
             this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
             this.removeActivityScheduling(activityId);
         } else if (this.defaultActivitiesIds.includes(activityId)) {
-            if (Object.keys(scheduling).length) {
-                this.editExcludedActivityScheduling(activityId, scheduling);
+            if (to !== undefined) {
+                this.editExcludedActivityScheduling(activityId, {
+                    dateScheduling: { to },
+                });
                 return;
             }
             let excludedActivitiesIds = this.excludedActivitiesIds;
@@ -193,7 +181,11 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             if (
                 activity &&
                 activity.isActive &&
-                !(scheduling.dateScheduling.to !== undefined && scheduling.dateScheduling.to >= timeTracker.currentDate)
+                !(
+                    scheduling.dateScheduling &&
+                    scheduling.dateScheduling.to !== undefined &&
+                    scheduling.dateScheduling.to >= timeTracker.currentDate
+                )
             ) {
                 res.push(activity);
             }
