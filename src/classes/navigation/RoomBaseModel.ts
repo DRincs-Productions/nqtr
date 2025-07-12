@@ -1,7 +1,6 @@
 import { storage } from "@drincs/pixi-vn";
 import { RegisteredRooms } from "../../decorators";
-import { CommitmentInterface, LocationInterface, RoomBaseModelProps } from "../../interface";
-import { routine } from "../../managers";
+import { LocationInterface, RoomBaseModelProps } from "../../interface";
 import RoomStoredClass from "./RoomStoredClass";
 
 /**
@@ -88,13 +87,5 @@ export default class RoomBaseModel extends RoomStoredClass {
      */
     get icon(): string | undefined {
         return this._icon;
-    }
-
-    /**
-     * Get the character commitments of the room.
-     * @returns The character commitments of the room.
-     */
-    get routine(): CommitmentInterface[] {
-        return routine.currentRoutine.filter((c) => c.room.id === this.id);
     }
 }

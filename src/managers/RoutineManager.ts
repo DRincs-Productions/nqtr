@@ -1,5 +1,4 @@
 import { CharacterInterface, storage } from "@drincs/pixi-vn";
-import { navigator } from ".";
 import RegisteredCommitments, { fixedCommitments, registeredCommitments } from "../decorators/RegisteredCommitments";
 import { CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
@@ -131,10 +130,6 @@ export default class RoutineManager {
             }
         });
         return Object.values(character_commitments);
-    }
-
-    get currentRoomRoutine(): CommitmentInterface[] {
-        return navigator.currentRoom?.routine || [];
     }
 
     /**
