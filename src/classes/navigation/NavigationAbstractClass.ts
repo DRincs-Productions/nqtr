@@ -131,6 +131,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             }
             additionalActivitiesIds = additionalActivitiesIds.filter((id) => id !== activityId);
             this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
+            this.removeActivityScheduling(activityId);
         } else if (this.defaultActivitiesIds.includes(activityId)) {
             if (Object.keys(scheduling).length) {
                 this.editExcludedActivityScheduling(activityId, scheduling);
