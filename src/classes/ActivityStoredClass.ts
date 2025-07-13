@@ -1,5 +1,4 @@
-import { StoredClassModel } from "@drincs/pixi-vn";
-import { addTempHistoryItem } from "../functions/tracking-changes";
+import { narration, StoredClassModel } from "@drincs/pixi-vn";
 import { ActivityInterface } from "../interface";
 import { ActivityBaseInternalInterface } from "../interface/ActivityInterface";
 import DateSchedulingInterface from "../interface/DateSchedulingInterface";
@@ -44,9 +43,12 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         return this._dateScheduling;
     }
 
+    protected addTempHistoryItem() {
+        narration.addCurrentStepToHistory();
+    }
     get run(): OnRunAsyncFunction {
         return async (props) => {
-            addTempHistoryItem();
+            this.addTempHistoryItem();
             return await this._onRun(this as any, props);
         };
     }

@@ -33,13 +33,14 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
         return characters;
     }
 
-    get automaticFunction(): OnRunAsyncFunction | undefined {
-        let run = this.routine.find((commitment) => commitment.executionType === "automatic")?.run;
-        if (run) {
-            return async (props) => {
-                await run(props);
-            };
-        }
-        return undefined;
+    get automaticFunctions(): OnRunAsyncFunction[] {
+        return this.routine
+            .filter((commitment) => commitment.executionType === "automatic" && commitment.run)
+            .map((commitment) => {
+                let res: OnRunAsyncFunction = async (props) => {
+                    await commitment.run(props);
+                };
+                return res;
+            });
     }
 }

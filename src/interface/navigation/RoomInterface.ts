@@ -24,7 +24,7 @@ export interface RoomBaseInternalInterface extends NavigationAbstractInterface {
      */
     readonly characters: CharacterInterface[];
     /**
-     * Get the function that will be executed when the room is visited.
+     * Get the functions that will be executed when the room is visited.
      */
-    readonly automaticFunction: OnRunAsyncFunction | undefined;
+    readonly automaticFunctions: OnRunAsyncFunction[];
 }

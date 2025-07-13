@@ -1,10 +1,14 @@
-import { CharacterInterface } from "@drincs/pixi-vn";
+import { CharacterInterface, storage } from "@drincs/pixi-vn";
+import { CURRENT_ROOM_MEMORY_KEY, TIME_DATA_KEY } from "../constants";
+import { getLastEvent } from "../functions/tracking-changes";
 import { CommitmentInterface, RoomInterface } from "../interface";
 import { CommitmentBaseInternalInterface } from "../interface/CommitmentInterface";
 import DateSchedulingInterface from "../interface/DateSchedulingInterface";
 import TimeSchedulingInterface from "../interface/TimeSchedulingInterface";
+import { navigator } from "../managers";
 import { ExecutionType } from "../types";
 import { OnRunEvent } from "../types/OnRunEvent";
+import TimeDataType from "../types/TimeDataType";
 import ActivityStoredClass from "./ActivityStoredClass";
 
 export interface CommitmentStoredClassProps {
@@ -68,5 +72,25 @@ export default class CommitmentStoredClass
     }
     set priority(value: number) {
         this.setStorageProperty("priority", value);
+    }
+    protected override addTempHistoryItem(): void {
+        let currentRoom = navigator.currentRoom;
+        if (!currentRoom || this.executionType !== "automatic") {
+            return super.addTempHistoryItem();
+        }
+        let lastEvent = getLastEvent();
+        switch (lastEvent?.type) {
+            case "editroom":
+                storage.setVariable(CURRENT_ROOM_MEMORY_KEY, lastEvent.prev);
+                super.addTempHistoryItem();
+                storage.setVariable(CURRENT_ROOM_MEMORY_KEY, currentRoom.id);
+                break;
+            case "edittime":
+                let currentTime = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+                storage.setVariable(TIME_DATA_KEY, lastEvent.prev);
+                super.addTempHistoryItem();
+                storage.setVariable(TIME_DATA_KEY, currentTime);
+                break;
+        }
     }
 }
