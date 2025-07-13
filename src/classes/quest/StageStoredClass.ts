@@ -5,7 +5,7 @@ import { StageBaseInternalInterface } from "../../interface/quest/StageInterface
 import { timeTracker } from "../../managers";
 import { OnRunEvent, QuestsRequiredType } from "../../types";
 
-export interface StoredClassModelProps {
+export interface StageStoredClassProps {
     /**
      * The function that will be executed when the stage starts.
      */
@@ -28,7 +28,7 @@ export interface StoredClassModelProps {
 
 const STAGE_CATEGORY = "__nqtr-stage__";
 export default class StageStoredClass extends StoredClassModel implements StageBaseInternalInterface {
-    constructor(id: string, props: StoredClassModelProps = {}) {
+    constructor(id: string, props: StageStoredClassProps = {}) {
         super(STAGE_CATEGORY, id);
         this._onStart = props.onStart;
         this._onEnd = props.onEnd;

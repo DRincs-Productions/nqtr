@@ -11,4 +11,4 @@ export { default as RoomStoredClass } from "./navigation/RoomStoredClass";
 export { default as QuestBaseModel } from "./quest/QuestBaseModel";
 export { default as QuestStoredClass, QuestStoredClassProps } from "./quest/QuestStoredClass";
 export { default as StageBaseModel } from "./quest/StageBaseModel";
-export { default as StageStoredClass, StoredClassModelProps } from "./quest/StageStoredClass";
+export { default as StageStoredClass, StageStoredClassProps } from "./quest/StageStoredClass";
