@@ -6,22 +6,20 @@ import { OnRunEvent } from "../../types";
 import { logger } from "../../utils/log-utility";
 import StageStoredClass from "./StageStoredClass";
 
+export interface QuestStoredClassProps {
+    /**
+     * The function that will be executed when the quest starts.
+     */
+    onStart?: OnRunEvent<QuestInterface>;
+    /**
+     * The function that will be executed when a stage end in the quest.
+     */
+    onNextStage?: OnRunEvent<QuestInterface>;
+}
+
 const QUEST_CATEGORY = "__nqtr-quest__";
 export default class QuestStoredClass extends StoredClassModel implements QuestBaseInternalInterface {
-    constructor(
-        id: string,
-        private readonly _stages: StageInterface[],
-        props: {
-            /**
-             * The function that will be executed when the quest starts.
-             */
-            onStart?: OnRunEvent<QuestInterface>;
-            /**
-             * The function that will be executed when a stage end in the quest.
-             */
-            onNextStage?: OnRunEvent<QuestInterface>;
-        } = {}
-    ) {
+    constructor(id: string, private readonly _stages: StageInterface[], props: QuestStoredClassProps = {}) {
         super(QUEST_CATEGORY, id);
         this._onStart = props.onStart;
         this._onNextStage = props.onNextStage;

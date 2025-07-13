@@ -5,36 +5,35 @@ import { StageBaseInternalInterface } from "../../interface/quest/StageInterface
 import { timeTracker } from "../../managers";
 import { OnRunEvent, QuestsRequiredType } from "../../types";
 
+export interface StoredClassModelProps {
+    /**
+     * The function that will be executed when the stage starts.
+     */
+    onStart?: OnRunEvent<StageInterface>;
+    /**
+     * The function that will be executed when the stage ends.
+     */
+    onEnd?: OnRunEvent<StageInterface>;
+    /**
+     * The number of day/date required to start the stage.
+     * @example If the value is 3, and the previous stage ends on day 1, the stage will start on day 4.
+     */
+    deltaDateRequired?: number;
+    /**
+     * The quests required to start the stage.
+     * @default []
+     */
+    questsRequired?: QuestsRequiredType[];
+}
+
 const STAGE_CATEGORY = "__nqtr-stage__";
 export default class StageStoredClass extends StoredClassModel implements StageBaseInternalInterface {
-    constructor(
-        id: string,
-        options: {
-            /**
-             * The function that will be executed when the stage starts.
-             */
-            onStart?: OnRunEvent<StageInterface>;
-            /**
-             * The function that will be executed when the stage ends.
-             */
-            onEnd?: OnRunEvent<StageInterface>;
-            /**
-             * The number of day/date required to start the stage.
-             * @example If the value is 3, and the previous stage ends on day 1, the stage will start on day 4.
-             */
-            deltaDateRequired?: number;
-            /**
-             * The quests required to start the stage.
-             * @default []
-             */
-            questsRequired?: QuestsRequiredType[];
-        } = {}
-    ) {
+    constructor(id: string, props: StoredClassModelProps = {}) {
         super(STAGE_CATEGORY, id);
-        this._onStart = options.onStart;
-        this._onEnd = options.onEnd;
-        this._deltaDateRequired = options.deltaDateRequired;
-        this._questsRequired = options.questsRequired || [];
+        this._onStart = props.onStart;
+        this._onEnd = props.onEnd;
+        this._deltaDateRequired = props.deltaDateRequired;
+        this._questsRequired = props.questsRequired || [];
     }
 
     private _onStart?: OnRunEvent<StageInterface>;

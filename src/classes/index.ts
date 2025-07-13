@@ -1,7 +1,7 @@
 export { default as ActivityBaseModel } from "./ActivityBaseModel";
-export { default as ActivityStoredClass } from "./ActivityStoredClass";
+export { default as ActivityStoredClass, ActivityStoredClassProps } from "./ActivityStoredClass";
 export { default as CommitmentBaseModel } from "./CommitmentBaseModel";
-export { default as CommitmentStoredClass } from "./CommitmentStoredClass";
+export { default as CommitmentStoredClass, CommitmentStoredClassProps } from "./CommitmentStoredClass";
 export { default as LocationBaseModel } from "./navigation/LocationBaseModel";
 export { default as LocationStoredClass } from "./navigation/LocationStoredClass";
 export { default as MapBaseModel } from "./navigation/MapBaseModel";
@@ -9,6 +9,6 @@ export { default as MapStoredClass } from "./navigation/MapStoredClass";
 export { default as RoomBaseModel } from "./navigation/RoomBaseModel";
 export { default as RoomStoredClass } from "./navigation/RoomStoredClass";
 export { default as QuestBaseModel } from "./quest/QuestBaseModel";
-export { default as QuestStoredClass } from "./quest/QuestStoredClass";
+export { default as QuestStoredClass, QuestStoredClassProps } from "./quest/QuestStoredClass";
 export { default as StageBaseModel } from "./quest/StageBaseModel";
-export { default as StageStoredClass } from "./quest/StageStoredClass";
+export { default as StageStoredClass, StoredClassModelProps } from "./quest/StageStoredClass";

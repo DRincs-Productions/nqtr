@@ -1,4 +1,11 @@
-import { CharacterBaseModel, GameUnifier, narration, NarrationManagerStatic, storage } from "@drincs/pixi-vn";
+import {
+    CharacterBaseModel,
+    GameUnifier,
+    narration,
+    NarrationManagerStatic,
+    RegisteredCharacters,
+    storage,
+} from "@drincs/pixi-vn";
 import { test } from "vitest";
 import {
     ActivityBaseModel,
@@ -12,8 +19,6 @@ import {
     RegisteredRooms,
     RoomBaseModel,
 } from "../src";
-
-import { RegisteredCharacters } from "@drincs/pixi-vn";
 
 export const mc = new CharacterBaseModel("mc", {
     name: "Liam",
@@ -114,6 +119,7 @@ test("setup", async () => {
         getOpenedLabels: () => narration.openedLabels.length,
         addHistoryItem: () => {},
         getCurrentStepsRunningNumber: () => NarrationManagerStatic.stepsRunning,
+        getCharacter: (id: string) => RegisteredCharacters.get(id),
         // storage
         getVariable: (key) => storage.getVariable(key),
         setVariable: (key, value) => storage.setVariable(key, value),

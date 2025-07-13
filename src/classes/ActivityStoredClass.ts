@@ -7,6 +7,17 @@ import TimeSchedulingInterface from "../interface/TimeSchedulingInterface";
 import { timeTracker } from "../managers";
 import { OnRunAsyncFunction, OnRunEvent } from "../types";
 
+export interface ActivityStoredClassProps {
+    /**
+     * Time slot in which activity/commitment will be active.
+     */
+    timeSlot?: TimeSchedulingInterface;
+    /**
+     * Used to schedule what date it will be added and removed.
+     */
+    dateScheduling?: DateSchedulingInterface;
+}
+
 const ACTIVITY_CATEGORY = "__nqtr-activity__";
 export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
     extends StoredClassModel
@@ -15,10 +26,7 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
     constructor(
         id: string,
         private readonly _onRun: OnRunEvent<OnRunEventType>,
-        props: {
-            timeSlot?: TimeSchedulingInterface;
-            dateScheduling?: DateSchedulingInterface;
-        },
+        props: ActivityStoredClassProps,
         category: string = ACTIVITY_CATEGORY
     ) {
         super(category, id);
