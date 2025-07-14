@@ -19,9 +19,9 @@ namespace RegisteredMaps {
             map.forEach((c) => add(c));
             return;
         }
-        if (registeredMaps.has(map.id)) {
-            console.warn(`[NQTR] Map id ${map.id} already exists, it will be overwritten`);
-        }
+        // if (registeredMaps.has(map.id)) {
+        //     console.warn(`[NQTR] Map id ${map.id} already exists, it will be overwritten`);
+        // }
         registeredMaps.set(map.id, map);
     }
 

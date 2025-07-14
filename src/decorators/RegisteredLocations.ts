@@ -19,9 +19,9 @@ namespace RegisteredLocations {
             location.forEach((c) => add(c));
             return;
         }
-        if (registeredLocations.has(location.id)) {
-            console.warn(`[NQTR] Location id ${location.id} already exists, it will be overwritten`);
-        }
+        // if (registeredLocations.has(location.id)) {
+        //     console.warn(`[NQTR] Location id ${location.id} already exists, it will be overwritten`);
+        // }
         registeredLocations.set(location.id, location);
     }
 
