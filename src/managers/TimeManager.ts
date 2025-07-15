@@ -187,11 +187,11 @@ export default class TimeManager {
 
     /**
      * This function will increase the current date by the given delta.
-     * @param time is the time of the new day (default: {@link dayStartTime})
      * @param delta is the number of days to increase (default: 1)
+     * @param time is the time of the new day (default: {@link dayStartTime})
      * @returns timeTracker.currentDate
      */
-    increaseDate(time: number = this.dayStartTime, delta: number = 1): number {
+    increaseDate(delta: number = 1, time: number = this.dayStartTime): number {
         let newDate = this.currentDate + delta;
         this.currentDate = newDate;
         this.currentTime = time;
