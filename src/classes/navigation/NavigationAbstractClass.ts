@@ -55,6 +55,9 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     private get excludedActivitiesIds(): string[] {
         return this.getStorageProperty<string[]>(`excludedActivitiesIds`) || [];
     }
+    get activitiesIds(): string[] {
+        return this.additionalActivitiesIds.concat(this.defaultActivitiesIds);
+    }
     addActivity(
         activity: ActivityInterface,
         options: {
