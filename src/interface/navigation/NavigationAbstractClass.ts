@@ -36,7 +36,7 @@ export default interface NavigationAbstractInterface extends StoredClassModel {
     /**
      * All the ids of the activities associated with this class. Compared to {@link activities}, they are not filtered based on their scheduling.
      */
-    activitiesIds: string[];
+    readonly activitiesIds: string[];
     /**
      * The activities associated with this class, filtered based on their scheduling.
      */
