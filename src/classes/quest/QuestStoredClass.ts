@@ -101,6 +101,9 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         }
     }
 
+    /**
+     * @deprecated Use {@link goNextIfCompleted} instead.
+     */
     tryToGoNextStage(props: OnRunProps): Promise<boolean> {
         return this.goNextIfCompleted(props);
     }
@@ -119,6 +122,9 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         return false;
     }
 
+    /**
+     * @deprecated Use {@link goNext} instead.
+     */
     completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean> {
         return this.goNext(props);
     }
@@ -132,6 +138,9 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         return await this.forceGoNext(props);
     }
 
+    /**
+     * @deprecated Use {@link forceGoNext} instead.
+     */
     goNextStage(props: OnRunProps): Promise<boolean> {
         return this.forceGoNext(props);
     }
