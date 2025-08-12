@@ -62,28 +62,40 @@ export interface QuestBaseInternalInterface {
     start(props: OnRunProps): Promise<void>;
 
     /**
-     * Go to the next stage if the current stage is completed.
-     * If you want to force the change of stage, use goNextStage.
-     * @param props The properties. If you not want to pass any property, you can pass an {}.
-     * @returns true if the stage was changed, false otherwise.
+     * @deprecated Use {@link goNextIfCompleted} instead.
      */
     tryToGoNextStage(props: OnRunProps): Promise<boolean>;
-
     /**
-     * Complete the current stage and go to the next stage.
-     * If you want to go to the next stage only if the current stage is completed, use tryToGoNextStage.
+     * Go to the next stage if the current stage is completed.
+     * If you want to force the change of stage, use {@link forceGoNext}.
      * @param props The properties. If you not want to pass any property, you can pass an {}.
      * @returns true if the stage was changed, false otherwise.
      */
-    completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean>;
+    goNextIfCompleted(props: OnRunProps): Promise<boolean>;
 
     /**
-     * Go to the next stage without checking if the current stage is completed.
-     * If you want to go to the next stage only if the current stage is completed, use tryToGoNextStage.
+     * @deprecated Use {@link goNext} instead.
+     */
+    completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean>;
+    /**
+     * Complete the current stage and go to the next stage with {@link forceGoNext}.
+     * If you want to go to the next stage only if the current stage is completed, use {@link goNextIfCompleted}.
+     * @param props The properties. If you not want to pass any property, you can pass an {}.
+     * @returns true if the stage was changed, false otherwise.
+     */
+    goNext(props: OnRunProps): Promise<boolean>;
+
+    /**
+     * @deprecated Use {@link forceGoNext} instead.
+     */
+    goNextStage(props: OnRunProps): Promise<boolean>;
+    /**
+     * Ignore the completed state of the current stage and go to the next stage without checking if the current stage is completed.
+     * If you want to go to the next stage only if the current stage is completed, use {@link goNextIfCompleted}.
      * @param props The properties. If you not want to pass any property, you can pass an {}.
      * @returns returns true if the stage was changed, false otherwise.
      */
-    goNextStage(props: OnRunProps): Promise<boolean>;
+    forceGoNext(props: OnRunProps): Promise<boolean>;
 
     /**
      * If the current stage must start. It is true if the current stage is not started, can start and not completed.
@@ -91,7 +103,7 @@ export interface QuestBaseInternalInterface {
     readonly currentStageMustStart: boolean;
 
     /**
-     * Start the current stage.
+     * Start the current stage. This is a system function, do not use it directly.
      * @param props The properties for the start stage. If you not want to pass any property, you can pass an {}.
      */
     startCurrentStage(props: OnRunProps): Promise<void>;

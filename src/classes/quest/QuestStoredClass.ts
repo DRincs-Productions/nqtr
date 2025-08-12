@@ -101,7 +101,10 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         }
     }
 
-    async tryToGoNextStage(props: OnRunProps): Promise<boolean> {
+    tryToGoNextStage(props: OnRunProps): Promise<boolean> {
+        return this.goNextIfCompleted(props);
+    }
+    async goNextIfCompleted(props: OnRunProps): Promise<boolean> {
         if (!this.inProgress) {
             return false;
         }
@@ -111,22 +114,28 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
             return false;
         }
         if (currentStage.completed) {
-            return await this.goNextStage(props);
+            return await this.forceGoNext(props);
         }
         return false;
     }
 
-    async completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean> {
+    completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean> {
+        return this.goNext(props);
+    }
+    async goNext(props: OnRunProps): Promise<boolean> {
         let currentStage = this.currentStage;
         if (!currentStage) {
             logger.error(`Quest ${this.id} has no current stage`);
             return false;
         }
         currentStage.completed = true;
-        return await this.goNextStage(props);
+        return await this.forceGoNext(props);
     }
 
-    async goNextStage(props: OnRunProps): Promise<boolean> {
+    goNextStage(props: OnRunProps): Promise<boolean> {
+        return this.forceGoNext(props);
+    }
+    async forceGoNext(props: OnRunProps): Promise<boolean> {
         if (!this.inProgress) {
             console.warn(`[NQTR] Quest ${this.id} is not in progress`);
             return false;
