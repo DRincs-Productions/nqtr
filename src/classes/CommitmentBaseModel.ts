@@ -1,4 +1,5 @@
-import { CharacterInterface, storage } from "@drincs/pixi-vn";
+import type { CharacterInterface } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import { CommitmentProps, RoomInterface } from "../interface";
 import { timeTracker } from "../managers";
 import CommitmentStoredClass from "./CommitmentStoredClass";

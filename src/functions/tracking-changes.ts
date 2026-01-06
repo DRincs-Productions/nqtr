@@ -1,4 +1,4 @@
-import { storage } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import { LATEST_EVENT_MEMORY_KEY } from "../constants";
 import LastEventType from "../types/LastEventType";
 

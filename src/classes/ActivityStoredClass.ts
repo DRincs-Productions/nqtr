@@ -1,4 +1,5 @@
-import { narration, StoredClassModel } from "@drincs/pixi-vn";
+import { narration } from "@drincs/pixi-vn/narration";
+import { StoredClassModel } from "@drincs/pixi-vn/storage";
 import { ActivityInterface } from "../interface";
 import { ActivityBaseInternalInterface } from "../interface/ActivityInterface";
 import DateSchedulingInterface from "../interface/DateSchedulingInterface";

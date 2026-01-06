@@ -1,4 +1,4 @@
-import { storage } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import { TIME_DATA_KEY } from "../constants";
 import { setLastEvent } from "../functions/tracking-changes";
 import TimeDataType from "../types/TimeDataType";

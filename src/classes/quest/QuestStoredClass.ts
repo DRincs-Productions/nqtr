@@ -1,5 +1,5 @@
 import { OnRunProps } from "@drincs/nqtr";
-import { StoredClassModel } from "@drincs/pixi-vn";
+import { StoredClassModel } from "@drincs/pixi-vn/storage";
 import { QuestInterface, StageInterface } from "../../interface";
 import { QuestBaseInternalInterface } from "../../interface/quest/QuestInterface";
 import { OnRunEvent } from "../../types";

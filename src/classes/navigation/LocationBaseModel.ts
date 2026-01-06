@@ -1,4 +1,4 @@
-import { storage } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import { LocationBaseModelProps, MapInterface } from "../../interface";
 import { LocationInternalInterface } from "../../interface/navigation/LocationInterface";
 import LocationStoredClass from "./LocationStoredClass";

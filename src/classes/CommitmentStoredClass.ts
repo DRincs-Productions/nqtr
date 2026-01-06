@@ -1,4 +1,5 @@
-import { CharacterInterface, storage } from "@drincs/pixi-vn";
+import type { CharacterInterface } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import { CURRENT_ROOM_MEMORY_KEY, TIME_DATA_KEY } from "../constants";
 import { getLastEvent } from "../functions/tracking-changes";
 import { CommitmentInterface, RoomInterface } from "../interface";

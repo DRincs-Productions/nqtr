@@ -1,4 +1,4 @@
-import { CharacterInterface } from "@drincs/pixi-vn";
+import type { CharacterInterface } from "@drincs/pixi-vn";
 import { ActivityInterface, CommitmentInterface, LocationInterface } from "../../interface";
 import { RoomBaseInternalInterface } from "../../interface/navigation/RoomInterface";
 import { routine } from "../../managers";

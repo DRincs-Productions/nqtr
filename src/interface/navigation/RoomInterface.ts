@@ -1,5 +1,5 @@
 import { RoomInterface as OverrideRoomInterface } from "@drincs/nqtr";
-import { CharacterInterface } from "@drincs/pixi-vn";
+import type { CharacterInterface } from "@drincs/pixi-vn";
 import { CommitmentInterface, LocationInterface as LocationInterfaceInt } from "..";
 import { OnRunAsyncFunction } from "../../types";
 import NavigationAbstractInterface from "./NavigationAbstractClass";

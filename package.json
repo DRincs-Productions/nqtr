@@ -1,6 +1,6 @@
 {
   "name": "@drincs/nqtr",
-  "version": "0.5.7",
+  "version": "0.6.0",
   "description": "A complete system introducing the concepts of location, time and event, producing the framework of a not-quite-point-and-click adventure game.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -25,7 +25,7 @@
     "url": "git+https://github.com/DRincs-Productions/nqtr-pixi-vn.git"
   },
   "author": "DRincs-Productions",
-  "license": "GPL-3.0",
+  "license": "LGPL-2.1",
   "bugs": {
     "url": "https://github.com/DRincs-Productions/nqtr-pixi-vn/issues"
   },

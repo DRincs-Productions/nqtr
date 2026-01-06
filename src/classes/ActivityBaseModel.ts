@@ -1,4 +1,4 @@
-import { storage } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import { ActivityInterface, ActivityProps } from "../interface";
 import { OnRunEvent } from "../types/OnRunEvent";
 import ActivityStoredClass from "./ActivityStoredClass";

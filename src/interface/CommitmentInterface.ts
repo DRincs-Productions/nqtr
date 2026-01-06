@@ -1,5 +1,5 @@
 import { CommitmentInterface as OverrideCommitmentInterface } from "@drincs/nqtr";
-import { CharacterInterface } from "@drincs/pixi-vn";
+import type { CharacterInterface } from "@drincs/pixi-vn";
 import { RoomInterface } from ".";
 import { ExecutionType } from "../types";
 import { ActivityBaseInternalInterface } from "./ActivityInterface";

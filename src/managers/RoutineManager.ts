@@ -1,4 +1,5 @@
-import { CharacterInterface, storage } from "@drincs/pixi-vn";
+import type { CharacterInterface } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import RegisteredCommitments, { fixedCommitments, registeredCommitments } from "../decorators/RegisteredCommitments";
 import { CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";

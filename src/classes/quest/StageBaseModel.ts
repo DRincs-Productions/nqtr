@@ -1,4 +1,4 @@
-import { storage } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import { StageProps } from "../../interface";
 import StageFlags from "../../interface/quest/StageFlags";
 import StageStoredClass from "./StageStoredClass";

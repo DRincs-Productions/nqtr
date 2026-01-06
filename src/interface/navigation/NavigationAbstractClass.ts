@@ -1,4 +1,4 @@
-import { StoredClassModel } from "@drincs/pixi-vn";
+import { StoredClassModel } from "@drincs/pixi-vn/storage";
 import { ActivityInterface } from "../../interface";
 import DateSchedulingInterface from "../DateSchedulingInterface";
 import TimeSchedulingInterface from "../TimeSchedulingInterface";

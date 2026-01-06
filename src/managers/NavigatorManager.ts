@@ -1,4 +1,4 @@
-import { storage } from "@drincs/pixi-vn";
+import { storage } from "@drincs/pixi-vn/storage";
 import { CURRENT_ROOM_MEMORY_KEY } from "../constants";
 import { RegisteredLocations, RegisteredMaps, RegisteredRooms } from "../decorators";
 import { setLastEvent } from "../functions/tracking-changes";
