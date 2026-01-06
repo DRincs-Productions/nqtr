@@ -67,14 +67,14 @@ export default class TimeManager {
      * It's recommended to use currentTime as if it were the current time. If you also want to manage minutes, you can use a float value.
      */
     get currentTime(): number {
-        let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+        let data = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
         if (data.hasOwnProperty("currentTime") && typeof data.currentTime === "number") {
             return data.currentTime;
         }
         return this.dayStartTime;
     }
     set currentTime(value: number | undefined) {
-        let prev = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+        let prev = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
         let data = { ...prev };
         if (typeof value === "number") {
             data.currentTime = value;
@@ -86,21 +86,21 @@ export default class TimeManager {
             prev: prev,
             value: data,
         });
-        storage.setVariable(TIME_DATA_KEY, data);
+        storage.set(TIME_DATA_KEY, data);
     }
     /**
      * Get the current date. Date is a numeric variable used to determine and manage the number of days passed.
      * It's recommended to use currentDate as if it were the current day.
      */
     get currentDate(): number {
-        let data = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+        let data = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
         if (data.hasOwnProperty("currentDate") && typeof data.currentDate === "number") {
             return data.currentDate;
         }
         return 0;
     }
     set currentDate(value: number | undefined) {
-        let prev = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
+        let prev = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
         let data = { ...prev };
         if (typeof value === "number") {
             data.currentDate = value;
@@ -112,7 +112,7 @@ export default class TimeManager {
             prev: prev,
             value: data,
         });
-        storage.setVariable(TIME_DATA_KEY, data);
+        storage.set(TIME_DATA_KEY, data);
     }
     /**
      * If the current day is greater than or equal to the weekend start day, then it will return true.

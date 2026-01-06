@@ -25,7 +25,7 @@ export default class RoutineManager {
      * @returns The temporary commitments.
      */
     get temporaryRoutine(): CommitmentInterface[] {
-        let commitmentsIds = storage.getVariable<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
+        let commitmentsIds = storage.get<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
         if (!commitmentsIds) {
             return [];
         }
@@ -58,7 +58,7 @@ export default class RoutineManager {
             })
             .filter((id) => id !== undefined);
 
-        storage.setVariable(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, commitmentsIds);
+        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, commitmentsIds);
     }
 
     /**
@@ -82,12 +82,12 @@ export default class RoutineManager {
             return commitment.id;
         });
 
-        let currentCommitments = storage.getVariable<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
+        let currentCommitments = storage.get<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
         if (!currentCommitments) {
             return;
         }
         currentCommitments = currentCommitments.filter((id) => !commitmentsIds.includes(id));
-        storage.setVariable(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, currentCommitments);
+        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, currentCommitments);
     }
 
     /**

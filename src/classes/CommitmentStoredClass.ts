@@ -81,15 +81,15 @@ export default class CommitmentStoredClass
         let lastEvent = getLastEvent();
         switch (lastEvent?.type) {
             case "editroom":
-                storage.setVariable(CURRENT_ROOM_MEMORY_KEY, lastEvent.prev);
+                storage.set(CURRENT_ROOM_MEMORY_KEY, lastEvent.prev);
                 super.addTempHistoryItem();
-                storage.setVariable(CURRENT_ROOM_MEMORY_KEY, currentRoom.id);
+                storage.set(CURRENT_ROOM_MEMORY_KEY, currentRoom.id);
                 break;
             case "edittime":
-                let currentTime = storage.getVariable<TimeDataType>(TIME_DATA_KEY) || {};
-                storage.setVariable(TIME_DATA_KEY, lastEvent.prev);
+                let currentTime = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
+                storage.set(TIME_DATA_KEY, lastEvent.prev);
                 super.addTempHistoryItem();
-                storage.setVariable(TIME_DATA_KEY, currentTime);
+                storage.set(TIME_DATA_KEY, currentTime);
                 break;
         }
     }

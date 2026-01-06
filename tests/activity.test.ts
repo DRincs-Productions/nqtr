@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { mcRoom, orderProduct } from "./setup.test";
+import { mcRoom, orderProduct } from "./setup";
 
 test("removeActivity", async () => {
     mcRoom.addActivity(orderProduct);

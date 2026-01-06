@@ -31,11 +31,12 @@
   },
   "homepage": "https://pixi-vn.web.app/nqtr",
   "devDependencies": {
-    "jsdom": "^26.1.0",
+    "jsdom": "^27.4.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.0.3",
+    "vitest": "^4.0.16"
   },
   "keywords": [
     "game",
@@ -52,6 +53,6 @@
     "vn"
   ],
   "peerDependencies": {
-    "@drincs/pixi-vn": ">=1.1.0"
+    "@drincs/pixi-vn": ">=1.4.0"
   }
 }

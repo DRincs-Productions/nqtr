@@ -1,12 +1,4 @@
-import {
-    CharacterBaseModel,
-    GameUnifier,
-    narration,
-    NarrationManagerStatic,
-    RegisteredCharacters,
-    storage,
-} from "@drincs/pixi-vn";
-import { test } from "vitest";
+import { CharacterBaseModel, Game, RegisteredCharacters } from "@drincs/pixi-vn";
 import {
     ActivityBaseModel,
     CommitmentBaseModel,
@@ -109,23 +101,4 @@ const aliceSmokes = new CommitmentBaseModel("alice_smokes", alice, terrace, {
 export const fixedRoutine = [aliceSleep, aliceGoSchool, aliceSmokes];
 RegisteredCommitments.add(fixedRoutine);
 
-test("setup", async () => {
-    GameUnifier.init({
-        getCurrentGameStepState: () => {},
-        restoreGameStepState: async () => {},
-        // narration
-        getStepCounter: () => narration.stepCounter,
-        setStepCounter: () => {},
-        getOpenedLabels: () => narration.openedLabels.length,
-        addHistoryItem: () => {},
-        getCurrentStepsRunningNumber: () => NarrationManagerStatic.stepsRunning,
-        getCharacter: (id: string) => RegisteredCharacters.get(id),
-        // storage
-        getVariable: (key) => storage.getVariable(key),
-        setVariable: (key, value) => storage.setVariable(key, value),
-        removeVariable: (key) => storage.removeVariable(key),
-        getFlag: (key) => storage.getFlag(key),
-        setFlag: (name, value) => storage.setFlag(name, value),
-        onLabelClosing: () => {},
-    });
-});
+Game.init();

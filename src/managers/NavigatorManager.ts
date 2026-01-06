@@ -16,7 +16,7 @@ export default class NavigatorManager {
         return RegisteredMaps.values();
     }
     get currentRoomId(): string | undefined {
-        return storage.getVariable<string>(CURRENT_ROOM_MEMORY_KEY);
+        return storage.get<string>(CURRENT_ROOM_MEMORY_KEY);
     }
     get currentRoom(): RoomInterface | undefined {
         let roomId = this.currentRoomId;
@@ -40,7 +40,7 @@ export default class NavigatorManager {
             logger.error(`The room ${room} is not registered, so it can't be set as current room`);
             return;
         }
-        let prevRoom = storage.getVariable<string>(CURRENT_ROOM_MEMORY_KEY);
+        let prevRoom = storage.get<string>(CURRENT_ROOM_MEMORY_KEY);
         if (prevRoom === room) {
             return;
         }
@@ -50,7 +50,7 @@ export default class NavigatorManager {
             prev: prevRoom,
             value: room,
         });
-        storage.setVariable(CURRENT_ROOM_MEMORY_KEY, room);
+        storage.set(CURRENT_ROOM_MEMORY_KEY, room);
     }
     get currentLocation(): LocationInterface | undefined {
         return this.currentRoom?.location;
