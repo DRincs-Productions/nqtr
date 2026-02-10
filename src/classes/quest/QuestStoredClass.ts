@@ -19,7 +19,11 @@ export interface QuestStoredClassProps {
 
 const QUEST_CATEGORY = "__nqtr-quest__";
 export default class QuestStoredClass extends StoredClassModel implements QuestBaseInternalInterface {
-    constructor(id: string, private readonly _stages: StageInterface[], props: QuestStoredClassProps = {}) {
+    constructor(
+        id: string,
+        private readonly _stages: StageInterface[],
+        props: QuestStoredClassProps = {},
+    ) {
         super(QUEST_CATEGORY, id);
         this._onStart = props.onStart;
         this._onNextStage = props.onNextStage;
@@ -102,12 +106,12 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
     }
 
     /**
-     * @deprecated Use {@link goNextIfCompleted} instead.
+     * @deprecated Use {@link advanceIfCompleted} instead.
      */
-    tryToGoNextStage(props: OnRunProps): Promise<boolean> {
-        return this.goNextIfCompleted(props);
-    }
     async goNextIfCompleted(props: OnRunProps): Promise<boolean> {
+        return await this.advanceIfCompleted(props);
+    }
+    async advanceIfCompleted(props: OnRunProps): Promise<boolean> {
         if (!this.inProgress) {
             return false;
         }
@@ -117,34 +121,34 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
             return false;
         }
         if (currentStage.completed) {
-            return await this.forceGoNext(props);
+            return await this.advanceUnconditionally(props);
         }
         return false;
     }
 
     /**
-     * @deprecated Use {@link goNext} instead.
+     * @deprecated Use {@link continue} instead.
      */
-    completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean> {
-        return this.goNext(props);
-    }
     async goNext(props: OnRunProps): Promise<boolean> {
+        return await this.continue(props);
+    }
+    async continue(props: OnRunProps): Promise<boolean> {
         let currentStage = this.currentStage;
         if (!currentStage) {
             logger.error(`Quest ${this.id} has no current stage`);
             return false;
         }
         currentStage.completed = true;
-        return await this.forceGoNext(props);
+        return await this.advanceUnconditionally(props);
     }
 
     /**
-     * @deprecated Use {@link forceGoNext} instead.
+     * @deprecated Use {@link advanceUnconditionally} instead.
      */
-    goNextStage(props: OnRunProps): Promise<boolean> {
-        return this.forceGoNext(props);
-    }
     async forceGoNext(props: OnRunProps): Promise<boolean> {
+        return await this.advanceUnconditionally(props);
+    }
+    async advanceUnconditionally(props: OnRunProps): Promise<boolean> {
         if (!this.inProgress) {
             console.warn(`[NQTR] Quest ${this.id} is not in progress`);
             return false;

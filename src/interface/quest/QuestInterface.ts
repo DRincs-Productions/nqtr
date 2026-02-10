@@ -62,40 +62,28 @@ export interface QuestBaseInternalInterface {
     start(props: OnRunProps): Promise<void>;
 
     /**
-     * @deprecated Use {@link goNextIfCompleted} instead.
-     */
-    tryToGoNextStage(props: OnRunProps): Promise<boolean>;
-    /**
      * Go to the next stage if the current stage is completed.
-     * If you want to force the change of stage, use {@link forceGoNext}.
+     * If you want to force the change of stage, use {@link advanceUnconditionally}.
      * @param props The properties. If you not want to pass any property, you can pass an {}.
      * @returns true if the stage was changed, false otherwise.
      */
-    goNextIfCompleted(props: OnRunProps): Promise<boolean>;
+    advanceIfCompleted(props: OnRunProps): Promise<boolean>;
 
     /**
-     * @deprecated Use {@link goNext} instead.
-     */
-    completeCurrentStageAndGoNext(props: OnRunProps): Promise<boolean>;
-    /**
-     * Complete the current stage and go to the next stage with {@link forceGoNext}.
-     * If you want to go to the next stage only if the current stage is completed, use {@link goNextIfCompleted}.
+     * Complete the current stage and go to the next stage with {@link advanceUnconditionally}.
+     * If you want to go to the next stage only if the current stage is completed, use {@link advanceIfCompleted}.
      * @param props The properties. If you not want to pass any property, you can pass an {}.
      * @returns true if the stage was changed, false otherwise.
      */
-    goNext(props: OnRunProps): Promise<boolean>;
+    continue(props: OnRunProps): Promise<boolean>;
 
-    /**
-     * @deprecated Use {@link forceGoNext} instead.
-     */
-    goNextStage(props: OnRunProps): Promise<boolean>;
     /**
      * Ignore the completed state of the current stage and go to the next stage without checking if the current stage is completed.
-     * If you want to go to the next stage only if the current stage is completed, use {@link goNextIfCompleted}.
+     * If you want to go to the next stage only if the current stage is completed, use {@link advanceIfCompleted}.
      * @param props The properties. If you not want to pass any property, you can pass an {}.
      * @returns returns true if the stage was changed, false otherwise.
      */
-    forceGoNext(props: OnRunProps): Promise<boolean>;
+    advanceUnconditionally(props: OnRunProps): Promise<boolean>;
 
     /**
      * If the current stage must start. It is true if the current stage is not started, can start and not completed.
