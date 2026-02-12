@@ -12,7 +12,7 @@ interface WaitOptions {
     hours?: number;
     days?: number;
 }
-function wait(delta?: WaitOptions | number): void {
+function waitInternal(delta?: WaitOptions | number): void {
     if (!delta) {
         delta = { hours: timeTracker.defaultTimeSpent };
     }
@@ -28,11 +28,20 @@ function wait(delta?: WaitOptions | number): void {
     }
 }
 
-export const nqtrHandler: () => HashtagHandler =
-    ({
-        timeConverter = (time: string) => Number(time.replace(":", ".")),
-        dateConverter = (date: string) => Number(date),
-    }: {
+/**
+ * This function returns a HashtagHandler that can be used in a Ink script to handle NQTR-specific commands for managing rooms, time, date, activities, routines, and quests. The handler supports commands like "enter room", "set time", "set date", "add/remove activity", "add/remove routine", "start/continue quest", and "wait". The function accepts an optional configuration object that allows you to provide custom implementations for time conversion, date conversion, and waiting logic. If no custom implementations are provided, default ones will be used.
+ * @example
+ * ```ts
+ * import { nqtrHandler } from '@drincs/nqtr/ink';
+ * import { HashtagCommands } from '@drincs/pixi-vn-ink';
+ *
+ * HashtagCommands.add(nqtrHandler());
+ * ```
+ * @param options An object containing optional custom implementations for time conversion, date conversion, and waiting logic. If not provided, default implementations will be used.
+ * @returns A HashtagHandler function that can be used in a Ink script to handle NQTR-specific commands for managing rooms, time, date, activities, routines, and quests.
+ */
+export const nqtrHandler: () => HashtagHandler = (
+    options: {
         /**
          * Custom time converter function to convert time strings to numbers. The default implementation converts "HH:MM" format to hours as a number (e.g. "01:30" => 1.5).
          * @default (time: string) => Number(time.replace(":", "."))
@@ -47,8 +56,19 @@ export const nqtrHandler: () => HashtagHandler =
          * @returns Date as a number
          */
         dateConverter?: (date: string) => number;
-    } = {}) =>
-    (script, props, convertListStringToObj) => {
+        /** Custom wait function to replace the default time and date increasing logic. The default implementation increases time and date based on the provided delta or default values.
+         * @default waitInternal
+         * @param delta An object containing hours and/or days to increase, or a number representing hours to increase.
+         */
+        wait?: (delta?: WaitOptions | number) => void;
+    } = {},
+) => {
+    const {
+        timeConverter = (time: string) => Number(time.replace(":", ".")),
+        dateConverter = (date: string) => Number(date),
+        wait = waitInternal,
+    } = options;
+    return (script, props, convertListStringToObj) => {
         switch (script[1]) {
             case "room":
                 switch (script[0]) {
@@ -208,3 +228,4 @@ export const nqtrHandler: () => HashtagHandler =
         }
         return false;
     };
+};
