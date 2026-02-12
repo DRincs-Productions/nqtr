@@ -1,5 +1,10 @@
 import { navigator, routine, timeTracker } from "@drincs/nqtr/handlers";
-import { RegisteredActivities, RegisteredCommitments, RegisteredRooms } from "@drincs/nqtr/registries";
+import {
+    RegisteredActivities,
+    RegisteredCommitments,
+    RegisteredQuests,
+    RegisteredRooms,
+} from "@drincs/nqtr/registries";
 import { HashtagHandler } from "@drincs/pixi-vn-ink";
 import { logger } from "../utils/log-utility";
 
@@ -146,6 +151,30 @@ export const nqtrHandler: () => HashtagHandler =
                                 return true;
                             }
                             routine.remove(commitments);
+                            return true;
+                        }
+                }
+                break;
+            case "quest":
+                switch (script[0]) {
+                    case "start":
+                        if (script.length == 3) {
+                            const quest = RegisteredQuests.get(script[2]);
+                            if (!quest) {
+                                logger.warn(`Quest ${script[2]} not found`);
+                                return true;
+                            }
+                            quest.start(props);
+                            return true;
+                        }
+                    case "continue":
+                        if (script.length == 3) {
+                            const quest = RegisteredQuests.get(script[2]);
+                            if (!quest) {
+                                logger.warn(`Quest ${script[2]} not found`);
+                                return true;
+                            }
+                            quest.continue(props);
                             return true;
                         }
                 }
