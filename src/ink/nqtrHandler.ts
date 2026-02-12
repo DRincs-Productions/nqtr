@@ -24,7 +24,7 @@ export const nqtrHandler: HashtagHandler = (script, props, convertListStringToOb
             switch (script[0]) {
                 case "set":
                     if (script.length > 2) {
-                        const time = parseInt(script[2].replace(":", ""));
+                        const time = Number(script[2].replace(":", "."));
                         if (isNaN(time)) {
                             logger.warn(`Invalid time format: ${script[2]}`);
                         } else {
@@ -39,7 +39,7 @@ export const nqtrHandler: HashtagHandler = (script, props, convertListStringToOb
             switch (script[0]) {
                 case "set":
                     if (script.length > 2) {
-                        const date = parseInt(script[2]);
+                        const date = Number(script[2]);
                         if (isNaN(date)) {
                             logger.warn(`Invalid date format: ${script[2]}`);
                         } else {
