@@ -1,6 +1,6 @@
 {
   "name": "@drincs/nqtr",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A complete system introducing the concepts of location, time and event, producing the framework of a not-quite-point-and-click adventure game.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -18,6 +18,37 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
       "default": "./dist/index.mjs"
+    },
+    "./handlers": {
+      "types": "./dist/handlers.d.ts",
+      "import": "./dist/handlers.mjs",
+      "require": "./dist/handlers.cjs",
+      "default": "./dist/handlers.mjs"
+    },
+    "./registries": {
+      "types": "./dist/registries.d.ts",
+      "import": "./dist/registries.mjs",
+      "require": "./dist/registries.cjs",
+      "default": "./dist/registries.mjs"
+    },
+    "./ink": {
+      "types": "./dist/ink.d.ts",
+      "import": "./dist/ink.mjs",
+      "require": "./dist/ink.cjs",
+      "default": "./dist/ink.mjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "handlers": [
+        "./dist/handlers.d.ts"
+      ],
+      "registries": [
+        "./dist/registries.d.ts"
+      ],
+      "ink": [
+        "./dist/ink.d.ts"
+      ]
     }
   },
   "repository": {
@@ -31,12 +62,16 @@
   },
   "homepage": "https://pixi-vn.web.app/nqtr",
   "devDependencies": {
-    "jsdom": "^27.4.0",
+    "@drincs/pixi-vn-ink": "^0.11.3",
+    "jsdom": "^28.0.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^6.0.3",
-    "vitest": "^4.0.16"
+    "vite-tsconfig-paths": "^6.1.0",
+    "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "@drincs/pixi-vn": ">=1.4.0"
   },
   "keywords": [
     "game",
@@ -51,8 +86,5 @@
     "visual",
     "visual-novel",
     "vn"
-  ],
-  "peerDependencies": {
-    "@drincs/pixi-vn": ">=1.4.0"
-  }
+  ]
 }
