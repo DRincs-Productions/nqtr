@@ -3,6 +3,26 @@ import { RegisteredRooms } from "@drincs/nqtr/registries";
 import { HashtagHandler } from "@drincs/pixi-vn-ink";
 import { logger } from "../utils/log-utility";
 
+interface WaitOptions {
+    hours?: number;
+    days?: number;
+}
+function wait(delta?: WaitOptions | number): void {
+    if (!delta) {
+        delta = { hours: timeTracker.defaultTimeSpent };
+    }
+    if (typeof delta === "number") {
+        delta = { hours: delta };
+    }
+    const { hours, days } = delta;
+    if (days) {
+        timeTracker.increaseDate(days, timeTracker.dayStartTime);
+    }
+    if (hours) {
+        timeTracker.increaseTime(hours);
+    }
+}
+
 export const nqtrHandler: () => HashtagHandler =
     ({
         timeConverter = (time: string) => Number(time.replace(":", ".")),
@@ -68,6 +88,32 @@ export const nqtrHandler: () => HashtagHandler =
                             return true;
                         }
                         break;
+                }
+                break;
+        }
+        switch (script[0]) {
+            case "wait":
+                if (script.length == 1) {
+                    wait();
+                    return true;
+                } else if (script.length == 2) {
+                    const delta = timeConverter(script[1]);
+                    if (isNaN(delta)) {
+                        logger.warn(`Invalid time format: ${script[1]}`);
+                    } else {
+                        wait(delta);
+                    }
+                    return true;
+                } else if (script.length > 2) {
+                    let options: WaitOptions = convertListStringToObj(script.slice(1));
+                    if (options.hours !== undefined && typeof options.hours === "string") {
+                        options.hours = timeConverter(options.hours);
+                    }
+                    if (options.days !== undefined && typeof options.days === "string") {
+                        options.days = dateConverter(options.days);
+                    }
+                    wait(options);
+                    return true;
                 }
                 break;
         }
