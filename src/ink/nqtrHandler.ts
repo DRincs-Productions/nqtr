@@ -1,5 +1,5 @@
-import { navigator, timeTracker } from "@drincs/nqtr/handlers";
-import { RegisteredActivities, RegisteredRooms } from "@drincs/nqtr/registries";
+import { navigator, routine, timeTracker } from "@drincs/nqtr/handlers";
+import { RegisteredActivities, RegisteredCommitments, RegisteredRooms } from "@drincs/nqtr/registries";
 import { HashtagHandler } from "@drincs/pixi-vn-ink";
 import { logger } from "../utils/log-utility";
 
@@ -93,7 +93,7 @@ export const nqtrHandler: () => HashtagHandler =
             case "activity":
                 switch (script[0]) {
                     case "add":
-                        if (script.length == 4) {
+                        if (script.length == 5) {
                             const activity = RegisteredActivities.get(script[2]);
                             if (!activity) {
                                 logger.warn(`Activity ${script[2]} not found`);
@@ -109,7 +109,7 @@ export const nqtrHandler: () => HashtagHandler =
                             return true;
                         }
                     case "remove":
-                        if (script.length == 4) {
+                        if (script.length == 5) {
                             const activity = RegisteredActivities.get(script[2]);
                             if (!activity) {
                                 logger.warn(`Activity ${script[2]} not found`);
@@ -125,6 +125,31 @@ export const nqtrHandler: () => HashtagHandler =
                             return true;
                         }
                 }
+                break;
+            case "routine":
+                switch (script[0]) {
+                    case "add":
+                        if (script.length == 3) {
+                            const commitments = RegisteredCommitments.get(script[2]);
+                            if (!commitments) {
+                                logger.warn(`Commitment ${script[2]} not found`);
+                                return true;
+                            }
+                            routine.add(commitments);
+                            return true;
+                        }
+                    case "remove":
+                        if (script.length == 3) {
+                            const commitments = RegisteredCommitments.get(script[2]);
+                            if (!commitments) {
+                                logger.warn(`Commitment ${script[2]} not found`);
+                                return true;
+                            }
+                            routine.remove(commitments);
+                            return true;
+                        }
+                }
+                break;
         }
         switch (script[0]) {
             case "wait":
