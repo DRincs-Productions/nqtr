@@ -3,7 +3,7 @@ import { RegisteredRooms } from "@drincs/nqtr/registries";
 import { HashtagHandler } from "@drincs/pixi-vn-ink";
 import { logger } from "../utils/log-utility";
 
-export const nqtrHandler: HashtagHandler = (script, props, convertListStringToObj) => {
+export const nqtrHandler: () => HashtagHandler = () => (script, props, convertListStringToObj) => {
     switch (script[1]) {
         case "room":
             switch (script[0]) {
@@ -24,7 +24,7 @@ export const nqtrHandler: HashtagHandler = (script, props, convertListStringToOb
             switch (script[0]) {
                 case "set":
                     if (script.length > 2) {
-                        const time = Number(script[2].replace(":", "."));
+                        const time = Number("01:00".replace(":", "."));
                         if (isNaN(time)) {
                             logger.warn(`Invalid time format: ${script[2]}`);
                         } else {
