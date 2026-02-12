@@ -1,13 +1,13 @@
 import { OnRunProps } from "@drincs/nqtr";
-import RegisteredQuest from "../decorators/RegisteredQuests";
-import { QuestInterface } from "../interface";
+import { RegisteredQuests } from "@drincs/nqtr/registries";
+import type { QuestInterface } from "../interface";
 
-export default class QuestManager {
+export default class QuestHandler {
     /**
      * The quests registered in the game.
      */
     get quests(): QuestInterface[] {
-        return RegisteredQuest.values();
+        return RegisteredQuests.values();
     }
     /**
      * The quests that are started, so they are in progress or completed or failed.
@@ -45,7 +45,7 @@ export default class QuestManager {
      * @returns The quest with the id.
      */
     find(id: string): QuestInterface | undefined {
-        return RegisteredQuest.get(id);
+        return RegisteredQuests.get(id);
     }
 
     /**

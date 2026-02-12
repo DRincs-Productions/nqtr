@@ -1,3 +1,4 @@
+import { navigator } from "@drincs/nqtr/handlers";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 import { CURRENT_ROOM_MEMORY_KEY, TIME_DATA_KEY } from "../constants";
@@ -6,7 +7,6 @@ import { CommitmentInterface, RoomInterface } from "../interface";
 import { CommitmentBaseInternalInterface } from "../interface/CommitmentInterface";
 import DateSchedulingInterface from "../interface/DateSchedulingInterface";
 import TimeSchedulingInterface from "../interface/TimeSchedulingInterface";
-import { navigator } from "../managers";
 import { ExecutionType } from "../types";
 import { OnRunEvent } from "../types/OnRunEvent";
 import TimeDataType from "../types/TimeDataType";
@@ -43,7 +43,7 @@ export default class CommitmentStoredClass
         private readonly _characters: CharacterInterface[],
         private readonly _room: RoomInterface,
         onRun: OnRunEvent<CommitmentInterface> | undefined,
-        props: CommitmentStoredClassProps
+        props: CommitmentStoredClassProps,
     ) {
         onRun = onRun || (() => {});
         super(id, onRun, props, COMMITMENT_CATEGORY);

@@ -1,11 +1,11 @@
 import { storage } from "@drincs/pixi-vn/storage";
 import { TIME_DATA_KEY } from "../constants";
 import { setLastEvent } from "../functions/tracking-changes";
-import TimeDataType from "../types/TimeDataType";
-import { TimeSettings, TimeSlotInterface } from "../types/TimeSettings";
-import TimeManagerSettings from "./TimeManagerSettings";
+import type TimeDataType from "../types/TimeDataType";
+import type { TimeSettings, TimeSlotInterface } from "../types/TimeSettings";
+import TimeHandlerSettings from "./TimeHandlerSettings";
 
-export default class TimeManager {
+export default class TimeHandler {
     initialize(settings: TimeSettings) {
         const {
             dayStartTime = 0,
@@ -16,35 +16,35 @@ export default class TimeManager {
             weekendStartDay = weekLength - 1,
             getDayName,
         } = settings;
-        TimeManagerSettings.dayStartTime = dayStartTime;
-        TimeManagerSettings.dayEndTime = dayEndTime;
-        TimeManagerSettings.defaultTimeSpent = defaultTimeSpent;
-        TimeManagerSettings.timeSlots = timeSlots;
-        TimeManagerSettings.weekLength = weekLength;
-        if (weekendStartDay >= TimeManagerSettings.weekLength) {
+        TimeHandlerSettings.dayStartTime = dayStartTime;
+        TimeHandlerSettings.dayEndTime = dayEndTime;
+        TimeHandlerSettings.defaultTimeSpent = defaultTimeSpent;
+        TimeHandlerSettings.timeSlots = timeSlots;
+        TimeHandlerSettings.weekLength = weekLength;
+        if (weekendStartDay >= TimeHandlerSettings.weekLength) {
             console.warn(`[NQTR] Weekend start day should be less than week length ${weekLength}, so will be ignored`);
         } else {
-            TimeManagerSettings.weekendStartDay = weekendStartDay;
+            TimeHandlerSettings.weekendStartDay = weekendStartDay;
         }
-        TimeManagerSettings.getDayName = getDayName;
+        TimeHandlerSettings.getDayName = getDayName;
     }
     get dayStartTime(): number {
-        return TimeManagerSettings.dayStartTime;
+        return TimeHandlerSettings.dayStartTime;
     }
     get dayEndTime(): number {
-        return TimeManagerSettings.dayEndTime;
+        return TimeHandlerSettings.dayEndTime;
     }
     get defaultTimeSpent(): number {
-        return TimeManagerSettings.defaultTimeSpent;
+        return TimeHandlerSettings.defaultTimeSpent;
     }
     get timeSlots(): TimeSlotInterface[] {
-        return TimeManagerSettings.timeSlots;
+        return TimeHandlerSettings.timeSlots;
     }
     get weekLength(): number {
-        return TimeManagerSettings.weekLength;
+        return TimeHandlerSettings.weekLength;
     }
     get weekendStartDay(): number {
-        return TimeManagerSettings.weekendStartDay;
+        return TimeHandlerSettings.weekendStartDay;
     }
     /**
      * Week days name
@@ -59,7 +59,7 @@ export default class TimeManager {
      * ```
      */
     get getDayName() {
-        return TimeManagerSettings.getDayName;
+        return TimeHandlerSettings.getDayName;
     }
 
     /**

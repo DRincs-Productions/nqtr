@@ -1,11 +1,11 @@
+import { RegisteredLocations, RegisteredMaps, RegisteredRooms } from "@drincs/nqtr/registries";
 import { storage } from "@drincs/pixi-vn/storage";
 import { CURRENT_ROOM_MEMORY_KEY } from "../constants";
-import { RegisteredLocations, RegisteredMaps, RegisteredRooms } from "../decorators";
 import { setLastEvent } from "../functions/tracking-changes";
-import { LocationInterface, MapInterface, RoomInterface } from "../interface";
+import type { LocationInterface, MapInterface, RoomInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
-export default class NavigatorManager {
+export default class NavigatorHandler {
     get rooms() {
         return RegisteredRooms.values();
     }

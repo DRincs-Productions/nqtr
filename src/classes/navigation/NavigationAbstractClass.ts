@@ -1,10 +1,10 @@
+import { timeTracker } from "@drincs/nqtr/handlers";
+import { RegisteredActivities } from "@drincs/nqtr/registries";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { RegisteredActivities } from "../../decorators";
 import { ActivityInterface } from "../../interface";
 import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
 import NavigationAbstractInterface from "../../interface/navigation/NavigationAbstractClass";
 import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
-import { timeTracker } from "../../managers";
 
 type ActiveScheduling = {
     timeSlot?: Partial<TimeSchedulingInterface>;
@@ -15,7 +15,11 @@ type ExcludedScheduling = {
 };
 
 export default abstract class NavigationAbstractClass extends StoredClassModel implements NavigationAbstractInterface {
-    constructor(categoryId: string, id: string, private defaultActivities: ActivityInterface[] = []) {
+    constructor(
+        categoryId: string,
+        id: string,
+        private defaultActivities: ActivityInterface[] = [],
+    ) {
         super(categoryId, id);
     }
     private get defaultActivitiesIds(): string[] {
@@ -63,7 +67,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         options: {
             timeSlot?: TimeSchedulingInterface;
             dateScheduling?: DateSchedulingInterface;
-        } = {}
+        } = {},
     ) {
         const { timeSlot, dateScheduling } = options;
         const { to: toTime = timeTracker.dayEndTime + 1 } = timeSlot || {};
@@ -95,7 +99,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         if (this.excludedActivitiesIds.includes(activity.id)) {
             this.removeActivityScheduling(activity.id);
             console.log(
-                `[NQTR] Activity with id ${activity.id} was excluded, so it will be associated with this class again.`
+                `[NQTR] Activity with id ${activity.id} was excluded, so it will be associated with this class again.`,
             );
         }
 

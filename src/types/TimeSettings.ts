@@ -1,4 +1,4 @@
-import { timeTracker } from "../managers";
+import { timeTracker } from "@drincs/nqtr/handlers";
 
 export type TimeSlotInterface = {
     name: string;

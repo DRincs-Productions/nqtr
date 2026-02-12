@@ -1,11 +1,11 @@
+import { RegisteredCommitments, fixedCommitments, registeredCommitments } from "@drincs/nqtr/registries";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
-import RegisteredCommitments, { fixedCommitments, registeredCommitments } from "../decorators/RegisteredCommitments";
-import { CommitmentInterface } from "../interface";
+import type { CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
 const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
-export default class RoutineManager {
+export default class RoutineHandler {
     get fixedRoutine(): CommitmentInterface[] {
         return [...fixedCommitments.values()];
     }
@@ -118,7 +118,7 @@ export default class RoutineManager {
                 if (c.characters.length > 0) {
                     // all the characters don't already have commitments or the commitment has a higher priority
                     let allAvailable = c.characters.every(
-                        (ch) => !character_commitments[ch.id] || c.priority > character_commitments[ch.id].priority
+                        (ch) => !character_commitments[ch.id] || c.priority > character_commitments[ch.id].priority,
                     );
                     if (allAvailable) {
                         c.characters.forEach((ch) => {

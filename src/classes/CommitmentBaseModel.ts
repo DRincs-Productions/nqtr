@@ -1,7 +1,7 @@
+import { timeTracker } from "@drincs/nqtr/handlers";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 import { CommitmentProps, RoomInterface } from "../interface";
-import { timeTracker } from "../managers";
 import CommitmentStoredClass from "./CommitmentStoredClass";
 
 /**
@@ -31,7 +31,7 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
         id: string,
         character: CharacterInterface | CharacterInterface[] | undefined,
         room: RoomInterface,
-        props: CommitmentProps
+        props: CommitmentProps,
     ) {
         super(id, character ? (Array.isArray(character) ? character : [character]) : [], room, props.onRun, {
             executionType: props.executionType,

@@ -1,5 +1,5 @@
+import { RegisteredRooms } from "@drincs/nqtr/registries";
 import { storage } from "@drincs/pixi-vn/storage";
-import { RegisteredRooms } from "../../decorators";
 import { LocationInterface, RoomBaseModelProps } from "../../interface";
 import RoomStoredClass from "./RoomStoredClass";
 

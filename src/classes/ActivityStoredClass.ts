@@ -1,10 +1,10 @@
+import { timeTracker } from "@drincs/nqtr/handlers";
 import { narration } from "@drincs/pixi-vn/narration";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
 import { ActivityInterface } from "../interface";
 import { ActivityBaseInternalInterface } from "../interface/ActivityInterface";
 import DateSchedulingInterface from "../interface/DateSchedulingInterface";
 import TimeSchedulingInterface from "../interface/TimeSchedulingInterface";
-import { timeTracker } from "../managers";
 import { OnRunAsyncFunction, OnRunEvent } from "../types";
 
 export interface ActivityStoredClassProps {
@@ -27,7 +27,7 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         id: string,
         private readonly _onRun: OnRunEvent<OnRunEventType>,
         props: ActivityStoredClassProps,
-        category: string = ACTIVITY_CATEGORY
+        category: string = ACTIVITY_CATEGORY,
     ) {
         super(category, id);
         this._timeSlot = props.timeSlot;

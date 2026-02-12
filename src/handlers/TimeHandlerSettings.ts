@@ -1,6 +1,6 @@
-import { TimeSettings, TimeSlotInterface } from "../types/TimeSettings";
+import type { TimeSettings, TimeSlotInterface } from "../types/TimeSettings";
 
-export default class TimeManagerSettings implements TimeSettings {
+export default class TimeHandlerSettings implements TimeSettings {
     static dayStartTime: number = 0;
     static dayEndTime: number = 24;
     static defaultTimeSpent: number = 1;

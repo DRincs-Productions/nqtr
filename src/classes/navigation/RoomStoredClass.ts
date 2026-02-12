@@ -1,7 +1,7 @@
+import { routine } from "@drincs/nqtr/handlers";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { ActivityInterface, CommitmentInterface, LocationInterface } from "../../interface";
 import { RoomBaseInternalInterface } from "../../interface/navigation/RoomInterface";
-import { routine } from "../../managers";
 import { OnRunAsyncFunction } from "../../types";
 import NavigationAbstractClass from "./NavigationAbstractClass";
 
@@ -13,7 +13,7 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
          * The location where the room is.
          */
         private readonly _location: LocationInterface,
-        activities: ActivityInterface[] = []
+        activities: ActivityInterface[] = [],
     ) {
         super(ROOM_CATEGORY, id, activities);
     }

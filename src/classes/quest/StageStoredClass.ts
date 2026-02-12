@@ -1,8 +1,8 @@
 import { OnRunProps } from "@drincs/nqtr";
+import { timeTracker } from "@drincs/nqtr/handlers";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
 import { StageInterface } from "../../interface";
 import { StageBaseInternalInterface } from "../../interface/quest/StageInterface";
-import { timeTracker } from "../../managers";
 import { OnRunEvent, QuestsRequiredType } from "../../types";
 
 export interface StageStoredClassProps {
