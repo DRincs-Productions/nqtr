@@ -1,5 +1,5 @@
 import { CachedMap } from "@drincs/pixi-vn";
-import { QuestInterface } from "../interface";
+import type { QuestInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
 /**

@@ -1,5 +1,5 @@
 import { CachedMap } from "@drincs/pixi-vn";
-import { MapInterface } from "../interface";
+import type { MapInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
 /**

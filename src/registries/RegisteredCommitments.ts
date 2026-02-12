@@ -1,5 +1,5 @@
 import { CachedMap } from "@drincs/pixi-vn";
-import { CommitmentInterface } from "../interface";
+import type { CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
 /**

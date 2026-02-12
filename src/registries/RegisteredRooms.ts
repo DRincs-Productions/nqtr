@@ -1,5 +1,5 @@
 import { CachedMap } from "@drincs/pixi-vn";
-import { RoomInterface } from "../interface";
+import type { RoomInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 import RegisteredLocations from "./RegisteredLocations";
 import RegisteredMaps from "./RegisteredMaps";
