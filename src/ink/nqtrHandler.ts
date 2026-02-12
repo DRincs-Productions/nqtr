@@ -1,5 +1,5 @@
 import { navigator, timeTracker } from "@drincs/nqtr/handlers";
-import { RegisteredRooms } from "@drincs/nqtr/registries";
+import { RegisteredActivities, RegisteredRooms } from "@drincs/nqtr/registries";
 import { HashtagHandler } from "@drincs/pixi-vn-ink";
 import { logger } from "../utils/log-utility";
 
@@ -90,6 +90,41 @@ export const nqtrHandler: () => HashtagHandler =
                         break;
                 }
                 break;
+            case "activity":
+                switch (script[0]) {
+                    case "add":
+                        if (script.length == 4) {
+                            const activity = RegisteredActivities.get(script[2]);
+                            if (!activity) {
+                                logger.warn(`Activity ${script[2]} not found`);
+                                return true;
+                            }
+                            const { in: into } = convertListStringToObj(script.slice(3)) as { in: string };
+                            const room = RegisteredRooms.get(into);
+                            if (!room) {
+                                logger.warn(`Room ${into} not found`);
+                            } else {
+                                room.addActivity(activity);
+                            }
+                            return true;
+                        }
+                    case "remove":
+                        if (script.length == 4) {
+                            const activity = RegisteredActivities.get(script[2]);
+                            if (!activity) {
+                                logger.warn(`Activity ${script[2]} not found`);
+                                return true;
+                            }
+                            const { from } = convertListStringToObj(script.slice(3)) as { from: string };
+                            const room = RegisteredRooms.get(from);
+                            if (!room) {
+                                logger.warn(`Room ${from} not found`);
+                            } else {
+                                room.removeActivity(activity);
+                            }
+                            return true;
+                        }
+                }
         }
         switch (script[0]) {
             case "wait":
