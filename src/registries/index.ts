@@ -1,5 +1,11 @@
-export { default as RegisteredActivities } from "./RegisteredActivities";
-export { fixedCommitments, default as RegisteredCommitments, registeredCommitments } from "./RegisteredCommitments";
+export {
+    default as RegisteredActivities,
+    /**
+     * @deprecated Use RegisteredActivities instead. This will be removed in future versions.
+     */
+    default as RegisteredCommitments,
+} from "./RegisteredActivities";
+export { fixedCommitments, registeredCommitments } from "./RegisteredCommitments";
 export { default as RegisteredLocations } from "./RegisteredLocations";
 export { default as RegisteredMaps } from "./RegisteredMaps";
 export { default as RegisteredQuests } from "./RegisteredQuests";

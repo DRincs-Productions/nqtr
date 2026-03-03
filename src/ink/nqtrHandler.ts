@@ -1,10 +1,5 @@
-import { navigator, routine, timeTracker } from "@drincs/nqtr/handlers";
-import {
-    RegisteredActivities,
-    RegisteredCommitments,
-    RegisteredQuests,
-    RegisteredRooms,
-} from "@drincs/nqtr/registries";
+import { navigator, timeTracker } from "@drincs/nqtr/handlers";
+import { RegisteredActivities, RegisteredQuests, RegisteredRooms } from "@drincs/nqtr/registries";
 import { HashtagHandler } from "@drincs/pixi-vn-ink";
 import { logger } from "../utils/log-utility";
 
@@ -116,6 +111,7 @@ export const nqtrHandler: () => HashtagHandler = (
                 }
                 break;
             case "activity":
+            case "routine":
                 switch (script[0]) {
                     case "add":
                         if (script.length == 5) {
@@ -147,30 +143,6 @@ export const nqtrHandler: () => HashtagHandler = (
                             } else {
                                 room.removeActivity(activity);
                             }
-                            return true;
-                        }
-                }
-                break;
-            case "routine":
-                switch (script[0]) {
-                    case "add":
-                        if (script.length == 3) {
-                            const commitments = RegisteredCommitments.get(script[2]);
-                            if (!commitments) {
-                                logger.warn(`Commitment ${script[2]} not found`);
-                                return true;
-                            }
-                            routine.add(commitments);
-                            return true;
-                        }
-                    case "remove":
-                        if (script.length == 3) {
-                            const commitments = RegisteredCommitments.get(script[2]);
-                            if (!commitments) {
-                                logger.warn(`Commitment ${script[2]} not found`);
-                                return true;
-                            }
-                            routine.remove(commitments);
                             return true;
                         }
                 }

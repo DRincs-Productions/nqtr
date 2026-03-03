@@ -1,6 +1,7 @@
-import { RegisteredCommitments, fixedCommitments, registeredCommitments } from "@drincs/nqtr/registries";
+import { RegisteredActivities, fixedCommitments, registeredCommitments } from "@drincs/nqtr/registries";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
+import { CommitmentStoredClass } from "../classes";
 import type { CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
@@ -31,9 +32,9 @@ export default class RoutineHandler {
             return [];
         }
         let commitments = commitmentsIds
-            .map((id) => RegisteredCommitments.get(id))
+            .map((id) => RegisteredActivities.get(id))
             .filter((commitment) => commitment !== undefined);
-        return commitments;
+        return commitments as CommitmentInterface[];
     }
 
     get allRoutine(): CommitmentInterface[] {
@@ -50,7 +51,7 @@ export default class RoutineHandler {
         }
         let commitmentsIds = commitment
             .map((commitment) => {
-                let commitmentTest = RegisteredCommitments.get(commitment.id);
+                let commitmentTest = RegisteredActivities.get(commitment.id);
                 if (!commitmentTest) {
                     console.warn(`[NQTR] Commitment ${commitment.id} not found, it will be ignored`);
                     return undefined;
@@ -68,7 +69,10 @@ export default class RoutineHandler {
      * @returns The commitment or undefined if not found.
      */
     find(id: string): CommitmentInterface | undefined {
-        return RegisteredCommitments.get(id);
+        const commitment = RegisteredActivities.get(id);
+        if (commitment instanceof CommitmentStoredClass) {
+            return commitment;
+        }
     }
 
     /**
@@ -95,7 +99,7 @@ export default class RoutineHandler {
      * Clear all the expired commitments.
      */
     clearExpiredRoutine() {
-        RegisteredCommitments.values().forEach((commitment) => {
+        RegisteredActivities.values().forEach((commitment) => {
             if (commitment.expired) {
                 registeredCommitments.delete(commitment.id);
             }
