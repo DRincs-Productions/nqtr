@@ -2,7 +2,7 @@ import { RegisteredActivities, fixedCommitments, registeredCommitments } from "@
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 import { CommitmentStoredClass } from "../classes";
-import type { CommitmentInterface } from "../interface";
+import type { ActivityInterface, CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
 const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
@@ -138,25 +138,30 @@ export default class RoutineHandler {
      * @returns The current commitments.
      */
     get currentRoutine(): CommitmentInterface[] {
-        let character_commitments: { [character: string]: CommitmentInterface } = {};
-        [...this.fixedRoutine, ...this.temporaryRoutine].forEach((c) => {
-            if (c.characters.length == 0) {
-                logger.error(`The commitment ${c.id} has no characters assigned`);
-                return;
-            }
-            if (c.isActive) {
-                // all the characters don't already have commitments or the commitment has a higher priority
-                let allAvailable = c.characters.every(
-                    (ch) => !character_commitments[ch.id] || c.priority > character_commitments[ch.id].priority,
-                );
-                if (allAvailable) {
-                    c.characters.forEach((ch) => {
-                        character_commitments[ch.id] = c;
-                    });
-                }
-            }
-        });
         return Object.values(this.character_commitments);
+    }
+
+    /**
+     * Filter activities based on character availability
+     */
+    filterActivitiesByCharacterAvailability(activities: ActivityInterface[]): ActivityInterface[] {
+        let character_commitments = this.character_commitments;
+        return activities.filter((activity) => {
+            if (!(activity instanceof CommitmentStoredClass)) {
+                return true;
+            }
+            if (activity.characters.length === 0) {
+                logger.error(`The commitment ${activity.id} has no characters assigned`);
+                return false;
+            }
+            return activity.characters.every((ch) => {
+                let commitment = character_commitments[ch.id];
+                if (!commitment) {
+                    return true;
+                }
+                return activity.id === commitment.id;
+            });
+        });
     }
 
     /**

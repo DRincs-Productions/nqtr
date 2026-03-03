@@ -1,6 +1,6 @@
 import { routine } from "@drincs/nqtr/handlers";
 import type { CharacterInterface } from "@drincs/pixi-vn";
-import { ActivityInterface, CommitmentInterface, LocationInterface } from "../../interface";
+import { ActivityInterface, LocationInterface } from "../../interface";
 import { RoomBaseInternalInterface } from "../../interface/navigation/RoomInterface";
 import { OnRunAsyncFunction } from "../../types";
 import NavigationAbstractClass from "./NavigationAbstractClass";
@@ -16,9 +16,6 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
         activities: ActivityInterface[] = [],
     ) {
         super(ROOM_CATEGORY, id, activities);
-    }
-    get routine(): CommitmentInterface[] {
-        return routine.currentRoutine.filter((c) => c.room.id === this.id);
     }
 
     get location(): LocationInterface {
@@ -42,5 +39,9 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
                 };
                 return res;
             });
+    }
+
+    override get activities(): ActivityInterface[] {
+        return routine.filterActivitiesByCharacterAvailability(super.activities);
     }
 }
