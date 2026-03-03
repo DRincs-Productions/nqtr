@@ -106,6 +106,28 @@ export default class RoutineHandler {
         });
     }
 
+    private get character_commitments() {
+        let character_commitments: { [character: string]: CommitmentInterface } = {};
+        [...this.fixedRoutine, ...this.temporaryRoutine].forEach((c) => {
+            if (c.characters.length == 0) {
+                logger.error(`The commitment ${c.id} has no characters assigned`);
+                return;
+            }
+            if (c.isActive) {
+                // all the characters don't already have commitments or the commitment has a higher priority
+                let allAvailable = c.characters.every(
+                    (ch) => !character_commitments[ch.id] || c.priority > character_commitments[ch.id].priority,
+                );
+                if (allAvailable) {
+                    c.characters.forEach((ch) => {
+                        character_commitments[ch.id] = c;
+                    });
+                }
+            }
+        });
+        return character_commitments;
+    }
+
     /**
      * Get the current commitments. The hidden commitments are not included.
      * In case there is a character who has two or more commitments at the same time, will be selected the commitment with the highest priority.
@@ -134,7 +156,7 @@ export default class RoutineHandler {
                 }
             }
         });
-        return Object.values(character_commitments);
+        return Object.values(this.character_commitments);
     }
 
     /**
