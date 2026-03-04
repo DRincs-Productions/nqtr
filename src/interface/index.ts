@@ -1,5 +1,6 @@
 export type { default as ActivityInterface } from "./activity/ActivityInterface";
 export type { default as ActivityProps } from "./activity/ActivityProps";
+export type { default as CommitmentInfo } from "./activity/CommitmentInfo";
 export type { default as CommitmentInterface } from "./activity/CommitmentInterface";
 export type { default as CommitmentProps } from "./activity/CommitmentProps";
 export type { default as DateSchedulingInterface } from "./DateSchedulingInterface";
