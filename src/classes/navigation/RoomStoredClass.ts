@@ -3,6 +3,7 @@ import type { CharacterInterface } from "@drincs/pixi-vn";
 import { ActivityInterface, LocationInterface } from "../../interface";
 import { RoomBaseInternalInterface } from "../../interface/navigation/RoomInterface";
 import { OnRunAsyncFunction } from "../../types";
+import CommitmentStoredClass from "../CommitmentStoredClass";
 import NavigationAbstractClass from "./NavigationAbstractClass";
 
 const ROOM_CATEGORY = "__nqtr-room__";
@@ -23,22 +24,28 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
     }
 
     get characters(): CharacterInterface[] {
-        let characters: CharacterInterface[] = [];
-        this.routine.forEach((commitment) => {
-            characters.push(...commitment.characters);
-        });
-        return characters;
+        return this.activities.reduce((acc: CharacterInterface[], commitment) => {
+            if (commitment instanceof CommitmentStoredClass) {
+                acc.push(...commitment.characters);
+            }
+            return acc;
+        }, []);
     }
 
     get automaticFunctions(): OnRunAsyncFunction[] {
-        return this.routine
-            .filter((commitment) => commitment.executionType === "automatic" && commitment.run)
-            .map((commitment) => {
-                let res: OnRunAsyncFunction = async (props) => {
+        return this.activities.reduce((acc: OnRunAsyncFunction[], commitment) => {
+            if (
+                commitment instanceof CommitmentStoredClass &&
+                commitment.executionType === "automatic" &&
+                commitment.run
+            ) {
+                const res: OnRunAsyncFunction = async (props) => {
                     await commitment.run(props);
                 };
-                return res;
-            });
+                acc.push(res);
+            }
+            return acc;
+        }, []);
     }
 
     override get activities(): ActivityInterface[] {
