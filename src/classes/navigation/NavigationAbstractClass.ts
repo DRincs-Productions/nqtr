@@ -1,15 +1,10 @@
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { RegisteredActivities } from "@drincs/nqtr/registries";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { ActivityInterface } from "../../interface";
+import { ActiveScheduling, ActivityInterface } from "../../interface";
 import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
 import NavigationAbstractInterface from "../../interface/navigation/NavigationAbstractClass";
-import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
 
-type ActiveScheduling = {
-    timeSlot?: Partial<TimeSchedulingInterface>;
-    dateScheduling?: Partial<DateSchedulingInterface>;
-};
 type ExcludedScheduling = {
     dateScheduling?: Pick<DateSchedulingInterface, "to">;
 };
@@ -62,20 +57,19 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     get activitiesIds(): string[] {
         return this.additionalActivitiesIds.concat(this.defaultActivitiesIds);
     }
-    addActivity(
-        activity: ActivityInterface,
-        options: {
-            timeSlot?: TimeSchedulingInterface;
-            dateScheduling?: DateSchedulingInterface;
-        } = {},
-    ) {
-        const { timeSlot, dateScheduling } = options;
-        const { to: toTime = timeTracker.dayEndTime + 1 } = timeSlot || {};
-        if (timeSlot) {
-            if (timeSlot.from >= toTime) {
-                throw new Error(`[NQTR] The from time must be less than the to time.`);
-            }
+    addActivity(activity: ActivityInterface, options: ActiveScheduling = {}) {
+        let { timeSlot, dateScheduling } = options;
+        if (timeSlot && !Array.isArray(timeSlot)) {
+            timeSlot = [timeSlot];
         }
+        timeSlot?.forEach((timeSlot) => {
+            const { to: toTime = timeTracker.dayEndTime + 1 } = timeSlot || {};
+            if (timeSlot) {
+                if (timeSlot.from >= toTime) {
+                    throw new Error(`[NQTR] The from time must be less than the to time.`);
+                }
+            }
+        });
         if (
             dateScheduling?.from !== undefined &&
             dateScheduling?.to !== undefined &&
