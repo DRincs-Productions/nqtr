@@ -31,14 +31,14 @@ export default class RoutineHandler {
         if (!commitmentsIds) {
             return [];
         }
-        let commitments = commitmentsIds.reduce((acc: any[], id) => {
+        let commitments = commitmentsIds.reduce((acc: CommitmentInterface[], id) => {
             const c = RegisteredActivities.get(id);
-            if (c !== undefined) {
+            if (c && c instanceof CommitmentStoredClass) {
                 acc.push(c);
             }
             return acc;
         }, []);
-        return commitments as CommitmentInterface[];
+        return commitments;
     }
 
     get allRoutine(): CommitmentInterface[] {
