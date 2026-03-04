@@ -31,9 +31,13 @@ export default class RoutineHandler {
         if (!commitmentsIds) {
             return [];
         }
-        let commitments = commitmentsIds
-            .map((id) => RegisteredActivities.get(id))
-            .filter((commitment) => commitment !== undefined);
+        let commitments = commitmentsIds.reduce((acc: any[], id) => {
+            const c = RegisteredActivities.get(id);
+            if (c !== undefined) {
+                acc.push(c);
+            }
+            return acc;
+        }, []);
         return commitments as CommitmentInterface[];
     }
 
@@ -49,16 +53,15 @@ export default class RoutineHandler {
         if (!Array.isArray(commitment)) {
             commitment = [commitment];
         }
-        let commitmentsIds = commitment
-            .map((commitment) => {
-                let commitmentTest = RegisteredActivities.get(commitment.id);
-                if (!commitmentTest) {
-                    console.warn(`[NQTR] Commitment ${commitment.id} not found, it will be ignored`);
-                    return undefined;
-                }
-                return commitment.id;
-            })
-            .filter((id) => id !== undefined);
+        let commitmentsIds = commitment.reduce((acc: string[], commitment) => {
+            let commitmentTest = RegisteredActivities.get(commitment.id);
+            if (!commitmentTest) {
+                console.warn(`[NQTR] Commitment ${commitment.id} not found, it will be ignored`);
+                return acc;
+            }
+            acc.push(commitment.id);
+            return acc;
+        }, []);
 
         storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, commitmentsIds);
     }
