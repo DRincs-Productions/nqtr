@@ -1,3 +1,4 @@
+export type { default as ActiveScheduling } from "./activity/ActiveScheduling";
 export type { default as ActivityInterface } from "./activity/ActivityInterface";
 export type { default as ActivityProps } from "./activity/ActivityProps";
 export type { default as CommitmentInfo } from "./activity/CommitmentInfo";
