@@ -3,7 +3,7 @@ import type { CharacterInterface } from "@drincs/pixi-vn";
 import { ActivityInterface, LocationInterface } from "../../interface";
 import { RoomBaseInternalInterface } from "../../interface/navigation/RoomInterface";
 import { OnRunAsyncFunction } from "../../types";
-import CommitmentStoredClass from "../CommitmentStoredClass";
+import CommitmentStoredClass from "../activity/CommitmentStoredClass";
 import NavigationAbstractClass from "./NavigationAbstractClass";
 
 const ROOM_CATEGORY = "__nqtr-room__";

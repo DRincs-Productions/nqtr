@@ -1,5 +1,5 @@
-import DateSchedulingInterface from "./DateSchedulingInterface";
-import TimeSchedulingInterface from "./TimeSchedulingInterface";
+import DateSchedulingInterface from "../DateSchedulingInterface";
+import TimeSchedulingInterface from "../TimeSchedulingInterface";
 
 export default interface ActivityProps {
     /**

@@ -1,11 +1,11 @@
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { narration } from "@drincs/pixi-vn/narration";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { ActivityInterface } from "../interface";
-import { ActivityBaseInternalInterface } from "../interface/ActivityInterface";
-import DateSchedulingInterface from "../interface/DateSchedulingInterface";
-import TimeSchedulingInterface from "../interface/TimeSchedulingInterface";
-import { OnRunAsyncFunction, OnRunEvent } from "../types";
+import { ActivityInterface } from "../../interface";
+import { ActivityBaseInternalInterface } from "../../interface/activity/ActivityInterface";
+import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
+import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
+import { OnRunAsyncFunction, OnRunEvent } from "../../types";
 
 export interface ActivityStoredClassProps {
     /**

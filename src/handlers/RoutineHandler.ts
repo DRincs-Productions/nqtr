@@ -173,9 +173,9 @@ export default class RoutineHandler {
      * @returns The commitment or undefined if not found.
      */
     getCommitmentByCharacter(character: CharacterInterface): CommitmentInterface | undefined {
-        this.currentRoutine.forEach((c) => {
-            if (c.characters.map((ch) => ch.id).includes(character.id)) {
-                return c;
+        this.currentRoutine.forEach((commitment) => {
+            if (commitment.characters.map((ch) => ch.id).includes(character.id)) {
+                return commitment;
             }
         });
         return undefined;
