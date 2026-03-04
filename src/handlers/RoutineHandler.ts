@@ -1,11 +1,20 @@
-import { RegisteredActivities, fixedCommitments, registeredCommitments } from "@drincs/nqtr/registries";
-import type { CharacterInterface } from "@drincs/pixi-vn";
+import { RegisteredActivities } from "@drincs/nqtr/registries";
+import { CachedMap, type CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 import { CommitmentStoredClass } from "../classes";
-import type { ActivityInterface, CommitmentInterface } from "../interface";
+import type { ActivityInterface, CommitmentInfo, CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
-const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
+const fixedCommitments = new CachedMap<string, CommitmentInterface>({ cacheSize: 20 });
+
+type StoredCommitmentInfo = {
+    [key: string]: {
+        commitmentId: string;
+        roomId: string;
+    };
+};
+
+const TEMPORARY_ROUTINE_CATEGORY_MEMORY_KEY = "___nqtr-temporary_routine___";
 export default class RoutineHandler {
     get fixedRoutine(): CommitmentInterface[] {
         return [...fixedCommitments.values()];
@@ -27,7 +36,7 @@ export default class RoutineHandler {
      * @returns The temporary commitments.
      */
     get temporaryRoutine(): CommitmentInterface[] {
-        let commitmentsIds = storage.get<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
+        let commitmentsIds = storage.get<string[]>(TEMPORARY_ROUTINE_CATEGORY_MEMORY_KEY);
         if (!commitmentsIds) {
             return [];
         }
@@ -46,24 +55,15 @@ export default class RoutineHandler {
     }
 
     /**
-     * This feature adds the commitments during the game session.
-     * @param commitment The commitment or commitments to add.
+     * This feature adds a commitment during the game session.
+     * @param commitment The commitment to add.
      */
-    add(commitment: CommitmentInterface[] | CommitmentInterface) {
-        if (!Array.isArray(commitment)) {
-            commitment = [commitment];
-        }
-        let commitmentsIds = commitment.reduce((acc: string[], commitment) => {
-            let commitmentTest = RegisteredActivities.get(commitment.id);
-            if (!commitmentTest) {
-                console.warn(`[NQTR] Commitment ${commitment.id} not found, it will be ignored`);
-                return acc;
-            }
-            acc.push(commitment.id);
-            return acc;
-        }, []);
+    add(commitment: CommitmentInfo) {
+        const commitmentId = commitment.commitment.id;
+        const roomId = commitment.roomId;
+        let commitments = storage.get<StoredCommitmentInfo[]>(TEMPORARY_ROUTINE_CATEGORY_MEMORY_KEY) || [];
 
-        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, commitmentsIds);
+        storage.set(TEMPORARY_ROUTINE_CATEGORY_MEMORY_KEY, commitmentsIds);
     }
 
     /**
@@ -90,12 +90,12 @@ export default class RoutineHandler {
             return commitment.id;
         });
 
-        let currentCommitments = storage.get<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
+        let currentCommitments = storage.get<string[]>(TEMPORARY_ROUTINE_CATEGORY_MEMORY_KEY);
         if (!currentCommitments) {
             return;
         }
         currentCommitments = currentCommitments.filter((id) => !commitmentsIds.includes(id));
-        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, currentCommitments);
+        storage.set(TEMPORARY_ROUTINE_CATEGORY_MEMORY_KEY, currentCommitments);
     }
 
     /**

@@ -5,7 +5,6 @@ export {
      */
     default as RegisteredCommitments,
 } from "./RegisteredActivities";
-export { fixedCommitments, registeredCommitments } from "./RegisteredCommitments";
 export { default as RegisteredLocations } from "./RegisteredLocations";
 export { default as RegisteredMaps } from "./RegisteredMaps";
 export { default as RegisteredQuests } from "./RegisteredQuests";
