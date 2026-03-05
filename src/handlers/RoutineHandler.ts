@@ -114,7 +114,7 @@ export default class RoutineHandler {
     get currentRoutine(): CommitmentInterface[] {
         let character_commitments: { [character: string]: CommitmentInterface } = {};
         [...this.fixedRoutine, ...this.temporaryRoutine].forEach((c) => {
-            if (c.isActive) {
+            if (c.isActive()) {
                 if (c.characters.length > 0) {
                     // all the characters don't already have commitments or the commitment has a higher priority
                     let allAvailable = c.characters.every(

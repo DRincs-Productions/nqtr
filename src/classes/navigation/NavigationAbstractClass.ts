@@ -2,12 +2,8 @@ import { timeTracker } from "@drincs/nqtr/handlers";
 import { RegisteredActivities } from "@drincs/nqtr/registries";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
 import { ActiveScheduling, ActivityInterface } from "../../interface";
-import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
+import { ExcludedScheduling } from "../../interface/activity/ActiveScheduling";
 import NavigationAbstractInterface from "../../interface/navigation/NavigationAbstractClass";
-
-type ExcludedScheduling = {
-    dateScheduling?: Pick<DateSchedulingInterface, "to">;
-};
 
 export default abstract class NavigationAbstractClass extends StoredClassModel implements NavigationAbstractInterface {
     constructor(
@@ -104,28 +100,15 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             });
         }
     }
-    removeActivity(activity: ActivityInterface | string, options: Pick<DateSchedulingInterface, "to"> = {}) {
-        const { to } = options;
+    removeActivity(activity: ActivityInterface | string) {
         const activityId = typeof activity === "string" ? activity : activity.id;
 
         let additionalActivitiesIds = this.additionalActivitiesIds;
         if (additionalActivitiesIds.includes(activityId)) {
-            if (to !== undefined) {
-                this.editExcludedActivityScheduling(activityId, {
-                    dateScheduling: { to },
-                });
-                return;
-            }
             additionalActivitiesIds = additionalActivitiesIds.filter((id) => id !== activityId);
             this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
             this.removeActivityScheduling(activityId);
         } else if (this.defaultActivitiesIds.includes(activityId)) {
-            if (to !== undefined) {
-                this.editExcludedActivityScheduling(activityId, {
-                    dateScheduling: { to },
-                });
-                return;
-            }
             let excludedActivitiesIds = this.excludedActivitiesIds;
             excludedActivitiesIds.push(activityId);
             this.setStorageProperty(`excludedActivitiesIds`, excludedActivitiesIds);
@@ -150,8 +133,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         });
         excludedActivitiesIds.forEach((activityId) => {
             if (activityId in excludedActivitiesScheduling) {
-                let { to: toDate } = excludedActivitiesScheduling[activityId].dateScheduling || {};
-                if (toDate && toDate < timeTracker.currentDate) {
+                if (excludedActivitiesScheduling[activityId]) {
                     this.removeActivityScheduling(activityId);
                     excludedActivitiesIds = excludedActivitiesIds.filter((id) => id !== activityId);
                 }
@@ -162,37 +144,14 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     get activities(): ActivityInterface[] {
         let res: ActivityInterface[] = [];
         let activeActivityScheduling = this.activeActivityScheduling;
-        this.additionalActivitiesIds.concat(this.defaultActivitiesIds).forEach((activityId) => {
-            let activity = RegisteredActivities.get(activityId);
-            const { dateScheduling, timeSlot } = activeActivityScheduling[activityId] || {};
-            const { from: fromDate = activity?.dateScheduling?.from, to: toDate = activity?.dateScheduling?.to } =
-                dateScheduling || {};
-            const { from: fromTime = activity?.timeSlot?.from, to: toTime = activity?.timeSlot?.to } = timeSlot || {};
-            if (
-                activity &&
-                timeTracker.nowIsBetween(fromTime, toTime) &&
-                !(fromDate && fromDate > timeTracker.currentDate) &&
-                !(toDate && toDate < timeTracker.currentDate)
-            ) {
-                res.push(activity);
-            }
-        });
-        Object.entries(this.excludedActivitiesScheduling).forEach(([activityId, scheduling]) => {
+        let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
+        new Set<string>(...this.additionalActivitiesIds, ...this.defaultActivitiesIds).forEach((activityId) => {
             let activity = RegisteredActivities.get(activityId);
             if (
                 activity &&
-                activity.isActive &&
-                !(
-                    scheduling.dateScheduling &&
-                    scheduling.dateScheduling.to !== undefined &&
-                    scheduling.dateScheduling.to >= timeTracker.currentDate
-                )
+                activity.isActive(activeActivityScheduling[activityId]) &&
+                !excludedActivitiesScheduling[activityId]
             ) {
-                res.push(activity);
-            }
-        });
-        this.defaultActivities.forEach((activity) => {
-            if (activity.isActive && !res.find((a) => a.id === activity.id)) {
                 res.push(activity);
             }
         });

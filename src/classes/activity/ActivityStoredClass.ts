@@ -1,22 +1,13 @@
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { narration } from "@drincs/pixi-vn/narration";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { ActivityInterface } from "../../interface";
+import { ActiveScheduling, ActivityInterface } from "../../interface";
 import { ActivityBaseInternalInterface } from "../../interface/activity/ActivityInterface";
 import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
 import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
 import { OnRunAsyncFunction, OnRunEvent } from "../../types";
 
-export interface ActivityStoredClassProps {
-    /**
-     * Time slot in which activity/commitment will be active.
-     */
-    timeSlot?: TimeSchedulingInterface;
-    /**
-     * Used to schedule what date it will be added and removed.
-     */
-    dateScheduling?: DateSchedulingInterface;
-}
+export interface ActivityStoredClassProps extends ActiveScheduling {}
 
 const ACTIVITY_CATEGORY = "__nqtr-activity__";
 export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
@@ -34,8 +25,8 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         this._dateScheduling = props.dateScheduling;
     }
 
-    private _timeSlot?: TimeSchedulingInterface;
-    get timeSlot(): TimeSchedulingInterface | undefined {
+    private _timeSlot?: TimeSchedulingInterface[] | TimeSchedulingInterface;
+    get timeSlot(): TimeSchedulingInterface[] | TimeSchedulingInterface | undefined {
         return this._timeSlot;
     }
 
@@ -61,21 +52,21 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         return false;
     }
 
-    isActive(
-        options: {
-            timeSlot?: TimeSchedulingInterface;
-            dateScheduling?: DateSchedulingInterface;
-        } = {},
-    ): boolean {
-        const { timeSlot = this.timeSlot, dateScheduling = this.dateScheduling } = options;
+    isActive(options: ActiveScheduling = {}): boolean {
+        let { timeSlot = this.timeSlot, dateScheduling = this.dateScheduling } = options;
         if (dateScheduling?.from != undefined && dateScheduling.from > timeTracker.currentDate) {
             return false;
         }
         if (dateScheduling?.to != undefined && dateScheduling.to < timeTracker.currentDate) {
             return false;
         }
-        if (!timeTracker.nowIsBetween(timeSlot?.from, timeSlot?.to)) {
-            return false;
+        if (timeSlot && !Array.isArray(timeSlot)) {
+            timeSlot = [timeSlot];
+        }
+        for (let slot of timeSlot || []) {
+            if (!timeTracker.nowIsBetween(slot?.from, slot?.to)) {
+                return false;
+            }
         }
         return true;
     }

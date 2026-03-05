@@ -1,4 +1,3 @@
-import { timeTracker } from "@drincs/nqtr/handlers";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 import { CommitmentProps, RoomInterface } from "../../interface";
@@ -90,15 +89,6 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
      * Whether is hidden. You can also pass a Pixi'VN flag name.
      */
     get hidden(): boolean {
-        if (this.dateScheduling?.from && this.dateScheduling.from > timeTracker.currentDate) {
-            return true;
-        }
-        if (!timeTracker.nowIsBetween(this.timeSlot?.from, this.timeSlot?.to)) {
-            return true;
-        }
-        if (!this.expired) {
-            return true;
-        }
         let value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
         if (typeof value === "string") {
             return storage.getFlag(value);
