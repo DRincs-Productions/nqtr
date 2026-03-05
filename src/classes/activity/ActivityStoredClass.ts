@@ -1,11 +1,11 @@
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { narration } from "@drincs/pixi-vn/narration";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { ActivityInterface } from "../interface";
-import { ActivityBaseInternalInterface } from "../interface/ActivityInterface";
-import DateSchedulingInterface from "../interface/DateSchedulingInterface";
-import TimeSchedulingInterface from "../interface/TimeSchedulingInterface";
-import { OnRunAsyncFunction, OnRunEvent } from "../types";
+import { ActivityInterface } from "../../interface";
+import { ActivityBaseInternalInterface } from "../../interface/activity/ActivityInterface";
+import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
+import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
+import { OnRunAsyncFunction, OnRunEvent } from "../../types";
 
 export interface ActivityStoredClassProps {
     /**
@@ -61,14 +61,20 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         return false;
     }
 
-    get isActive(): boolean {
-        if (this.dateScheduling?.from && this.dateScheduling.from > timeTracker.currentDate) {
+    isActive(
+        options: {
+            timeSlot?: TimeSchedulingInterface;
+            dateScheduling?: DateSchedulingInterface;
+        } = {},
+    ): boolean {
+        const { timeSlot = this.timeSlot, dateScheduling = this.dateScheduling } = options;
+        if (dateScheduling?.from != undefined && dateScheduling.from > timeTracker.currentDate) {
             return false;
         }
-        if (this.dateScheduling?.to && this.dateScheduling.to < timeTracker.currentDate) {
+        if (dateScheduling?.to != undefined && dateScheduling.to < timeTracker.currentDate) {
             return false;
         }
-        if (!timeTracker.nowIsBetween(this.timeSlot?.from, this.timeSlot?.to)) {
+        if (!timeTracker.nowIsBetween(timeSlot?.from, timeSlot?.to)) {
             return false;
         }
         return true;

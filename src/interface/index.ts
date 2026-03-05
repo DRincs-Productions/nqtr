@@ -1,7 +1,9 @@
-export type { default as ActivityInterface } from "./ActivityInterface";
-export type { default as ActivityProps } from "./ActivityProps";
-export type { default as CommitmentInterface } from "./CommitmentInterface";
-export type { default as CommitmentProps } from "./CommitmentProps";
+export type { default as ActiveScheduling } from "./activity/ActiveScheduling";
+export type { default as ActivityInterface } from "./activity/ActivityInterface";
+export type { default as ActivityProps } from "./activity/ActivityProps";
+export type { default as CommitmentInfo } from "./activity/CommitmentInfo";
+export type { default as CommitmentInterface } from "./activity/CommitmentInterface";
+export type { default as CommitmentProps } from "./activity/CommitmentProps";
 export type { default as DateSchedulingInterface } from "./DateSchedulingInterface";
 export type { default as LocationBaseModelProps } from "./navigation/LocationBaseModelProps";
 export type { default as LocationInterface } from "./navigation/LocationInterface";

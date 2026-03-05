@@ -1,7 +1,7 @@
 import { ActivityInterface as OverrideActivityInterface } from "@drincs/nqtr";
-import { OnRunAsyncFunction } from "../types";
-import DateSchedulingInterface from "./DateSchedulingInterface";
-import TimeSchedulingInterface from "./TimeSchedulingInterface";
+import { OnRunAsyncFunction } from "../../types";
+import DateSchedulingInterface from "../DateSchedulingInterface";
+import TimeSchedulingInterface from "../TimeSchedulingInterface";
 
 export default interface ActivityInterface extends ActivityBaseInternalInterface, OverrideActivityInterface {}
 
@@ -28,8 +28,4 @@ export interface ActivityBaseInternalInterface {
      * It **depends only on the date**, not the time. So if you set { dateScheduling: { from: 0, to: 3 }, timeSlot { from: 10, to: 20 } } the activity/commitment hidden or deleted on date 3 at 0.
      */
     readonly expired: boolean;
-    /**
-     * Whether the activity/commitment is active.
-     */
-    readonly isActive: boolean;
 }
