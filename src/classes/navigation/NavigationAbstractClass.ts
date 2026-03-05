@@ -142,19 +142,19 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     }
 
     get activities(): ActivityInterface[] {
-        let res: ActivityInterface[] = [];
-        let activeActivityScheduling = this.activeActivityScheduling;
-        let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
-        new Set<string>(...this.additionalActivitiesIds, ...this.defaultActivitiesIds).forEach((activityId) => {
-            let activity = RegisteredActivities.get(activityId);
-            if (
-                activity &&
-                activity.isActive(activeActivityScheduling[activityId]) &&
-                !excludedActivitiesScheduling[activityId]
-            ) {
-                res.push(activity);
-            }
-        });
-        return res;
+        return [...new Set<string>([...this.additionalActivitiesIds, ...this.defaultActivitiesIds])].reduce(
+            (acc: ActivityInterface[], activityId) => {
+                const activity = RegisteredActivities.get(activityId);
+                if (
+                    activity &&
+                    activity.isActive(this.activeActivityScheduling[activityId]) &&
+                    !this.excludedActivitiesScheduling[activityId]
+                ) {
+                    acc.push(activity);
+                }
+                return acc;
+            },
+            [],
+        );
     }
 }
