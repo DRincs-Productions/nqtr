@@ -1,4 +1,5 @@
 import { routine } from "@drincs/nqtr/handlers";
+import { fixedCommitments } from "@drincs/nqtr/registries";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { ActivityInterface, CommitmentInterface, LocationInterface } from "../../interface";
 import { RoomBaseInternalInterface } from "../../interface/navigation/RoomInterface";
@@ -13,9 +14,19 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
          * The location where the room is.
          */
         private readonly _location: LocationInterface,
-        activities: ActivityInterface[] = [],
+        activities:
+            | ActivityInterface[]
+            | {
+                  activities: ActivityInterface[];
+                  routine: CommitmentInterface[];
+              },
     ) {
-        super(ROOM_CATEGORY, id, activities);
+        if (Array.isArray(activities)) {
+            super(ROOM_CATEGORY, id, activities);
+        } else {
+            super(ROOM_CATEGORY, id, activities.activities);
+            activities.routine.forEach((commitment) => fixedCommitments.set(commitment.id, [commitment, id]));
+        }
     }
     get routine(): CommitmentInterface[] {
         return routine.roomCommitments[this.id] || [];
