@@ -1,43 +1,42 @@
-import { RegisteredCommitments, fixedCommitments, registeredCommitments } from "@drincs/nqtr/registries";
-import type { CharacterInterface } from "@drincs/pixi-vn";
+import { fixedCommitments, RegisteredCommitments, registeredCommitments } from "@drincs/nqtr/registries";
+import { PixiError, type CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 import type { CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
+interface StoredCommitment {
+    id: string;
+    roomId: string;
+}
+
 const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
 export default class RoutineHandler {
-    get fixedRoutine(): CommitmentInterface[] {
-        return [...fixedCommitments.values()];
-    }
-    /**
-     * Set a commitment as fixed, it will be always available. They cannot be deleted or edit during the game session.
-     */
-    set fixedRoutine(commitments: CommitmentInterface[]) {
-        commitments.forEach((c) => {
-            if (fixedCommitments.has(c.id)) {
-                console.warn(`[NQTR] Commitment id ${c.id} already exists, it will be overwritten`);
-            }
-            fixedCommitments.set(c.id, c);
-        });
-    }
-
     /**
      * Get the temporary commitments by its id.
      * @returns The temporary commitments.
      */
-    get temporaryRoutine(): CommitmentInterface[] {
-        let commitmentsIds = storage.get<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
-        if (!commitmentsIds) {
-            return [];
+    private get temporaryRoutine(): {
+        [commitmentId: string]: StoredCommitment;
+    } {
+        let commitments = storage.get(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY) as
+            | string[]
+            | {
+                  [commitmentId: string]: StoredCommitment;
+              };
+        if (!commitments) {
+            return {};
+        } else if (Array.isArray(commitments)) {
+            throw new PixiError(
+                "obsolete_save",
+                `The save you loaded is not compatible with the current version of NQTR. Please delete the save and start a new game.`,
+            );
         }
-        let commitments = commitmentsIds
-            .map((id) => RegisteredCommitments.get(id))
-            .filter((commitment) => commitment !== undefined);
+
         return commitments;
     }
 
-    get allRoutine(): CommitmentInterface[] {
-        return [...this.fixedRoutine, ...this.temporaryRoutine];
+    get commitmentsIds(): string[] {
+        return [...fixedCommitments.keys(), ...Object.keys(this.temporaryRoutine)];
     }
 
     /**
@@ -102,19 +101,11 @@ export default class RoutineHandler {
         });
     }
 
-    /**
-     * Get the current commitments. The hidden commitments are not included.
-     * In case there is a character who has two or more commitments at the same time, will be selected the commitment with the highest priority.
-     * Higher priority commitments are calculated using the following steps:
-     * 1. The commitments that have Commitments BaseModel.priority set to a higher value will be selected first.
-     * 2. If there are commitments with the same priority, the commitments that are not fixed will be selected first.
-     * 3. If there are commitments with the same priority and the same fixed status, priority will be given to the commitment with a lower index.
-     * @returns The current commitments.
-     */
-    get currentRoutine(): CommitmentInterface[] {
+    private get character_commitments(): { [character: string]: CommitmentInterface } {
         let character_commitments: { [character: string]: CommitmentInterface } = {};
-        [...this.fixedRoutine, ...this.temporaryRoutine].forEach((c) => {
-            if (c.isActive()) {
+        this.commitmentsIds.forEach((id) => {
+            const c = RegisteredCommitments.get(id);
+            if (c && c.isActive()) {
                 if (c.characters.length > 0) {
                     // all the characters don't already have commitments or the commitment has a higher priority
                     let allAvailable = c.characters.every(
@@ -130,7 +121,20 @@ export default class RoutineHandler {
                 }
             }
         });
-        return Object.values(character_commitments);
+        return character_commitments;
+    }
+
+    /**
+     * Get the current commitments. The hidden commitments are not included.
+     * In case there is a character who has two or more commitments at the same time, will be selected the commitment with the highest priority.
+     * Higher priority commitments are calculated using the following steps:
+     * 1. The commitments that have Commitments BaseModel.priority set to a higher value will be selected first.
+     * 2. If there are commitments with the same priority, the commitments that are not fixed will be selected first.
+     * 3. If there are commitments with the same priority and the same fixed status, priority will be given to the commitment with a lower index.
+     * @returns The current commitments.
+     */
+    get currentRoutine(): CommitmentInterface[] {
+        return Object.values(this.character_commitments);
     }
 
     /**
