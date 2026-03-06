@@ -99,7 +99,7 @@ export default class RoutineHandler {
         });
     }
 
-    private get character_commitments(): { [character: string]: CommitmentInterface } {
+    get characterCommitments(): { [character: string]: CommitmentInterface } {
         return this.commitmentsIds.reduce((acc: { [character: string]: CommitmentInterface }, id) => {
             const c = RegisteredCommitments.get(id);
             if (c && c.isActive()) {
@@ -129,7 +129,21 @@ export default class RoutineHandler {
      * @returns The current commitments.
      */
     get currentRoutine(): CommitmentInterface[] {
-        return Object.values(this.character_commitments);
+        return Object.values(this.characterCommitments);
+    }
+
+    get roomCommitments(): { [roomId: string]: CommitmentInterface[] } {
+        const temporaryRoutine = this.temporaryRoutine;
+        return this.currentRoutine.reduce((acc: { [roomId: string]: CommitmentInterface[] }, commitment) => {
+            const roomId = temporaryRoutine[commitment.id]?.roomId || fixedCommitments.get(commitment.id)?.[1];
+            if (roomId) {
+                if (!acc[roomId]) {
+                    acc[roomId] = [];
+                }
+                acc[roomId].push(commitment);
+            }
+            return acc;
+        }, {});
     }
 
     /**

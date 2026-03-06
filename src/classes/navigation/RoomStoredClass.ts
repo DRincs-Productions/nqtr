@@ -18,7 +18,7 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
         super(ROOM_CATEGORY, id, activities);
     }
     get routine(): CommitmentInterface[] {
-        return routine.currentRoutine.filter((c) => c.room.id === this.id);
+        return routine.roomCommitments[this.id] || [];
     }
 
     get location(): LocationInterface {
