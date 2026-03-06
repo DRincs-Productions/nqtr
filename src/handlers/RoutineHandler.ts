@@ -1,4 +1,4 @@
-import { fixedCommitments, RegisteredCommitments, registeredCommitments } from "@drincs/nqtr/registries";
+import { fixedCommitments, RegisteredCommitments } from "@drincs/nqtr/registries";
 import { PixiError, type CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 import type { CommitmentInterface } from "../interface";
@@ -43,22 +43,22 @@ export default class RoutineHandler {
      * This feature adds the commitments during the game session.
      * @param commitment The commitment or commitments to add.
      */
-    add(commitment: CommitmentInterface[] | CommitmentInterface) {
+    add(commitment: CommitmentInterface[] | CommitmentInterface, roomId: string) {
         if (!Array.isArray(commitment)) {
             commitment = [commitment];
         }
-        let commitmentsIds = commitment
-            .map((commitment) => {
-                let commitmentTest = RegisteredCommitments.get(commitment.id);
-                if (!commitmentTest) {
-                    console.warn(`[NQTR] Commitment ${commitment.id} not found, it will be ignored`);
-                    return undefined;
-                }
-                return commitment.id;
-            })
-            .filter((id) => id !== undefined);
-
-        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, commitmentsIds);
+        const temporaryRoutine = this.temporaryRoutine;
+        commitment.forEach((commitment) => {
+            if (RegisteredCommitments.get(commitment.id)) {
+                logger.warn(`The commitment ${commitment.id} is already registered, it will be overwritten`);
+            }
+            RegisteredCommitments.add(commitment);
+            temporaryRoutine[commitment.id] = {
+                id: commitment.id,
+                roomId,
+            };
+        });
+        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, temporaryRoutine as any);
     }
 
     /**
@@ -78,16 +78,14 @@ export default class RoutineHandler {
         if (!Array.isArray(commitment)) {
             commitment = [commitment];
         }
-        let commitmentsIds = commitment.map((commitment) => {
-            return commitment.id;
+        const temporaryRoutine = this.temporaryRoutine;
+        commitment.forEach((commitment) => {
+            if (RegisteredCommitments.get(commitment.id)) {
+                RegisteredCommitments.add(commitment);
+            }
+            delete temporaryRoutine[commitment.id];
         });
-
-        let currentCommitments = storage.get<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
-        if (!currentCommitments) {
-            return;
-        }
-        currentCommitments = currentCommitments.filter((id) => !commitmentsIds.includes(id));
-        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, currentCommitments);
+        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, temporaryRoutine as any);
     }
 
     /**
@@ -96,32 +94,29 @@ export default class RoutineHandler {
     clearExpiredRoutine() {
         RegisteredCommitments.values().forEach((commitment) => {
             if (commitment.expired) {
-                registeredCommitments.delete(commitment.id);
+                this.remove(commitment);
             }
         });
     }
 
     private get character_commitments(): { [character: string]: CommitmentInterface } {
-        let character_commitments: { [character: string]: CommitmentInterface } = {};
-        this.commitmentsIds.forEach((id) => {
+        return this.commitmentsIds.reduce((acc: { [character: string]: CommitmentInterface }, id) => {
             const c = RegisteredCommitments.get(id);
             if (c && c.isActive()) {
                 if (c.characters.length > 0) {
                     // all the characters don't already have commitments or the commitment has a higher priority
-                    let allAvailable = c.characters.every(
-                        (ch) => !character_commitments[ch.id] || c.priority > character_commitments[ch.id].priority,
-                    );
+                    let allAvailable = c.characters.every((ch) => !acc[ch.id] || c.priority > acc[ch.id].priority);
                     if (allAvailable) {
                         c.characters.forEach((ch) => {
-                            character_commitments[ch.id] = c;
+                            acc[ch.id] = c;
                         });
                     }
                 } else {
                     logger.error(`The commitment ${c.id} has no characters assigned`);
                 }
             }
-        });
-        return character_commitments;
+            return acc;
+        }, {});
     }
 
     /**
@@ -143,11 +138,10 @@ export default class RoutineHandler {
      * @returns The commitment or undefined if not found.
      */
     getCommitmentByCharacter(character: CharacterInterface): CommitmentInterface | undefined {
-        this.currentRoutine.forEach((c) => {
+        return this.currentRoutine.find((c) => {
             if (c.characters.map((ch) => ch.id).includes(character.id)) {
                 return c;
             }
         });
-        return undefined;
     }
 }
