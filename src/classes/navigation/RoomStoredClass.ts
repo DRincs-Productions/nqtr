@@ -34,13 +34,14 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
     }
 
     get automaticFunctions(): OnRunAsyncFunction[] {
-        return this.routine
-            .filter((commitment) => commitment.executionType === "automatic" && commitment.run)
-            .map((commitment) => {
-                let res: OnRunAsyncFunction = async (props) => {
+        return this.routine.reduce((acc: OnRunAsyncFunction[], commitment) => {
+            if (commitment.executionType === "automatic" && commitment.run) {
+                const res: OnRunAsyncFunction = async (props) => {
                     await commitment.run(props);
                 };
-                return res;
-            });
+                acc.push(res);
+            }
+            return acc;
+        }, []);
     }
 }
