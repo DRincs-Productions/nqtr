@@ -1,9 +1,11 @@
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { RegisteredActivities } from "@drincs/nqtr/registries";
+import { PixiError } from "@drincs/pixi-vn";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
 import { ActiveScheduling, ActivityInterface } from "../../interface";
 import { ExcludedScheduling } from "../../interface/activity/ActiveScheduling";
 import NavigationAbstractInterface from "../../interface/navigation/NavigationAbstractClass";
+import { logger } from "../../utils/log-utility";
 
 export default abstract class NavigationAbstractClass extends StoredClassModel implements NavigationAbstractInterface {
     constructor(
@@ -62,7 +64,8 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             const { to: toTime = timeTracker.dayEndTime + 1 } = timeSlot || {};
             if (timeSlot) {
                 if (timeSlot.from >= toTime) {
-                    throw new Error(`[NQTR] The from time must be less than the to time.`);
+                    logger.error(`The from time must be less than the to time.`);
+                    throw new PixiError("invalid_usage", `The from time must be less than the to time.`);
                 }
             }
         });
@@ -71,7 +74,8 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             dateScheduling?.to !== undefined &&
             dateScheduling?.from >= dateScheduling?.to
         ) {
-            throw new Error(`[NQTR] The from day/date must be less than the to day/date.`);
+            logger.error(`The from day/date must be less than the to day/date.`);
+            throw new PixiError("invalid_usage", `The from day/date must be less than the to day/date.`);
         }
 
         if (this.defaultActivitiesIds.includes(activity.id)) {
