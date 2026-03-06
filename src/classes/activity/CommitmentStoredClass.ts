@@ -3,7 +3,7 @@ import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 import { CURRENT_ROOM_MEMORY_KEY, TIME_DATA_KEY } from "../../constants";
 import { getLastEvent } from "../../functions/tracking-changes";
-import { CommitmentInterface, RoomInterface } from "../../interface";
+import { CommitmentInterface } from "../../interface";
 import { CommitmentBaseInternalInterface } from "../../interface/activity/CommitmentInterface";
 import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
 import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
@@ -41,7 +41,6 @@ export default class CommitmentStoredClass
     constructor(
         id: string,
         private readonly _characters: CharacterInterface[],
-        private readonly _room: RoomInterface,
         onRun: OnRunEvent<CommitmentInterface> | undefined,
         props: CommitmentStoredClassProps,
     ) {
@@ -55,10 +54,6 @@ export default class CommitmentStoredClass
 
     get characters(): CharacterInterface[] {
         return this._characters;
-    }
-
-    get room(): RoomInterface {
-        return this._room;
     }
 
     get executionType(): ExecutionType {

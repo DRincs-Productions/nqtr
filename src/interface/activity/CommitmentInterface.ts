@@ -1,6 +1,5 @@
 import { CommitmentInterface as OverrideCommitmentInterface } from "@drincs/nqtr";
 import type { CharacterInterface } from "@drincs/pixi-vn";
-import { RoomInterface } from "..";
 import { ExecutionType } from "../../types";
 import { ActivityBaseInternalInterface } from "./ActivityInterface";
 
@@ -11,10 +10,6 @@ export interface CommitmentBaseInternalInterface extends ActivityBaseInternalInt
      * The character or characters that are in the commitment and so in the room.
      */
     readonly characters: CharacterInterface[];
-    /**
-     * The room where the commitment is.
-     */
-    readonly room: RoomInterface;
     /**
      * Execution type. If is "automatic" the onRun() runned automatically when the palayer is in the room. If is "interaction" the player must interact with the character to run the onRun() function.
      * If you set "automatic" remember to remove the commitment when it is no longer needed, because otherwise it repeats itself every time.
