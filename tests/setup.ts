@@ -49,12 +49,38 @@ export const school = new LocationBaseModel("school", mainMap, {
 });
 RegisteredLocations.add([mcHome, gym, school]);
 
+const aliceSleep = new CommitmentBaseModel("alice_sleep", alice, {
+    priority: 1,
+    timeSlot: {
+        from: 20,
+        to: 10,
+    },
+    onRun: (_, event) => {},
+});
+const aliceGoSchool = new CommitmentBaseModel("alice_go_school", alice, {
+    timeSlot: {
+        from: 8,
+        to: 14,
+    },
+    priority: 2,
+});
+const aliceSmokes = new CommitmentBaseModel("alice_smokes", alice, {
+    timeSlot: {
+        from: 10,
+        to: 20,
+    },
+    onRun: (_, event) => {},
+});
+export const fixedRoutine = [aliceSleep, aliceGoSchool, aliceSmokes];
+RegisteredCommitments.add(fixedRoutine);
+
 export const mcRoom = new RoomBaseModel("mc_room", mcHome, {
     name: "MC room",
     activities: [bed],
 });
 export const aliceRoom = new RoomBaseModel("alice_room", mcHome, {
     name: "Alice room",
+    routine: [aliceSleep],
 });
 export const annRoom = new RoomBaseModel("ann_room", mcHome, {
     name: "Ann room",
@@ -67,38 +93,15 @@ export const lounge = new RoomBaseModel("lounge", mcHome, {
 });
 export const terrace = new RoomBaseModel("terrace", mcHome, {
     name: "Terrace",
+    routine: [aliceSmokes],
 });
 export const gymRoom = new RoomBaseModel("gym_room", gym, {
     name: "Gym",
 });
 export const classRoom = new RoomBaseModel("class_room", school, {
     name: "School",
+    routine: [aliceGoSchool],
 });
 RegisteredRooms.add([mcRoom, aliceRoom, annRoom, bathroom, lounge, terrace, gymRoom, classRoom]);
-
-const aliceSleep = new CommitmentBaseModel("alice_sleep", alice, aliceRoom, {
-    priority: 1,
-    timeSlot: {
-        from: 20,
-        to: 10,
-    },
-    onRun: (_, event) => {},
-});
-const aliceGoSchool = new CommitmentBaseModel("alice_go_school", alice, classRoom, {
-    timeSlot: {
-        from: 8,
-        to: 14,
-    },
-    priority: 2,
-});
-const aliceSmokes = new CommitmentBaseModel("alice_smokes", alice, terrace, {
-    timeSlot: {
-        from: 10,
-        to: 20,
-    },
-    onRun: (_, event) => {},
-});
-export const fixedRoutine = [aliceSleep, aliceGoSchool, aliceSmokes];
-RegisteredCommitments.add(fixedRoutine);
 
 Game.init();
