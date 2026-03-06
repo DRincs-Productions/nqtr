@@ -26,11 +26,10 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
     }
 
     get characters(): CharacterInterface[] {
-        let characters: CharacterInterface[] = [];
-        this.routine.forEach((commitment) => {
-            characters.push(...commitment.characters);
-        });
-        return characters;
+        return this.routine.reduce((acc: CharacterInterface[], commitment) => {
+            acc.push(...commitment.characters);
+            return acc;
+        }, []);
     }
 
     get automaticFunctions(): OnRunAsyncFunction[] {
