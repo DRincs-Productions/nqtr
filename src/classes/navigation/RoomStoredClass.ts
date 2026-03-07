@@ -21,7 +21,7 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
             | {
                   activities: ActivityInterface[];
                   routine: CommitmentInterface[];
-              },
+              } = [],
     ) {
         if (Array.isArray(activities)) {
             super(ROOM_CATEGORY, id, activities);
@@ -56,12 +56,10 @@ export default class RoomStoredClass extends NavigationAbstractClass implements 
             throw new PixiError("invalid_usage", `The from day/date must be less than the to day/date.`);
         }
 
-        if (timeSlot || dateScheduling) {
-            routine.add(commitment, this.id, {
-                timeSlot: timeSlot,
-                dateScheduling: dateScheduling,
-            });
-        }
+        routine.add(commitment, this.id, {
+            timeSlot: timeSlot,
+            dateScheduling: dateScheduling,
+        });
     }
     removeCommitment(commitment: CommitmentInterface | string) {
         routine.remove(commitment, this.id);
