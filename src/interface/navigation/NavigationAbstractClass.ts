@@ -1,7 +1,5 @@
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { ActivityInterface } from "../../interface";
-import DateSchedulingInterface from "../DateSchedulingInterface";
-import TimeSchedulingInterface from "../TimeSchedulingInterface";
+import { ActiveScheduling, ActivityInterface } from "../../interface";
 
 export default interface NavigationAbstractInterface extends StoredClassModel {
     /**
@@ -10,25 +8,13 @@ export default interface NavigationAbstractInterface extends StoredClassModel {
      * @param options
      * @returns
      */
-    addActivity(
-        activity: ActivityInterface,
-        options?: {
-            /**
-             * Time slot in which activity will be active.
-             */
-            timeSlot?: TimeSchedulingInterface;
-            /**
-             * Used to schedule what date it will be added and removed.
-             */
-            dateScheduling?: DateSchedulingInterface;
-        }
-    ): void;
+    addActivity(activity: ActivityInterface, options?: ActiveScheduling): void;
     /**
      * Disconnects the activity from the class.
      * @param activity The activity to disconnect from the class.
      * @param options
      */
-    removeActivity(activity: ActivityInterface | string, options?: Pick<DateSchedulingInterface, "to">): void;
+    removeActivity(activity: ActivityInterface | string): void;
     /**
      * Removes the useless activities.
      */

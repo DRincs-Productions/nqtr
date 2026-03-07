@@ -1,10 +1,11 @@
 import { fixedCommitments, RegisteredCommitments } from "@drincs/nqtr/registries";
-import { PixiError, type CharacterInterface } from "@drincs/pixi-vn";
+import { type CharacterInterface } from "@drincs/pixi-vn";
+import { PixiError } from "@drincs/pixi-vn/core";
 import { storage } from "@drincs/pixi-vn/storage";
-import type { CommitmentInterface } from "../interface";
+import type { ActiveScheduling, CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
 
-interface StoredCommitment {
+interface StoredCommitment extends ActiveScheduling {
     id: string;
     roomId: string;
 }
@@ -42,8 +43,9 @@ export default class RoutineHandler {
     /**
      * This feature adds the commitments during the game session.
      * @param commitment The commitment or commitments to add.
+     * @param roomId The id of the room where the commitment is.
      */
-    add(commitment: CommitmentInterface[] | CommitmentInterface, roomId: string) {
+    add(commitment: CommitmentInterface[] | CommitmentInterface, roomId: string, options: ActiveScheduling = {}) {
         if (!Array.isArray(commitment)) {
             commitment = [commitment];
         }
@@ -56,6 +58,7 @@ export default class RoutineHandler {
             temporaryRoutine[commitment.id] = {
                 id: commitment.id,
                 roomId,
+                ...options,
             };
         });
         storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, temporaryRoutine as any);
@@ -72,19 +75,23 @@ export default class RoutineHandler {
 
     /**
      * Remove the commitments added during the game session.
-     * @param commitment The commitment or commitments to remove.
+     * @param commitment The commitment or commitment id to remove.
+     * @param roomId The id of the room where the commitment is.
      */
-    remove(commitment: CommitmentInterface[] | CommitmentInterface) {
-        if (!Array.isArray(commitment)) {
-            commitment = [commitment];
+    remove(commitment: CommitmentInterface | string, roomId?: string) {
+        if (typeof commitment !== "string") {
+            commitment = commitment.id;
         }
         const temporaryRoutine = this.temporaryRoutine;
-        commitment.forEach((commitment) => {
-            if (RegisteredCommitments.get(commitment.id)) {
-                RegisteredCommitments.add(commitment);
+        if (temporaryRoutine[commitment]) {
+            if (!roomId || temporaryRoutine[commitment].roomId === roomId) {
+                delete temporaryRoutine[commitment];
             }
-            delete temporaryRoutine[commitment.id];
-        });
+        } else {
+            logger.warn(
+                `The commitment ${commitment} was not found in the temporary routine, so it will be ignored. If you want to remove a fixed commitment, you can add it to the temporary routine with a same character.`,
+            );
+        }
         storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, temporaryRoutine as any);
     }
 
@@ -99,20 +106,25 @@ export default class RoutineHandler {
         });
     }
 
-    get characterCommitments(): { [character: string]: CommitmentInterface } {
-        return this.commitmentsIds.reduce((acc: { [character: string]: CommitmentInterface }, id) => {
-            const c = RegisteredCommitments.get(id);
-            if (c && c.isActive()) {
-                if (c.characters.length > 0) {
+    get characterCommitments(): { [character: string]: [CommitmentInterface, string] } {
+        const temporaryRoutine = this.temporaryRoutine;
+        return this.commitmentsIds.reduce((acc: { [character: string]: [CommitmentInterface, string] }, id) => {
+            const commitment = RegisteredCommitments.get(id);
+            const temp = temporaryRoutine[id];
+            const roomId = temp?.roomId || fixedCommitments.get(id)?.[1];
+            if (roomId && commitment && commitment.isActive(temp)) {
+                if (commitment.characters.length > 0) {
                     // all the characters don't already have commitments or the commitment has a higher priority
-                    let allAvailable = c.characters.every((ch) => !acc[ch.id] || c.priority > acc[ch.id].priority);
+                    let allAvailable = commitment.characters.every(
+                        (ch) => !acc[ch.id] || commitment.priority > acc[ch.id][0].priority,
+                    );
                     if (allAvailable) {
-                        c.characters.forEach((ch) => {
-                            acc[ch.id] = c;
+                        commitment.characters.forEach((ch) => {
+                            acc[ch.id] = [commitment, roomId];
                         });
                     }
                 } else {
-                    logger.error(`The commitment ${c.id} has no characters assigned`);
+                    logger.error(`The commitment ${commitment.id} has no characters assigned`);
                 }
             }
             return acc;
@@ -129,21 +141,21 @@ export default class RoutineHandler {
      * @returns The current commitments.
      */
     get currentRoutine(): CommitmentInterface[] {
-        return Object.values(this.characterCommitments);
+        return Object.values(this.characterCommitments).map(([commitment]) => commitment);
     }
 
     get roomCommitments(): { [roomId: string]: CommitmentInterface[] } {
-        const temporaryRoutine = this.temporaryRoutine;
-        return this.currentRoutine.reduce((acc: { [roomId: string]: CommitmentInterface[] }, commitment) => {
-            const roomId = temporaryRoutine[commitment.id]?.roomId || fixedCommitments.get(commitment.id)?.[1];
-            if (roomId) {
+        return Object.values(this.characterCommitments).reduce(
+            (acc: { [roomId: string]: CommitmentInterface[] }, commitment) => {
+                const roomId = commitment[1];
                 if (!acc[roomId]) {
                     acc[roomId] = [];
                 }
-                acc[roomId].push(commitment);
-            }
-            return acc;
-        }, {});
+                acc[roomId].push(commitment[0]);
+                return acc;
+            },
+            {},
+        );
     }
 
     /**
