@@ -78,22 +78,19 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             throw new PixiError("invalid_usage", `The from day/date must be less than the to day/date.`);
         }
 
-        if (this.defaultActivitiesIds.includes(activity.id)) {
-            console.warn(`[NQTR] Activity with id ${activity.id} already exists, so it will be ignored.`);
-            return;
-        }
         let additionalActivitiesIds = this.additionalActivitiesIds;
-        if (additionalActivitiesIds.includes(activity.id)) {
-            console.warn(`[NQTR] Activity with id ${activity.id} already exists, so it will be ignored.`);
+        if (this.defaultActivitiesIds.includes(activity.id) || additionalActivitiesIds.includes(activity.id)) {
+            logger.info(
+                `Activity with id ${activity.id} already exists in the ${this.id}, so it will be updated with the new scheduling options if they are provided.`,
+            );
         } else {
             additionalActivitiesIds.push(activity.id);
-            this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
         }
 
         if (this.excludedActivitiesIds.includes(activity.id)) {
             this.removeActivityScheduling(activity.id);
-            console.log(
-                `[NQTR] Activity with id ${activity.id} was excluded, so it will be associated with this class again.`,
+            logger.log(
+                `Activity with id ${activity.id} was excluded from the ${this.id}, but now it will be added again with the new scheduling options. So it will be removed from the excluded activities list.`,
             );
         }
 
@@ -111,13 +108,12 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         if (additionalActivitiesIds.includes(activityId)) {
             additionalActivitiesIds = additionalActivitiesIds.filter((id) => id !== activityId);
             this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
-            this.removeActivityScheduling(activityId);
         } else if (this.defaultActivitiesIds.includes(activityId)) {
             let excludedActivitiesIds = this.excludedActivitiesIds;
             excludedActivitiesIds.push(activityId);
             this.setStorageProperty(`excludedActivitiesIds`, excludedActivitiesIds);
         } else {
-            console.warn(`[NQTR] Activity with id ${activityId} not found, so it will be ignored.`);
+            logger.warn(`Activity with id ${activityId} not found, so it will be ignored.`);
         }
     }
     clearExpiredActivities() {
