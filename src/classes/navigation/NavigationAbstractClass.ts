@@ -1,6 +1,6 @@
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { RegisteredActivities } from "@drincs/nqtr/registries";
-import { PixiError } from "@drincs/pixi-vn";
+import { PixiError } from "@drincs/pixi-vn/core";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
 import { ActiveScheduling, ActivityInterface } from "../../interface";
 import { ExcludedScheduling } from "../../interface/activity/ActiveScheduling";

@@ -23,7 +23,10 @@ export default class RoomBaseModel extends RoomStoredClass {
      * @param props The properties of the room.
      */
     constructor(id: string, location: LocationInterface, props: RoomBaseModelProps = {}) {
-        super(id, location, props.activities || []);
+        super(id, location, {
+            activities: props.activities || [],
+            routine: props.routine || [],
+        });
         this.defaultName = props.name || "";
         this._image = props.image;
         this.defaultDisabled = props.disabled || false;

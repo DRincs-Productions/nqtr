@@ -1,65 +1,67 @@
-import { RegisteredCommitments, fixedCommitments, registeredCommitments } from "@drincs/nqtr/registries";
-import type { CharacterInterface } from "@drincs/pixi-vn";
+import { fixedCommitments, RegisteredCommitments } from "@drincs/nqtr/registries";
+import { type CharacterInterface } from "@drincs/pixi-vn";
+import { PixiError } from "@drincs/pixi-vn/core";
 import { storage } from "@drincs/pixi-vn/storage";
-import type { CommitmentInterface } from "../interface";
+import type { ActiveScheduling, CommitmentInterface } from "../interface";
 import { logger } from "../utils/log-utility";
+
+interface StoredCommitment extends ActiveScheduling {
+    id: string;
+    roomId: string;
+}
 
 const TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY = "___nqtr-temporary_commitment___";
 export default class RoutineHandler {
-    get fixedRoutine(): CommitmentInterface[] {
-        return [...fixedCommitments.values()];
-    }
-    /**
-     * Set a commitment as fixed, it will be always available. They cannot be deleted or edit during the game session.
-     */
-    set fixedRoutine(commitments: CommitmentInterface[]) {
-        commitments.forEach((c) => {
-            if (fixedCommitments.has(c.id)) {
-                console.warn(`[NQTR] Commitment id ${c.id} already exists, it will be overwritten`);
-            }
-            fixedCommitments.set(c.id, c);
-        });
-    }
-
     /**
      * Get the temporary commitments by its id.
      * @returns The temporary commitments.
      */
-    get temporaryRoutine(): CommitmentInterface[] {
-        let commitmentsIds = storage.get<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
-        if (!commitmentsIds) {
-            return [];
+    private get temporaryRoutine(): {
+        [commitmentId: string]: StoredCommitment;
+    } {
+        let commitments = storage.get(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY) as
+            | string[]
+            | {
+                  [commitmentId: string]: StoredCommitment;
+              };
+        if (!commitments) {
+            return {};
+        } else if (Array.isArray(commitments)) {
+            throw new PixiError(
+                "obsolete_save",
+                `The save you loaded is not compatible with the current version of NQTR. Please delete the save and start a new game.`,
+            );
         }
-        let commitments = commitmentsIds
-            .map((id) => RegisteredCommitments.get(id))
-            .filter((commitment) => commitment !== undefined);
+
         return commitments;
     }
 
-    get allRoutine(): CommitmentInterface[] {
-        return [...this.fixedRoutine, ...this.temporaryRoutine];
+    get commitmentsIds(): string[] {
+        return [...fixedCommitments.keys(), ...Object.keys(this.temporaryRoutine)];
     }
 
     /**
      * This feature adds the commitments during the game session.
      * @param commitment The commitment or commitments to add.
+     * @param roomId The id of the room where the commitment is.
      */
-    add(commitment: CommitmentInterface[] | CommitmentInterface) {
+    add(commitment: CommitmentInterface[] | CommitmentInterface, roomId: string, options: ActiveScheduling = {}) {
         if (!Array.isArray(commitment)) {
             commitment = [commitment];
         }
-        let commitmentsIds = commitment
-            .map((commitment) => {
-                let commitmentTest = RegisteredCommitments.get(commitment.id);
-                if (!commitmentTest) {
-                    console.warn(`[NQTR] Commitment ${commitment.id} not found, it will be ignored`);
-                    return undefined;
-                }
-                return commitment.id;
-            })
-            .filter((id) => id !== undefined);
-
-        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, commitmentsIds);
+        const temporaryRoutine = this.temporaryRoutine;
+        commitment.forEach((commitment) => {
+            if (RegisteredCommitments.get(commitment.id)) {
+                logger.warn(`The commitment ${commitment.id} is already registered, it will be overwritten`);
+            }
+            RegisteredCommitments.add(commitment);
+            temporaryRoutine[commitment.id] = {
+                id: commitment.id,
+                roomId,
+                ...options,
+            };
+        });
+        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, temporaryRoutine as any);
     }
 
     /**
@@ -73,22 +75,24 @@ export default class RoutineHandler {
 
     /**
      * Remove the commitments added during the game session.
-     * @param commitment The commitment or commitments to remove.
+     * @param commitment The commitment or commitment id to remove.
+     * @param roomId The id of the room where the commitment is.
      */
-    remove(commitment: CommitmentInterface[] | CommitmentInterface) {
-        if (!Array.isArray(commitment)) {
-            commitment = [commitment];
+    remove(commitment: CommitmentInterface | string, roomId?: string) {
+        if (typeof commitment !== "string") {
+            commitment = commitment.id;
         }
-        let commitmentsIds = commitment.map((commitment) => {
-            return commitment.id;
-        });
-
-        let currentCommitments = storage.get<string[]>(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY);
-        if (!currentCommitments) {
-            return;
+        const temporaryRoutine = this.temporaryRoutine;
+        if (temporaryRoutine[commitment]) {
+            if (!roomId || temporaryRoutine[commitment].roomId === roomId) {
+                delete temporaryRoutine[commitment];
+            }
+        } else {
+            logger.warn(
+                `The commitment ${commitment} was not found in the temporary routine, so it will be ignored. If you want to remove a fixed commitment, you can add it to the temporary routine with a same character.`,
+            );
         }
-        currentCommitments = currentCommitments.filter((id) => !commitmentsIds.includes(id));
-        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, currentCommitments);
+        storage.set(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY, temporaryRoutine as any);
     }
 
     /**
@@ -97,9 +101,34 @@ export default class RoutineHandler {
     clearExpiredRoutine() {
         RegisteredCommitments.values().forEach((commitment) => {
             if (commitment.expired) {
-                registeredCommitments.delete(commitment.id);
+                this.remove(commitment);
             }
         });
+    }
+
+    get characterCommitments(): { [character: string]: [CommitmentInterface, string] } {
+        const temporaryRoutine = this.temporaryRoutine;
+        return this.commitmentsIds.reduce((acc: { [character: string]: [CommitmentInterface, string] }, id) => {
+            const commitment = RegisteredCommitments.get(id);
+            const temp = temporaryRoutine[id];
+            const roomId = temp?.roomId || fixedCommitments.get(id)?.[1];
+            if (roomId && commitment && commitment.isActive(temp)) {
+                if (commitment.characters.length > 0) {
+                    // all the characters don't already have commitments or the commitment has a higher priority
+                    let allAvailable = commitment.characters.every(
+                        (ch) => !acc[ch.id] || commitment.priority > acc[ch.id][0].priority,
+                    );
+                    if (allAvailable) {
+                        commitment.characters.forEach((ch) => {
+                            acc[ch.id] = [commitment, roomId];
+                        });
+                    }
+                } else {
+                    logger.error(`The commitment ${commitment.id} has no characters assigned`);
+                }
+            }
+            return acc;
+        }, {});
     }
 
     /**
@@ -112,25 +141,21 @@ export default class RoutineHandler {
      * @returns The current commitments.
      */
     get currentRoutine(): CommitmentInterface[] {
-        let character_commitments: { [character: string]: CommitmentInterface } = {};
-        [...this.fixedRoutine, ...this.temporaryRoutine].forEach((c) => {
-            if (c.isActive()) {
-                if (c.characters.length > 0) {
-                    // all the characters don't already have commitments or the commitment has a higher priority
-                    let allAvailable = c.characters.every(
-                        (ch) => !character_commitments[ch.id] || c.priority > character_commitments[ch.id].priority,
-                    );
-                    if (allAvailable) {
-                        c.characters.forEach((ch) => {
-                            character_commitments[ch.id] = c;
-                        });
-                    }
-                } else {
-                    logger.error(`The commitment ${c.id} has no characters assigned`);
+        return Object.values(this.characterCommitments).map(([commitment]) => commitment);
+    }
+
+    get roomCommitments(): { [roomId: string]: CommitmentInterface[] } {
+        return Object.values(this.characterCommitments).reduce(
+            (acc: { [roomId: string]: CommitmentInterface[] }, commitment) => {
+                const roomId = commitment[1];
+                if (!acc[roomId]) {
+                    acc[roomId] = [];
                 }
-            }
-        });
-        return Object.values(character_commitments);
+                acc[roomId].push(commitment[0]);
+                return acc;
+            },
+            {},
+        );
     }
 
     /**
@@ -139,11 +164,10 @@ export default class RoutineHandler {
      * @returns The commitment or undefined if not found.
      */
     getCommitmentByCharacter(character: CharacterInterface): CommitmentInterface | undefined {
-        this.currentRoutine.forEach((c) => {
+        return this.currentRoutine.find((c) => {
             if (c.characters.map((ch) => ch.id).includes(character.id)) {
                 return c;
             }
         });
-        return undefined;
     }
 }

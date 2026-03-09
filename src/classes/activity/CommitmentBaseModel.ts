@@ -1,14 +1,14 @@
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
-import { CommitmentProps, RoomInterface } from "../../interface";
+import { CommitmentProps } from "../../interface";
 import CommitmentStoredClass from "./CommitmentStoredClass";
 
 /**
  * The base model of a commitment. I suggest you extend this class to create your own commitment model.
- * You must use the saveRoom function to save the commitment in the registered commitments.
+ * You must use the saveCommitment function to save the commitment in the registered commitments.
  * @example
  * ```ts
- * export const mcRoom = new CommitmentBaseModel("test", character, room, {
+ * export const miaPlay = new CommitmentBaseModel("mia_play", mia, {
  *     name: "Test",
  *     image: "https://image.jpg",
  *     executionType: ExecutionTypeEnum.INTERACTION,
@@ -16,23 +16,17 @@ import CommitmentStoredClass from "./CommitmentStoredClass";
  *         // Do something
  *     }
  * })
- * saveCommitment(mcRoom)
+ * saveCommitment(miaPlay)
  * ```
  */
 export default class CommitmentBaseModel extends CommitmentStoredClass {
     /**
      * @param id The id of the commitment, it must be unique.
      * @param character The character or characters that are in the commitment and so in the room.
-     * @param room The room where the commitment is.
      * @param props The properties of the commitment.
      */
-    constructor(
-        id: string,
-        character: CharacterInterface | CharacterInterface[] | undefined,
-        room: RoomInterface,
-        props: CommitmentProps,
-    ) {
-        super(id, character ? (Array.isArray(character) ? character : [character]) : [], room, props.onRun, {
+    constructor(id: string, character: CharacterInterface | CharacterInterface[] | undefined, props: CommitmentProps) {
+        super(id, character ? (Array.isArray(character) ? character : [character]) : [], props.onRun, {
             executionType: props.executionType,
             priority: props.priority,
             timeSlot: props.timeSlot,

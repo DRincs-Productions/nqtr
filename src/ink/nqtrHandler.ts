@@ -154,13 +154,19 @@ export const nqtrHandler: () => HashtagHandler = (
             case "routine":
                 switch (script[0]) {
                     case "add":
-                        if (script.length == 3) {
+                        if (script.length == 5) {
                             const commitments = RegisteredCommitments.get(script[2]);
                             if (!commitments) {
                                 logger.warn(`Commitment ${script[2]} not found`);
                                 return true;
                             }
-                            routine.add(commitments);
+                            const { in: into } = convertListStringToObj(script.slice(3)) as { in: string };
+                            const room = RegisteredRooms.get(into);
+                            if (!room) {
+                                logger.warn(`Room ${into} not found`);
+                            } else {
+                                room.addCommitment(commitments);
+                            }
                             return true;
                         }
                     case "remove":
