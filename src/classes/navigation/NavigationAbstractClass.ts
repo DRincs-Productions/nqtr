@@ -85,6 +85,7 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             );
         } else {
             additionalActivitiesIds.push(activity.id);
+            this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
         }
 
         if (this.excludedActivitiesIds.includes(activity.id)) {
