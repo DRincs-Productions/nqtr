@@ -75,41 +75,38 @@ export const nqtrHandler: () => HashtagHandler = (
             v.storageOperationType === "get"
         ) {
             const model: PixiVNJsonStorageGet = v as PixiVNJsonStorageGet;
-            if ((model.storageType = "storage")) {
-                const keys = model.key.split("_");
-                if (keys.length === 2) {
-                    const [id, type] = keys;
-                    switch (type) {
-                        case "currentStageIndex":
-                            const quest = RegisteredQuests.get(id);
-                            if (!quest) {
-                                logger.warn(`Quest ${id} not found`);
-                                return next(v);
-                            }
-                            return quest.currentStageIndex;
-                        case "started":
-                            const questStarted = RegisteredQuests.get(id);
-                            if (!questStarted) {
-                                logger.warn(`Quest ${id} not found`);
-                                return next(v);
-                            }
-                            return questStarted.started;
-                        case "completed":
-                            const questCompleted = RegisteredQuests.get(id);
-                            if (!questCompleted) {
-                                logger.warn(`Quest ${id} not found`);
-                                return next(v);
-                            }
-                            return questCompleted.completed;
-                        case "failed":
-                            const questFailed = RegisteredQuests.get(id);
-                            if (!questFailed) {
-                                logger.warn(`Quest ${id} not found`);
-                                return next(v);
-                            }
-                            return questFailed.failed;
-                    }
+            if (model.key.endsWith("_currentStageIndex")) {
+                const id = model.key.replace("_currentStageIndex", "");
+                const quest = RegisteredQuests.get(id);
+                if (!quest) {
+                    logger.warn(`Quest ${id} not found`);
+                    return next(v);
                 }
+                return quest.currentStageIndex;
+            } else if (model.key.endsWith("_started")) {
+                const id = model.key.replace("_started", "");
+                const quest = RegisteredQuests.get(id);
+                if (!quest) {
+                    logger.warn(`Quest ${id} not found`);
+                    return next(v);
+                }
+                return quest.started;
+            } else if (model.key.endsWith("_completed")) {
+                const id = model.key.replace("_completed", "");
+                const quest = RegisteredQuests.get(id);
+                if (!quest) {
+                    logger.warn(`Quest ${id} not found`);
+                    return next(v);
+                }
+                return quest.completed;
+            } else if (model.key.endsWith("_failed")) {
+                const id = model.key.replace("_failed", "");
+                const quest = RegisteredQuests.get(id);
+                if (!quest) {
+                    logger.warn(`Quest ${id} not found`);
+                    return next(v);
+                }
+                return quest.failed;
             }
         }
         next(v);
