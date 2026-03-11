@@ -110,7 +110,7 @@ export const nqtrHandler: () => HashtagHandler = (
                 return quest.failed;
             }
         }
-        next(v);
+        return next(v);
     });
     const {
         timeConverter = (time: string) => Number(time.replace(":", ".")),
