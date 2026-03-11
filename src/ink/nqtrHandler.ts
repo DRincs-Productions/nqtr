@@ -72,7 +72,8 @@ export const nqtrHandler: () => HashtagHandler = (
             "key" in v &&
             "storageOperationType" in v &&
             "storageType" in v &&
-            v.storageOperationType === "get"
+            v.storageOperationType === "get" &&
+            (v.storageType === "storage" || v.storageType === "tempstorage" || v.storageType === "flagStorage")
         ) {
             const model: PixiVNJsonStorageGet = v as PixiVNJsonStorageGet;
             if (model.key.endsWith("_currentStageIndex")) {
