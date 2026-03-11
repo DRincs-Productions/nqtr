@@ -76,7 +76,7 @@ export const nqtrHandler: () => HashtagHandler = (
         ) {
             const model: PixiVNJsonStorageGet = v as PixiVNJsonStorageGet;
             if ((model.storageType = "storage")) {
-                const keys = model.key.split(".");
+                const keys = model.key.split("_");
                 if (keys.length === 2) {
                     const [id, type] = keys;
                     switch (type) {
@@ -140,7 +140,7 @@ export const nqtrHandler: () => HashtagHandler = (
                 switch (script[0]) {
                     case "set":
                         if (script.length > 2) {
-                            const time = timeConverter("01:00".replace(":", "."));
+                            const time = timeConverter(script[2]);
                             if (isNaN(time)) {
                                 logger.warn(`Invalid time format: ${script[2]}`);
                             } else {
