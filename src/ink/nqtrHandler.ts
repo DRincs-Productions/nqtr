@@ -5,7 +5,8 @@ import {
     RegisteredQuests,
     RegisteredRooms,
 } from "@drincs/nqtr/registries";
-import { HashtagHandler } from "@drincs/pixi-vn-ink";
+import { HashtagHandler, VariableGetter } from "@drincs/pixi-vn-ink";
+import { PixiVNJsonStorageGet } from "@drincs/pixi-vn-json";
 import { logger } from "../utils/log-utility";
 
 interface WaitOptions {
@@ -63,6 +64,56 @@ export const nqtrHandler: () => HashtagHandler = (
         wait?: (delta?: WaitOptions | number) => void;
     } = {},
 ) => {
+    VariableGetter.add((v: any, next: any) => {
+        if (
+            v &&
+            typeof v === "object" &&
+            "type" in v &&
+            "key" in v &&
+            "storageOperationType" in v &&
+            "storageType" in v &&
+            v.storageOperationType === "get"
+        ) {
+            const model: PixiVNJsonStorageGet = v as PixiVNJsonStorageGet;
+            if ((model.storageType = "storage")) {
+                const keys = model.key.split(".");
+                if (keys.length === 2) {
+                    const [id, type] = keys;
+                    switch (type) {
+                        case "currentStageIndex":
+                            const quest = RegisteredQuests.get(id);
+                            if (!quest) {
+                                logger.warn(`Quest ${id} not found`);
+                                return next(v);
+                            }
+                            return quest.currentStageIndex;
+                        case "started":
+                            const questStarted = RegisteredQuests.get(id);
+                            if (!questStarted) {
+                                logger.warn(`Quest ${id} not found`);
+                                return next(v);
+                            }
+                            return questStarted.started;
+                        case "completed":
+                            const questCompleted = RegisteredQuests.get(id);
+                            if (!questCompleted) {
+                                logger.warn(`Quest ${id} not found`);
+                                return next(v);
+                            }
+                            return questCompleted.completed;
+                        case "failed":
+                            const questFailed = RegisteredQuests.get(id);
+                            if (!questFailed) {
+                                logger.warn(`Quest ${id} not found`);
+                                return next(v);
+                            }
+                            return questFailed.failed;
+                    }
+                }
+            }
+        }
+        next(v);
+    });
     const {
         timeConverter = (time: string) => Number(time.replace(":", ".")),
         dateConverter = (date: string) => Number(date),
