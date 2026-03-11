@@ -72,7 +72,7 @@
   },
   "peerDependencies": {
     "@drincs/pixi-vn": ">=1.5.17",
-    "@drincs/pixi-vn-ink": "^0.12.1"
+    "@drincs/pixi-vn-ink": "^0.12.2"
   },
   "peerDependenciesMeta": {
     "@drincs/pixi-vn-ink": {
