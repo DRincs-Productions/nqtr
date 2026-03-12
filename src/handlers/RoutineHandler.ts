@@ -27,10 +27,13 @@ export default class RoutineHandler {
         if (!commitments) {
             return {};
         } else if (Array.isArray(commitments)) {
-            throw new PixiError(
-                "obsolete_save",
-                `The save you loaded is not compatible with the current version of NQTR. Please delete the save and start a new game.`,
-            );
+            if (commitments.length > 0) {
+                throw new PixiError(
+                    "obsolete_save",
+                    `The save you loaded is not compatible with the current version of NQTR. Please delete the save and start a new game.`,
+                );
+            }
+            return {};
         }
 
         return commitments;
