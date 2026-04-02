@@ -19,32 +19,36 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         return this.defaultActivities.map((activity) => activity.id);
     }
     private get activeActivityScheduling(): { [activityId: string]: ActiveScheduling } {
-        return this.getStorageProperty<{ [activityId: string]: ActiveScheduling }>(`activeActivityScheduling`) || {};
+        // TODO: improve the type
+        return this.getStorageProperty<any>(`activeActivityScheduling`) || {};
     }
     private get excludedActivitiesScheduling(): { [activityId: string]: ExcludedScheduling } {
-        return (
-            this.getStorageProperty<{ [activityId: string]: ExcludedScheduling }>(`excludedActivitiesScheduling`) || {}
-        );
+        // TODO: improve the type
+        return this.getStorageProperty<any>(`excludedActivitiesScheduling`) || {};
     }
     private removeActivityScheduling(activityId: string) {
         let activeActivityScheduling = this.activeActivityScheduling;
         delete activeActivityScheduling[activityId];
-        this.setStorageProperty(`activeActivityScheduling`, activeActivityScheduling);
+        // TODO: improve the type
+        this.setStorageProperty(`activeActivityScheduling`, activeActivityScheduling as any);
         let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
         delete excludedActivitiesScheduling[activityId];
-        this.setStorageProperty(`excludedActivitiesScheduling`, excludedActivitiesScheduling);
+        // TODO: improve the type
+        this.setStorageProperty(`excludedActivitiesScheduling`, excludedActivitiesScheduling as any);
     }
     private editActivityScheduling(activityId: string, scheduling: ActiveScheduling) {
         this.removeActivityScheduling(activityId);
         let activeActivityScheduling = this.activeActivityScheduling;
         activeActivityScheduling[activityId] = scheduling;
-        this.setStorageProperty(`activeActivityScheduling`, activeActivityScheduling);
+        // TODO: improve the type
+        this.setStorageProperty(`activeActivityScheduling`, activeActivityScheduling as any);
     }
     private editExcludedActivityScheduling(activityId: string, scheduling: ExcludedScheduling) {
         this.removeActivityScheduling(activityId);
         let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
         excludedActivitiesScheduling[activityId] = scheduling;
-        this.setStorageProperty(`excludedActivitiesScheduling`, excludedActivitiesScheduling);
+        // TODO: improve the type
+        this.setStorageProperty(`excludedActivitiesScheduling`, excludedActivitiesScheduling as any);
     }
     private get additionalActivitiesIds(): string[] {
         return this.getStorageProperty<string[]>(`additionalActivitiesIds`) || [];
