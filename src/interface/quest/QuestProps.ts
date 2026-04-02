@@ -31,7 +31,11 @@ export default interface QuestProps {
      */
     onStart?: OnRunEvent<QuestInterface>;
     /**
-     * The function that will be executed when a stage end in the quest.
+     * @deprecated Use {@link onContinue} instead. The function that will be executed when a stage end in the quest.
      */
     onNextStage?: OnRunEvent<QuestInterface>;
+    /**
+     * The function that will be executed when a stage end in the quest.
+     */
+    onContinue?: OnRunEvent<QuestInterface>;
 }

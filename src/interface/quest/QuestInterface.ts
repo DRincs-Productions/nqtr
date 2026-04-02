@@ -50,9 +50,13 @@ export interface QuestBaseInternalInterface {
     readonly onStart?: OnRunEvent<QuestInterfaceInt>;
 
     /**
-     * The function that will be called when the quest goes to the next stage.
+     * @deprecated Use {@link onContinue} instead. The function that will be called when the quest goes to the next stage.
      */
     readonly onNextStage?: OnRunEvent<QuestInterfaceInt>;
+    /**
+     * The function that will be called when the quest goes to the next stage.
+     */
+    readonly onContinue?: OnRunEvent<QuestInterfaceInt>;
 
     /**
      * Start the quest.

@@ -12,9 +12,13 @@ export interface QuestStoredClassProps {
      */
     onStart?: OnRunEvent<QuestInterface>;
     /**
-     * The function that will be executed when a stage end in the quest.
+     * @deprecated Use {@link onContinue} instead.
      */
     onNextStage?: OnRunEvent<QuestInterface>;
+    /**
+     * The function that will be executed when a stage end in the quest.
+     */
+    onContinue?: OnRunEvent<QuestInterface>;
 }
 
 const QUEST_CATEGORY = "__nqtr-quest__";
@@ -26,7 +30,7 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
     ) {
         super(QUEST_CATEGORY, id);
         this._onStart = props.onStart;
-        this._onNextStage = props.onNextStage;
+        this._onContinue = props.onContinue || props.onNextStage;
     }
 
     get stages(): StageInterface[] {
@@ -81,9 +85,12 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
         return this._onStart;
     }
 
-    private _onNextStage?: OnRunEvent<QuestInterface>;
+    private _onContinue?: OnRunEvent<QuestInterface>;
+    get onContinue(): undefined | OnRunEvent<QuestInterface> {
+        return this._onContinue;
+    }
     get onNextStage(): undefined | OnRunEvent<QuestInterface> {
-        return this._onNextStage;
+        return this._onContinue;
     }
 
     async start(props: OnRunProps): Promise<void> {
@@ -160,7 +167,7 @@ export default class QuestStoredClass extends StoredClassModel implements QuestB
             return false;
         }
         this.currentStageIndex = currentStageIndex + 1;
-        this.onNextStage && (await this.onNextStage(this as any as QuestInterface, props));
+        this.onContinue && (await this.onContinue(this as any as QuestInterface, props));
         if (prevStage && prevStage.onEnd) {
             await prevStage.onEnd(prevStage, props);
         }
