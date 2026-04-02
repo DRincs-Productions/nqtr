@@ -3,7 +3,7 @@ import QuestStoredClass from "./QuestStoredClass";
 
 export default class QuestBaseModel extends QuestStoredClass {
     constructor(id: string, stages: StageInterface[], props: QuestProps) {
-        super(id, stages, { onStart: props.onStart, onNextStage: props.onContinue || props.onNextStage });
+        super(id, stages, { onStart: props.onStart, onContinue: props.onContinue || props.onNextStage });
         this._name = props.name || "";
         this._description = props.description || "";
         this._icon = props.icon;
