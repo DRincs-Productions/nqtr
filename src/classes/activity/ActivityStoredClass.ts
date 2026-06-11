@@ -1,11 +1,11 @@
+import type { ActiveScheduling, ActivityInterface } from "@/interface";
+import type { ActivityBaseInternalInterface } from "@/interface/activity/ActivityInterface";
+import type DateSchedulingInterface from "@/interface/DateSchedulingInterface";
+import type TimeSchedulingInterface from "@/interface/TimeSchedulingInterface";
+import type { OnRunAsyncFunction, OnRunEvent } from "@/types";
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { narration } from "@drincs/pixi-vn/narration";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { ActiveScheduling, ActivityInterface } from "../../interface";
-import { ActivityBaseInternalInterface } from "../../interface/activity/ActivityInterface";
-import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
-import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
-import { OnRunAsyncFunction, OnRunEvent } from "../../types";
 
 export interface ActivityStoredClassProps extends ActiveScheduling {}
 
@@ -36,7 +36,7 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
     }
 
     protected addTempHistoryItem() {
-        narration.addCurrentStepToHistory();
+        return narration.addCurrentStepToHistory();
     }
     get run(): OnRunAsyncFunction {
         return async (props) => {
@@ -63,7 +63,7 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         if (timeSlot && !Array.isArray(timeSlot)) {
             timeSlot = [timeSlot];
         }
-        for (let slot of timeSlot || []) {
+        for (const slot of timeSlot || []) {
             if (!timeTracker.nowIsBetween(slot?.from, slot?.to)) {
                 return false;
             }

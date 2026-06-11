@@ -1,7 +1,7 @@
+import RoomStoredClass from "@/classes/navigation/RoomStoredClass";
+import type { LocationInterface, RoomBaseModelProps } from "@/interface";
 import { RegisteredRooms } from "@drincs/nqtr/registries";
 import { storage } from "@drincs/pixi-vn/storage";
-import { LocationInterface, RoomBaseModelProps } from "../../interface";
-import RoomStoredClass from "./RoomStoredClass";
 
 /**
  * The base model of a room. I suggest you extend this class to create your own room model.
@@ -59,7 +59,7 @@ export default class RoomBaseModel extends RoomStoredClass {
      * Whether is disabled. If it is a string, it is a Pixi'VN flag name.
      */
     get disabled(): boolean {
-        let value = this.getStorageProperty<boolean>("disabled") || this.defaultDisabled;
+        const value = this.getStorageProperty<boolean>("disabled") || this.defaultDisabled;
         if (typeof value === "string") {
             return storage.getFlag(value);
         }
@@ -74,7 +74,7 @@ export default class RoomBaseModel extends RoomStoredClass {
      * Whether is hidden. If it is a string, it is a Pixi'VN flag name.
      */
     get hidden(): boolean {
-        let value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
+        const value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
         if (typeof value === "string") {
             return storage.getFlag(value);
         }

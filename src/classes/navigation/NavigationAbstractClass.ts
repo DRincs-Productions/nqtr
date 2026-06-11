@@ -1,11 +1,11 @@
+import type { ActiveScheduling, ActivityInterface } from "@/interface";
+import type { ExcludedScheduling } from "@/interface/activity/ActiveScheduling";
+import type NavigationAbstractInterface from "@/interface/navigation/NavigationAbstractClass";
+import { logger } from "@/utils/log-utility";
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { RegisteredActivities } from "@drincs/nqtr/registries";
 import { PixiError } from "@drincs/pixi-vn/core";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { ActiveScheduling, ActivityInterface } from "../../interface";
-import { ExcludedScheduling } from "../../interface/activity/ActiveScheduling";
-import NavigationAbstractInterface from "../../interface/navigation/NavigationAbstractClass";
-import { logger } from "../../utils/log-utility";
 
 export default abstract class NavigationAbstractClass
     extends StoredClassModel
@@ -30,11 +30,11 @@ export default abstract class NavigationAbstractClass
         return this.getStorageProperty<any>(`excludedActivitiesScheduling`) || {};
     }
     private removeActivityScheduling(activityId: string) {
-        let activeActivityScheduling = this.activeActivityScheduling;
+        const activeActivityScheduling = this.activeActivityScheduling;
         delete activeActivityScheduling[activityId];
         // TODO: improve the type
         this.setStorageProperty(`activeActivityScheduling`, activeActivityScheduling as any);
-        let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
+        const excludedActivitiesScheduling = this.excludedActivitiesScheduling;
         delete excludedActivitiesScheduling[activityId];
         // TODO: improve the type
         this.setStorageProperty(
@@ -44,14 +44,14 @@ export default abstract class NavigationAbstractClass
     }
     private editActivityScheduling(activityId: string, scheduling: ActiveScheduling) {
         this.removeActivityScheduling(activityId);
-        let activeActivityScheduling = this.activeActivityScheduling;
+        const activeActivityScheduling = this.activeActivityScheduling;
         activeActivityScheduling[activityId] = scheduling;
         // TODO: improve the type
         this.setStorageProperty(`activeActivityScheduling`, activeActivityScheduling as any);
     }
     private editExcludedActivityScheduling(activityId: string, scheduling: ExcludedScheduling) {
         this.removeActivityScheduling(activityId);
-        let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
+        const excludedActivitiesScheduling = this.excludedActivitiesScheduling;
         excludedActivitiesScheduling[activityId] = scheduling;
         // TODO: improve the type
         this.setStorageProperty(
@@ -97,7 +97,7 @@ export default abstract class NavigationAbstractClass
             );
         }
 
-        let additionalActivitiesIds = this.additionalActivitiesIds;
+        const additionalActivitiesIds = this.additionalActivitiesIds;
         if (
             this.defaultActivitiesIds.includes(activity.id) ||
             additionalActivitiesIds.includes(activity.id)
@@ -132,7 +132,7 @@ export default abstract class NavigationAbstractClass
             additionalActivitiesIds = additionalActivitiesIds.filter((id) => id !== activityId);
             this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
         } else if (this.defaultActivitiesIds.includes(activityId)) {
-            let excludedActivitiesIds = this.excludedActivitiesIds;
+            const excludedActivitiesIds = this.excludedActivitiesIds;
             excludedActivitiesIds.push(activityId);
             this.setStorageProperty(`excludedActivitiesIds`, excludedActivitiesIds);
         } else {
@@ -140,14 +140,14 @@ export default abstract class NavigationAbstractClass
         }
     }
     clearExpiredActivities() {
-        let activeActivityScheduling = this.activeActivityScheduling;
-        let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
+        const activeActivityScheduling = this.activeActivityScheduling;
+        const excludedActivitiesScheduling = this.excludedActivitiesScheduling;
         let additionalActivitiesIds = this.additionalActivitiesIds;
         let excludedActivitiesIds = this.excludedActivitiesIds;
 
         additionalActivitiesIds.forEach((activityId) => {
             if (activityId in activeActivityScheduling) {
-                let { to: toDate } = activeActivityScheduling[activityId].dateScheduling || {};
+                const { to: toDate } = activeActivityScheduling[activityId].dateScheduling || {};
                 if (toDate && toDate < timeTracker.currentDate) {
                     this.removeActivityScheduling(activityId);
                     additionalActivitiesIds = additionalActivitiesIds.filter(

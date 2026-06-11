@@ -1,6 +1,6 @@
-import { MapBaseModelProps } from "../../interface";
-import { MapBaseInternalInterface } from "../../interface/navigation/MapInterface";
-import MapStoredClass from "./MapStoredClass";
+import MapStoredClass from "@/classes/navigation/MapStoredClass";
+import type { MapBaseModelProps } from "@/interface";
+import type { MapBaseInternalInterface } from "@/interface/navigation/MapInterface";
 
 /**
  * The base model of a map. I suggest you extend this class to create your own map model.

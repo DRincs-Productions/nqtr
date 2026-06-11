@@ -1,7 +1,7 @@
+import NavigationAbstractClass from "@/classes/navigation/NavigationAbstractClass";
+import type { ActivityInterface, LocationInterface } from "@/interface";
+import type { MapBaseInternalInterface } from "@/interface/navigation/MapInterface";
 import { navigator } from "@drincs/nqtr/handlers";
-import { ActivityInterface, LocationInterface } from "../../interface";
-import { MapBaseInternalInterface } from "../../interface/navigation/MapInterface";
-import NavigationAbstractClass from "./NavigationAbstractClass";
 
 const MAP_CATEGORY = "__nqtr-map__";
 export default class MapStoredClass

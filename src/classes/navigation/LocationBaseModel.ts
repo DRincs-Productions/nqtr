@@ -1,7 +1,7 @@
+import LocationStoredClass from "@/classes/navigation/LocationStoredClass";
+import type { LocationBaseModelProps, MapInterface } from "@/interface";
+import type { LocationInternalInterface } from "@/interface/navigation/LocationInterface";
 import { storage } from "@drincs/pixi-vn/storage";
-import { LocationBaseModelProps, MapInterface } from "../../interface";
-import { LocationInternalInterface } from "../../interface/navigation/LocationInterface";
-import LocationStoredClass from "./LocationStoredClass";
 
 /**
  * The base model of a location. I suggest you extend this class to create your own location model.
@@ -47,7 +47,7 @@ export default class LocationBaseModel
      * Whether is disabled. If it is a string, it is a Pixi'VN flag name.
      */
     get disabled(): boolean {
-        let value = this.getStorageProperty<boolean>("disabled") || this.defaultDisabled;
+        const value = this.getStorageProperty<boolean>("disabled") || this.defaultDisabled;
         if (typeof value === "string") {
             return storage.getFlag(value);
         }
@@ -62,7 +62,7 @@ export default class LocationBaseModel
      * Whether is hidden. If it is a string, it is a Pixi'VN flag name.
      */
     get hidden(): boolean {
-        let value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
+        const value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
         if (typeof value === "string") {
             return storage.getFlag(value);
         }

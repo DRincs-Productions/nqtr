@@ -1,16 +1,16 @@
+import ActivityStoredClass from "@/classes/activity/ActivityStoredClass";
+import { CURRENT_ROOM_MEMORY_KEY, TIME_DATA_KEY } from "@/constants";
+import { getLastEvent } from "@/functions/tracking-changes";
+import type { CommitmentInterface } from "@/interface";
+import type { CommitmentBaseInternalInterface } from "@/interface/activity/CommitmentInterface";
+import type DateSchedulingInterface from "@/interface/DateSchedulingInterface";
+import type TimeSchedulingInterface from "@/interface/TimeSchedulingInterface";
+import type { ExecutionType } from "@/types";
+import type { OnRunEvent } from "@/types/OnRunEvent";
+import type TimeDataType from "@/types/TimeDataType";
 import { navigator } from "@drincs/nqtr/handlers";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
-import { CURRENT_ROOM_MEMORY_KEY, TIME_DATA_KEY } from "../../constants";
-import { getLastEvent } from "../../functions/tracking-changes";
-import { CommitmentInterface } from "../../interface";
-import { CommitmentBaseInternalInterface } from "../../interface/activity/CommitmentInterface";
-import DateSchedulingInterface from "../../interface/DateSchedulingInterface";
-import TimeSchedulingInterface from "../../interface/TimeSchedulingInterface";
-import { ExecutionType } from "../../types";
-import { OnRunEvent } from "../../types/OnRunEvent";
-import TimeDataType from "../../types/TimeDataType";
-import ActivityStoredClass from "./ActivityStoredClass";
 
 export interface CommitmentStoredClassProps {
     /**
@@ -69,24 +69,25 @@ export default class CommitmentStoredClass
     set priority(value: number) {
         this.setStorageProperty("priority", value);
     }
-    protected override addTempHistoryItem(): void {
-        let currentRoom = navigator.currentRoom;
+    protected override addTempHistoryItem() {
+        const currentRoom = navigator.currentRoom;
         if (!currentRoom || this.executionType !== "automatic") {
             return super.addTempHistoryItem();
         }
-        let lastEvent = getLastEvent();
+        const lastEvent = getLastEvent();
         switch (lastEvent?.type) {
             case "editroom":
                 storage.set(CURRENT_ROOM_MEMORY_KEY, lastEvent.prev);
                 super.addTempHistoryItem();
                 storage.set(CURRENT_ROOM_MEMORY_KEY, currentRoom.id);
                 break;
-            case "edittime":
-                let currentTime = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
+            case "edittime": {
+                const currentTime = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
                 storage.set(TIME_DATA_KEY, lastEvent.prev);
                 super.addTempHistoryItem();
                 storage.set(TIME_DATA_KEY, currentTime);
                 break;
+            }
         }
     }
 }

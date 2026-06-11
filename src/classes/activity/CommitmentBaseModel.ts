@@ -1,7 +1,7 @@
+import CommitmentStoredClass from "@/classes/activity/CommitmentStoredClass";
+import type { CommitmentProps } from "@/interface";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
-import { CommitmentProps } from "../../interface";
-import CommitmentStoredClass from "./CommitmentStoredClass";
 
 /**
  * The base model of a commitment. I suggest you extend this class to create your own commitment model.
@@ -77,7 +77,7 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
      * Whether is disabled. You can also pass a Pixi'VN flag name.
      */
     get disabled(): boolean {
-        let value = this.getStorageProperty<boolean>("disabled") || this.defaultDisabled;
+        const value = this.getStorageProperty<boolean>("disabled") || this.defaultDisabled;
         if (typeof value === "string") {
             return storage.getFlag(value);
         }
@@ -92,7 +92,7 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
      * Whether is hidden. You can also pass a Pixi'VN flag name.
      */
     get hidden(): boolean {
-        let value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
+        const value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
         if (typeof value === "string") {
             return storage.getFlag(value);
         }

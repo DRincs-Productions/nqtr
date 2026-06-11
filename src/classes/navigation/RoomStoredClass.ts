@@ -1,17 +1,17 @@
-import { routine, timeTracker } from "@drincs/nqtr/handlers";
-import { fixedCommitments } from "@drincs/nqtr/registries";
-import { type CharacterInterface } from "@drincs/pixi-vn";
-import { PixiError } from "@drincs/pixi-vn/core";
-import {
+import NavigationAbstractClass from "@/classes/navigation/NavigationAbstractClass";
+import type {
     ActiveScheduling,
     ActivityInterface,
     CommitmentInterface,
     LocationInterface,
-} from "../../interface";
-import { RoomBaseInternalInterface } from "../../interface/navigation/RoomInterface";
-import { OnRunAsyncFunction } from "../../types";
-import { logger } from "../../utils/log-utility";
-import NavigationAbstractClass from "./NavigationAbstractClass";
+} from "@/interface";
+import type { RoomBaseInternalInterface } from "@/interface/navigation/RoomInterface";
+import type { OnRunAsyncFunction } from "@/types";
+import { logger } from "@/utils/log-utility";
+import { routine, timeTracker } from "@drincs/nqtr/handlers";
+import { fixedCommitments } from "@drincs/nqtr/registries";
+import type { CharacterInterface } from "@drincs/pixi-vn";
+import { PixiError } from "@drincs/pixi-vn/core";
 
 const ROOM_CATEGORY = "__nqtr-room__";
 export default class RoomStoredClass
@@ -35,9 +35,9 @@ export default class RoomStoredClass
             super(ROOM_CATEGORY, id, activities);
         } else {
             super(ROOM_CATEGORY, id, activities.activities);
-            activities.routine.forEach((commitment) =>
-                fixedCommitments.set(commitment.id, [commitment, id]),
-            );
+            activities.routine.forEach((commitment) => {
+                fixedCommitments.set(commitment.id, [commitment, id]);
+            });
         }
     }
     get routine(): CommitmentInterface[] {

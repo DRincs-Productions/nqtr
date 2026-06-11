@@ -1,7 +1,7 @@
+import ActivityStoredClass from "@/classes/activity/ActivityStoredClass";
+import type { ActivityInterface, ActivityProps } from "@/interface";
+import type { OnRunEvent } from "@/types/OnRunEvent";
 import { storage } from "@drincs/pixi-vn/storage";
-import { ActivityInterface, ActivityProps } from "../../interface";
-import { OnRunEvent } from "../../types/OnRunEvent";
-import ActivityStoredClass from "./ActivityStoredClass";
 
 /**
  * The activity model. It is used to create an activity.
@@ -61,7 +61,7 @@ export default class ActivityBaseModel extends ActivityStoredClass<ActivityInter
      * Whether is disabled. If it is a string, it is a Pixi'VN flag name.
      */
     get disabled(): boolean {
-        let value = this.getStorageProperty<boolean>("disabled") || this.defaultDisabled;
+        const value = this.getStorageProperty<boolean>("disabled") || this.defaultDisabled;
         if (typeof value === "string") {
             return storage.getFlag(value);
         }
@@ -76,7 +76,7 @@ export default class ActivityBaseModel extends ActivityStoredClass<ActivityInter
      * Whether is hidden. If it is a string, it is a Pixi'VN flag name.
      */
     get hidden(): boolean {
-        let value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
+        const value = this.getStorageProperty<boolean>("hidden") || this.defaultHidden;
         if (typeof value === "string") {
             return storage.getFlag(value);
         }

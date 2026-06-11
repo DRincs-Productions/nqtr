@@ -1,7 +1,7 @@
+import NavigationAbstractClass from "@/classes/navigation/NavigationAbstractClass";
+import type { ActivityInterface, MapInterface, RoomInterface } from "@/interface";
+import type { LocationInternalInterface } from "@/interface/navigation/LocationInterface";
 import { navigator } from "@drincs/nqtr/handlers";
-import { ActivityInterface, MapInterface, RoomInterface } from "../../interface";
-import { LocationInternalInterface } from "../../interface/navigation/LocationInterface";
-import NavigationAbstractClass from "./NavigationAbstractClass";
 
 const LOCATION_CATEGORY = "__nqtr-location__";
 export default class LocationStoredClass
