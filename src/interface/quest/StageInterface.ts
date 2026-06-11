@@ -2,7 +2,9 @@ import { OnRunProps, StageInterface as OverrideStageInterface } from "@drincs/nq
 import { StageInterface as StageInterfaceInt } from "..";
 import { OnRunEvent, QuestsRequiredType } from "../../types";
 
-export default interface StageInterface extends StageBaseInternalInterface, OverrideStageInterface {}
+export default interface StageInterface
+    extends StageBaseInternalInterface,
+        OverrideStageInterface {}
 
 export interface StageBaseInternalInterface {
     /**

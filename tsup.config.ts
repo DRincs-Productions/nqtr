@@ -73,7 +73,12 @@ export default defineConfig((options) => {
             minify: true,
             bundle: true,
             skipNodeModulesBundle: false,
-            external: ["@drincs/pixi-vn", "@drincs/nqtr/registries", "@drincs/nqtr/handlers", "@drincs/pixi-vn-ink"],
+            external: [
+                "@drincs/pixi-vn",
+                "@drincs/nqtr/registries",
+                "@drincs/nqtr/handlers",
+                "@drincs/pixi-vn-ink",
+            ],
             outExtension({ format }) {
                 return {
                     js: format === "esm" ? ".mjs" : ".cjs",

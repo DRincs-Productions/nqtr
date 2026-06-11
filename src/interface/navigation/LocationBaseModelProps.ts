@@ -1,29 +1,29 @@
-import { ActivityInterface } from ".."
+import { ActivityInterface } from "..";
 
 export default interface LocationBaseModelProps {
     /**
      * The name
      * @default ""
      */
-    name?: string
+    name?: string;
     /**
      * Whether is disabled. You can also pass a Pixi'VN flag name.
      * @default false
      */
-    disabled?: boolean | string
+    disabled?: boolean | string;
     /**
      * Whether is hidden. You can also pass a Pixi'VN flag name.
      * @default false
      */
-    hidden?: boolean | string
+    hidden?: boolean | string;
     /**
      * The icon of the location.
      * @default undefined
      */
-    icon?: string
+    icon?: string;
     /**
      * The activities that are available in this location.
      * @default []
      */
-    activities?: ActivityInterface[],
+    activities?: ActivityInterface[];
 }

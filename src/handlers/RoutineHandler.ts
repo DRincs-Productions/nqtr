@@ -48,14 +48,20 @@ export default class RoutineHandler {
      * @param commitment The commitment or commitments to add.
      * @param roomId The id of the room where the commitment is.
      */
-    add(commitment: CommitmentInterface[] | CommitmentInterface, roomId: string, options: ActiveScheduling = {}) {
+    add(
+        commitment: CommitmentInterface[] | CommitmentInterface,
+        roomId: string,
+        options: ActiveScheduling = {},
+    ) {
         if (!Array.isArray(commitment)) {
             commitment = [commitment];
         }
         const temporaryRoutine = this.temporaryRoutine;
         commitment.forEach((commitment) => {
             if (RegisteredCommitments.get(commitment.id)) {
-                logger.warn(`The commitment ${commitment.id} is already registered, it will be overwritten`);
+                logger.warn(
+                    `The commitment ${commitment.id} is already registered, it will be overwritten`,
+                );
             }
             RegisteredCommitments.add(commitment);
             temporaryRoutine[commitment.id] = {
@@ -111,27 +117,30 @@ export default class RoutineHandler {
 
     get characterCommitments(): { [character: string]: [CommitmentInterface, string] } {
         const temporaryRoutine = this.temporaryRoutine;
-        return this.commitmentsIds.reduce((acc: { [character: string]: [CommitmentInterface, string] }, id) => {
-            const commitment = RegisteredCommitments.get(id);
-            const temp = temporaryRoutine[id];
-            const roomId = temp?.roomId || fixedCommitments.get(id)?.[1];
-            if (roomId && commitment && commitment.isActive(temp)) {
-                if (commitment.characters.length > 0) {
-                    // all the characters don't already have commitments or the commitment has a higher priority
-                    let allAvailable = commitment.characters.every(
-                        (ch) => !acc[ch.id] || commitment.priority > acc[ch.id][0].priority,
-                    );
-                    if (allAvailable) {
-                        commitment.characters.forEach((ch) => {
-                            acc[ch.id] = [commitment, roomId];
-                        });
+        return this.commitmentsIds.reduce(
+            (acc: { [character: string]: [CommitmentInterface, string] }, id) => {
+                const commitment = RegisteredCommitments.get(id);
+                const temp = temporaryRoutine[id];
+                const roomId = temp?.roomId || fixedCommitments.get(id)?.[1];
+                if (roomId && commitment && commitment.isActive(temp)) {
+                    if (commitment.characters.length > 0) {
+                        // all the characters don't already have commitments or the commitment has a higher priority
+                        let allAvailable = commitment.characters.every(
+                            (ch) => !acc[ch.id] || commitment.priority > acc[ch.id][0].priority,
+                        );
+                        if (allAvailable) {
+                            commitment.characters.forEach((ch) => {
+                                acc[ch.id] = [commitment, roomId];
+                            });
+                        }
+                    } else {
+                        logger.error(`The commitment ${commitment.id} has no characters assigned`);
                     }
-                } else {
-                    logger.error(`The commitment ${commitment.id} has no characters assigned`);
                 }
-            }
-            return acc;
-        }, {});
+                return acc;
+            },
+            {},
+        );
     }
 
     /**

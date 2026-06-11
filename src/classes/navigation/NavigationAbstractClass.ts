@@ -7,7 +7,10 @@ import { ExcludedScheduling } from "../../interface/activity/ActiveScheduling";
 import NavigationAbstractInterface from "../../interface/navigation/NavigationAbstractClass";
 import { logger } from "../../utils/log-utility";
 
-export default abstract class NavigationAbstractClass extends StoredClassModel implements NavigationAbstractInterface {
+export default abstract class NavigationAbstractClass
+    extends StoredClassModel
+    implements NavigationAbstractInterface
+{
     constructor(
         categoryId: string,
         id: string,
@@ -34,7 +37,10 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
         delete excludedActivitiesScheduling[activityId];
         // TODO: improve the type
-        this.setStorageProperty(`excludedActivitiesScheduling`, excludedActivitiesScheduling as any);
+        this.setStorageProperty(
+            `excludedActivitiesScheduling`,
+            excludedActivitiesScheduling as any,
+        );
     }
     private editActivityScheduling(activityId: string, scheduling: ActiveScheduling) {
         this.removeActivityScheduling(activityId);
@@ -48,7 +54,10 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
         let excludedActivitiesScheduling = this.excludedActivitiesScheduling;
         excludedActivitiesScheduling[activityId] = scheduling;
         // TODO: improve the type
-        this.setStorageProperty(`excludedActivitiesScheduling`, excludedActivitiesScheduling as any);
+        this.setStorageProperty(
+            `excludedActivitiesScheduling`,
+            excludedActivitiesScheduling as any,
+        );
     }
     private get additionalActivitiesIds(): string[] {
         return this.getStorageProperty<string[]>(`additionalActivitiesIds`) || [];
@@ -69,7 +78,10 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             if (timeSlot) {
                 if (timeSlot.from >= toTime) {
                     logger.error(`The from time must be less than the to time.`);
-                    throw new PixiError("invalid_usage", `The from time must be less than the to time.`);
+                    throw new PixiError(
+                        "invalid_usage",
+                        `The from time must be less than the to time.`,
+                    );
                 }
             }
         });
@@ -79,11 +91,17 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
             dateScheduling?.from >= dateScheduling?.to
         ) {
             logger.error(`The from day/date must be less than the to day/date.`);
-            throw new PixiError("invalid_usage", `The from day/date must be less than the to day/date.`);
+            throw new PixiError(
+                "invalid_usage",
+                `The from day/date must be less than the to day/date.`,
+            );
         }
 
         let additionalActivitiesIds = this.additionalActivitiesIds;
-        if (this.defaultActivitiesIds.includes(activity.id) || additionalActivitiesIds.includes(activity.id)) {
+        if (
+            this.defaultActivitiesIds.includes(activity.id) ||
+            additionalActivitiesIds.includes(activity.id)
+        ) {
             logger.info(
                 `Activity with id ${activity.id} already exists in the ${this.id}, so it will be updated with the new scheduling options if they are provided.`,
             );
@@ -132,7 +150,9 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
                 let { to: toDate } = activeActivityScheduling[activityId].dateScheduling || {};
                 if (toDate && toDate < timeTracker.currentDate) {
                     this.removeActivityScheduling(activityId);
-                    additionalActivitiesIds = additionalActivitiesIds.filter((id) => id !== activityId);
+                    additionalActivitiesIds = additionalActivitiesIds.filter(
+                        (id) => id !== activityId,
+                    );
                 }
             }
         });
@@ -147,19 +167,18 @@ export default abstract class NavigationAbstractClass extends StoredClassModel i
     }
 
     get activities(): ActivityInterface[] {
-        return [...new Set<string>([...this.additionalActivitiesIds, ...this.defaultActivitiesIds])].reduce(
-            (acc: ActivityInterface[], activityId) => {
-                const activity = RegisteredActivities.get(activityId);
-                if (
-                    activity &&
-                    activity.isActive(this.activeActivityScheduling[activityId]) &&
-                    !this.excludedActivitiesScheduling[activityId]
-                ) {
-                    acc.push(activity);
-                }
-                return acc;
-            },
-            [],
-        );
+        return [
+            ...new Set<string>([...this.additionalActivitiesIds, ...this.defaultActivitiesIds]),
+        ].reduce((acc: ActivityInterface[], activityId) => {
+            const activity = RegisteredActivities.get(activityId);
+            if (
+                activity &&
+                activity.isActive(this.activeActivityScheduling[activityId]) &&
+                !this.excludedActivitiesScheduling[activityId]
+            ) {
+                acc.push(activity);
+            }
+            return acc;
+        }, []);
     }
 }

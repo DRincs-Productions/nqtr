@@ -1,2 +1,2 @@
-type ExecutionType = "automatic" | "interaction"
-export default ExecutionType
+type ExecutionType = "automatic" | "interaction";
+export default ExecutionType;

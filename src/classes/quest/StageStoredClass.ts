@@ -27,7 +27,10 @@ export interface StageStoredClassProps {
 }
 
 const STAGE_CATEGORY = "__nqtr-stage__";
-export default class StageStoredClass extends StoredClassModel implements StageBaseInternalInterface {
+export default class StageStoredClass
+    extends StoredClassModel
+    implements StageBaseInternalInterface
+{
     constructor(id: string, props: StageStoredClassProps = {}) {
         super(STAGE_CATEGORY, id);
         this._onStart = props.onStart;
@@ -88,7 +91,9 @@ export default class StageStoredClass extends StoredClassModel implements StageB
         }
         if (
             this.questsRequired.length > 0 &&
-            !this.questsRequired.every((q) => q.quest.currentStageIndex && q.quest.currentStageIndex >= q.stageNumber)
+            !this.questsRequired.every(
+                (q) => q.quest.currentStageIndex && q.quest.currentStageIndex >= q.stageNumber,
+            )
         ) {
             return false;
         }

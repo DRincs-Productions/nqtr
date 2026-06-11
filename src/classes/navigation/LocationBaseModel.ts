@@ -13,7 +13,10 @@ import LocationStoredClass from "./LocationStoredClass";
  * });
  * ```
  */
-export default class LocationBaseModel extends LocationStoredClass implements LocationInternalInterface {
+export default class LocationBaseModel
+    extends LocationStoredClass
+    implements LocationInternalInterface
+{
     /**
      * @param id The id of the location, it must be unique.
      * @param map The map where the location is.

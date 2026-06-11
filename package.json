@@ -9,8 +9,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "test": "vitest"
+    "dev": "tsup --watch",
+    "build": "tsup --config tsup.config.ts",
+    "lint": "biome lint",
+    "check": "biome check",
+    "format": "biome format --write",
+    "test": "vitest",
+    "docs": "typedoc"
   },
   "exports": {
     ".": {

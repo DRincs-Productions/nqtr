@@ -4,7 +4,10 @@ import { LocationInternalInterface } from "../../interface/navigation/LocationIn
 import NavigationAbstractClass from "./NavigationAbstractClass";
 
 const LOCATION_CATEGORY = "__nqtr-location__";
-export default class LocationStoredClass extends NavigationAbstractClass implements LocationInternalInterface {
+export default class LocationStoredClass
+    extends NavigationAbstractClass
+    implements LocationInternalInterface
+{
     constructor(
         id: string,
         /**

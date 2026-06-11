@@ -22,7 +22,9 @@ export default class TimeHandler {
         TimeHandlerSettings.timeSlots = timeSlots;
         TimeHandlerSettings.weekLength = weekLength;
         if (weekendStartDay >= TimeHandlerSettings.weekLength) {
-            console.warn(`[NQTR] Weekend start day should be less than week length ${weekLength}, so will be ignored`);
+            console.warn(
+                `[NQTR] Weekend start day should be less than week length ${weekLength}, so will be ignored`,
+            );
         } else {
             TimeHandlerSettings.weekendStartDay = weekendStartDay;
         }

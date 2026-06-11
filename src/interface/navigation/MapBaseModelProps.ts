@@ -1,19 +1,19 @@
-import { ActivityInterface } from ".."
+import { ActivityInterface } from "..";
 
 export default interface MapBaseModelProps {
     /**
      * The name
      * @default ""
      */
-    name?: string
+    name?: string;
     /**
      * The image of the map.
      * @default undefined
      */
-    image?: string
+    image?: string;
     /**
      * The activities that are available in this map.
      * @default []
      */
-    activities?: ActivityInterface[],
+    activities?: ActivityInterface[];
 }

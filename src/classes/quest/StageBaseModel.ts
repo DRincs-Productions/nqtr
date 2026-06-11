@@ -92,7 +92,10 @@ export default class StageBaseModel extends StageStoredClass {
         super.completed = value;
     }
     override get canStart(): boolean {
-        if (this.flagsRequired.length > 0 && !this.flagsRequired.every((flag) => storage.getFlag(flag.flag))) {
+        if (
+            this.flagsRequired.length > 0 &&
+            !this.flagsRequired.every((flag) => storage.getFlag(flag.flag))
+        ) {
             return false;
         }
         return super.canStart;

@@ -73,7 +73,9 @@ export const nqtrHandler: () => HashtagHandler = (
             "storageOperationType" in v &&
             "storageType" in v &&
             v.storageOperationType === "get" &&
-            (v.storageType === "storage" || v.storageType === "tempstorage" || v.storageType === "flagStorage")
+            (v.storageType === "storage" ||
+                v.storageType === "tempstorage" ||
+                v.storageType === "flagStorage")
         ) {
             const model: PixiVNJsonStorageGet = v as PixiVNJsonStorageGet;
             if (model.key.endsWith("_currentStageIndex")) {
@@ -173,7 +175,9 @@ export const nqtrHandler: () => HashtagHandler = (
                                 logger.warn(`Activity ${script[2]} not found`);
                                 return true;
                             }
-                            const { in: into } = convertListStringToObj(script.slice(3)) as { in: string };
+                            const { in: into } = convertListStringToObj(script.slice(3)) as {
+                                in: string;
+                            };
                             const room = RegisteredRooms.get(into);
                             if (!room) {
                                 logger.warn(`Room ${into} not found`);
@@ -189,7 +193,9 @@ export const nqtrHandler: () => HashtagHandler = (
                                 logger.warn(`Activity ${script[2]} not found`);
                                 return true;
                             }
-                            const { from } = convertListStringToObj(script.slice(3)) as { from: string };
+                            const { from } = convertListStringToObj(script.slice(3)) as {
+                                from: string;
+                            };
                             const room = RegisteredRooms.get(from);
                             if (!room) {
                                 logger.warn(`Room ${from} not found`);
@@ -209,7 +215,9 @@ export const nqtrHandler: () => HashtagHandler = (
                                 logger.warn(`Commitment ${script[2]} not found`);
                                 return true;
                             }
-                            const { in: into } = convertListStringToObj(script.slice(3)) as { in: string };
+                            const { in: into } = convertListStringToObj(script.slice(3)) as {
+                                in: string;
+                            };
                             const room = RegisteredRooms.get(into);
                             if (!room) {
                                 logger.warn(`Room ${into} not found`);

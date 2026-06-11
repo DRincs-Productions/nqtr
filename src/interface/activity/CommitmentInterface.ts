@@ -3,7 +3,9 @@ import type { CharacterInterface } from "@drincs/pixi-vn";
 import { ExecutionType } from "../../types";
 import { ActivityBaseInternalInterface } from "./ActivityInterface";
 
-export default interface CommitmentInterface extends CommitmentBaseInternalInterface, OverrideCommitmentInterface {}
+export default interface CommitmentInterface
+    extends CommitmentBaseInternalInterface,
+        OverrideCommitmentInterface {}
 
 export interface CommitmentBaseInternalInterface extends ActivityBaseInternalInterface {
     /**

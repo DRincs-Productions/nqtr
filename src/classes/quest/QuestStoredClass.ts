@@ -22,7 +22,10 @@ export interface QuestStoredClassProps {
 }
 
 const QUEST_CATEGORY = "__nqtr-quest__";
-export default class QuestStoredClass extends StoredClassModel implements QuestBaseInternalInterface {
+export default class QuestStoredClass
+    extends StoredClassModel
+    implements QuestBaseInternalInterface
+{
     constructor(
         id: string,
         private readonly _stages: StageInterface[],

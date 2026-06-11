@@ -25,13 +25,22 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
      * @param character The character or characters that are in the commitment and so in the room.
      * @param props The properties of the commitment.
      */
-    constructor(id: string, character: CharacterInterface | CharacterInterface[] | undefined, props: CommitmentProps) {
-        super(id, character ? (Array.isArray(character) ? character : [character]) : [], props.onRun, {
-            executionType: props.executionType,
-            priority: props.priority,
-            timeSlot: props.timeSlot,
-            dateScheduling: props.dateScheduling,
-        });
+    constructor(
+        id: string,
+        character: CharacterInterface | CharacterInterface[] | undefined,
+        props: CommitmentProps,
+    ) {
+        super(
+            id,
+            character ? (Array.isArray(character) ? character : [character]) : [],
+            props.onRun,
+            {
+                executionType: props.executionType,
+                priority: props.priority,
+                timeSlot: props.timeSlot,
+                dateScheduling: props.dateScheduling,
+            },
+        );
         this._name = props.name || "";
         this._image = props.image;
         this.defaultDisabled = props.disabled || false;
