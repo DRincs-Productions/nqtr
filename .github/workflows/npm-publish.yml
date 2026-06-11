@@ -8,17 +8,25 @@ on:
     tags:
       - 'v*'
 
+  workflow_dispatch:
+    inputs:
+      run_deploy_docs:
+        description: "Run only deploy-docs"
+        required: false
+        default: "false"
+
 run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 24.12.0
       - run: npm i
       - run: npm ci
       - run: npm run build
@@ -28,11 +36,12 @@ jobs:
     name: Publish to NPM
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 24.12.0
           registry-url: https://registry.npmjs.org/
       - run: |
           npm i
@@ -46,12 +55,13 @@ jobs:
     name: Create Release
     needs: publish-npm
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     permissions:
       contents: write
     steps:
     - uses: actions/checkout@v3
-    - name: Extract pixi-vn version
-      id: extract-version
+    - name: Extract dependency versions
+      id: versions
       run: |
         PIXIVN_VERSION=$(jq -r '.peerDependencies["@drincs/pixi-vn"] // "Not specified"' package.json)
         echo "pixivn_version=$PIXIVN_VERSION" >> $GITHUB_OUTPUT
@@ -62,3 +72,47 @@ jobs:
           
           ### Dependencies
           - **Pixi’VN**: ${{ steps.extract-version.outputs.pixivn_version }}
+
+  deploy-docs:
+    name: Deploy Docs to Wiki
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      github.event.inputs.run_deploy_docs == 'true'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24.12.0
+
+      - name: Install deps
+        run: npm i
+
+      - name: Generate docs
+        run: npm run docs
+
+      - name: Clone Wiki
+        run: |
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git wiki
+
+      - name: Clean Wiki (safe)
+        run: |
+          find wiki -mindepth 1 -not -path "wiki/.git*" -delete
+
+      - name: Copy docs
+        run: |
+          cp -r doc/* wiki/
+
+      - name: Commit & Push
+        run: |
+          cd wiki
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git diff --cached --quiet || git commit -m "Update TypeDoc API docs"
+          git push

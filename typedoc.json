@@ -1,0 +1,11 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "plugin": ["typedoc-plugin-markdown"],
+  "entryPoints": [
+    "./src/index.ts",
+    "./src/vite/index.ts"
+  ],
+  "out": "doc",
+  "exclude": ["*.md"],
+  "entryFileName": "index.md"
+}
