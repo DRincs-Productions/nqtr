@@ -1,11 +1,13 @@
-import type { TimeSettings, TimeSlotInterface } from "@/types/TimeSettings";
+import type { TimeSlotInterface } from "@/types/TimeSettings";
 
-export default class TimeHandlerSettings implements TimeSettings {
-    static dayStartTime: number = 0;
-    static dayEndTime: number = 24;
-    static defaultTimeSpent: number = 1;
-    static timeSlots: TimeSlotInterface[] = [];
-    static weekLength: number = 7;
-    static weekendStartDay: number = this.weekLength - 1;
-    static getDayName?: (weekDayNumber: number) => string;
-}
+const TimeHandlerSettings = {
+    dayStartTime: 0,
+    dayEndTime: 24,
+    defaultTimeSpent: 1,
+    timeSlots: [] as TimeSlotInterface[],
+    weekLength: 7,
+    weekendStartDay: 6,
+    getDayName: undefined as ((weekDayNumber: number) => string) | undefined,
+};
+
+export default TimeHandlerSettings;
