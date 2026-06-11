@@ -1,1 +1,1 @@
-export { nqtrHandler } from "./nqtrHandler";
+export { nqtrHandler } from "@/ink/nqtrHandler";

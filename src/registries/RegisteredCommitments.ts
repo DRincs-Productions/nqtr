@@ -1,6 +1,6 @@
+import type { CommitmentInterface } from "@/interface";
+import { logger } from "@/utils/log-utility";
 import { CachedMap } from "@drincs/pixi-vn";
-import type { CommitmentInterface } from "../interface";
-import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all commitments registered and available to be used.
@@ -26,7 +26,9 @@ namespace RegisteredCommitments {
      */
     export function add(commitments: CommitmentInterface | CommitmentInterface[]) {
         if (Array.isArray(commitments)) {
-            commitments.forEach((commitment) => RegisteredCommitments.add(commitment));
+            commitments.forEach((commitment) => {
+                RegisteredCommitments.add(commitment);
+            });
             return;
         }
         registeredCommitments.set(commitments.id, commitments);
@@ -38,7 +40,7 @@ namespace RegisteredCommitments {
      */
     export function get(id: string): CommitmentInterface | undefined {
         try {
-            let commitment = registeredCommitments.get(id);
+            const commitment = registeredCommitments.get(id);
             if (!commitment) {
                 console.warn(`[NQTR] Commitment ${id} not found, you should register it first`);
                 return;

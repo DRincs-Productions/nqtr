@@ -1,12 +1,9 @@
-import { RoomInterface as OverrideRoomInterface } from "@drincs/nqtr";
+import type { LocationInterface as LocationInterfaceInt } from "@/interface";
+import type ActiveScheduling from "@/interface/activity/ActiveScheduling";
+import type NavigationAbstractInterface from "@/interface/navigation/NavigationAbstractClass";
+import type { OnRunAsyncFunction } from "@/types";
+import type { CommitmentInterface, RoomInterface as OverrideRoomInterface } from "@drincs/nqtr";
 import type { CharacterInterface } from "@drincs/pixi-vn";
-import {
-    ActiveScheduling,
-    CommitmentInterface,
-    LocationInterface as LocationInterfaceInt,
-} from "..";
-import { OnRunAsyncFunction } from "../../types";
-import NavigationAbstractInterface from "./NavigationAbstractClass";
 
 export default interface RoomInterface extends RoomBaseInternalInterface, OverrideRoomInterface {}
 

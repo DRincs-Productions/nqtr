@@ -1,6 +1,6 @@
+import type { LocationInterface } from "@/interface";
+import { logger } from "@/utils/log-utility";
 import { CachedMap } from "@drincs/pixi-vn";
-import type { LocationInterface } from "../interface";
-import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all locations registered and available to be used.
@@ -16,7 +16,9 @@ namespace RegisteredLocations {
      */
     export function add(location: LocationInterface | LocationInterface[]) {
         if (Array.isArray(location)) {
-            location.forEach((c) => add(c));
+            location.forEach((c) => {
+                add(c);
+            });
             return;
         }
         // if (registeredLocations.has(location.id)) {
@@ -32,7 +34,7 @@ namespace RegisteredLocations {
      */
     export function get(id: string): LocationInterface | undefined {
         try {
-            let location = registeredLocations.get(id);
+            const location = registeredLocations.get(id);
             if (!location) {
                 console.warn(`[NQTR] Location ${id} not found, you should register it first`);
                 return;

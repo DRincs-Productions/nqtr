@@ -1,6 +1,6 @@
-import { StageInterface } from "..";
-import { OnRunEvent, QuestsRequiredType } from "../../types";
-import StageFlags from "./StageFlags";
+import type StageFlags from "@/interface/quest/StageFlags";
+import type { OnRunEvent, QuestsRequiredType } from "@/types";
+import type { StageInterface } from "@drincs/nqtr";
 
 export default interface StageProps {
     /**

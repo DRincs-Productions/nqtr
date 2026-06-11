@@ -1,4 +1,4 @@
-import { ActivityInterface, CommitmentInterface } from "..";
+import type { ActivityInterface, CommitmentInterface } from "@/interface";
 
 export default interface RoomBaseModelProps {
     /**

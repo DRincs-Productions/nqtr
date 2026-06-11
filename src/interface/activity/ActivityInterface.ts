@@ -1,6 +1,6 @@
-import { ActivityInterface as OverrideActivityInterface } from "@drincs/nqtr";
-import { OnRunAsyncFunction } from "../../types";
-import ActiveScheduling from "./ActiveScheduling";
+import type ActiveScheduling from "@/interface/activity/ActiveScheduling";
+import type { OnRunAsyncFunction } from "@/types";
+import type { ActivityInterface as OverrideActivityInterface } from "@drincs/nqtr";
 
 export default interface ActivityInterface
     extends ActivityBaseInternalInterface,

@@ -1,5 +1,5 @@
-import { QuestInterface } from "..";
-import { OnRunEvent } from "../../types";
+import type { OnRunEvent } from "@/types";
+import type { QuestInterface } from "@drincs/nqtr";
 
 export default interface QuestProps {
     /**

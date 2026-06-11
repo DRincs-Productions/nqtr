@@ -1,8 +1,8 @@
+import type { RoomInterface } from "@/interface";
+import RegisteredLocations from "@/registries/RegisteredLocations";
+import RegisteredMaps from "@/registries/RegisteredMaps";
+import { logger } from "@/utils/log-utility";
 import { CachedMap } from "@drincs/pixi-vn";
-import type { RoomInterface } from "../interface";
-import { logger } from "../utils/log-utility";
-import RegisteredLocations from "./RegisteredLocations";
-import RegisteredMaps from "./RegisteredMaps";
 
 /**
  * A Map that contains all rooms registered and available to be used.
@@ -19,13 +19,15 @@ namespace RegisteredRooms {
      */
     export function add(room: RoomInterface | RoomInterface[]) {
         if (Array.isArray(room)) {
-            room.forEach((c) => add(c));
+            room.forEach((c) => {
+                add(c);
+            });
             return;
         }
         registeredRooms.set(room.id, room);
-        let location = room.location;
+        const location = room.location;
         RegisteredLocations.add(location);
-        let map = location?.map;
+        const map = location?.map;
         if (map) {
             RegisteredMaps.add(map);
         }
@@ -38,7 +40,7 @@ namespace RegisteredRooms {
      */
     export function get(id: string): RoomInterface | undefined {
         try {
-            let room = registeredRooms.get(id);
+            const room = registeredRooms.get(id);
             if (!room) {
                 console.warn(`[NQTR] Room ${id} not found, you should register it first`);
                 return;

@@ -1,6 +1,6 @@
-import { LocationInterface as OverrideLocationInterface } from "@drincs/nqtr";
-import { MapInterface, RoomInterface } from "..";
-import NavigationAbstractInterface from "./NavigationAbstractClass";
+import type { MapInterface } from "@/interface";
+import type NavigationAbstractInterface from "@/interface/navigation/NavigationAbstractClass";
+import type { LocationInterface as OverrideLocationInterface, RoomInterface } from "@drincs/nqtr";
 
 export default interface LocationInterface
     extends LocationInternalInterface,

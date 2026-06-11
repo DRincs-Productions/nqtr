@@ -1,6 +1,6 @@
-import { OnRunProps, QuestInterface as OverrideQuestInterface } from "@drincs/nqtr";
-import { QuestInterface as QuestInterfaceInt, StageInterface } from "..";
-import { OnRunEvent } from "../../types";
+import type { QuestInterface as QuestInterfaceInt, StageInterface } from "@/interface";
+import type { OnRunEvent } from "@/types";
+import type { OnRunProps, QuestInterface as OverrideQuestInterface } from "@drincs/nqtr";
 
 export default interface QuestInterface
     extends QuestBaseInternalInterface,

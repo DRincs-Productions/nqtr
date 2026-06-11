@@ -1,4 +1,4 @@
-import { OnRunProps as OnRunPropsOverride } from "@drincs/nqtr";
+import type { OnRunProps as OnRunPropsOverride } from "@drincs/nqtr";
 
 export type OnRunProps = OnRunPropsOverride;
 

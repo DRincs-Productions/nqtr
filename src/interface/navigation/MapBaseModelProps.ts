@@ -1,4 +1,4 @@
-import { ActivityInterface } from "..";
+import type { ActivityInterface } from "@/interface";
 
 export default interface MapBaseModelProps {
     /**

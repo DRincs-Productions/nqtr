@@ -1,6 +1,6 @@
+import type { ActivityInterface } from "@/interface";
+import { logger } from "@/utils/log-utility";
 import { CachedMap } from "@drincs/pixi-vn";
-import type { ActivityInterface } from "../interface";
-import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all activities registered and available to be used.
@@ -16,7 +16,9 @@ namespace RegisteredActivities {
      */
     export function add(activities: ActivityInterface | ActivityInterface[]) {
         if (Array.isArray(activities)) {
-            activities.forEach((activity) => RegisteredActivities.add(activity));
+            activities.forEach((activity) => {
+                RegisteredActivities.add(activity);
+            });
             return;
         }
         registeredActivities.set(activities.id, activities);
@@ -29,7 +31,7 @@ namespace RegisteredActivities {
      */
     export function get(id: string): ActivityInterface | undefined {
         try {
-            let activity = registeredActivities.get(id);
+            const activity = registeredActivities.get(id);
             if (!activity) {
                 console.warn(`[NQTR] Activity ${id} not found, you should register it first`);
                 return;

@@ -1,5 +1,5 @@
-import DateSchedulingInterface from "../DateSchedulingInterface";
-import TimeSchedulingInterface from "../TimeSchedulingInterface";
+import type DateSchedulingInterface from "@/interface/DateSchedulingInterface";
+import type TimeSchedulingInterface from "@/interface/TimeSchedulingInterface";
 
 export default interface ActiveScheduling {
     /**
@@ -12,4 +12,4 @@ export default interface ActiveScheduling {
     readonly dateScheduling?: DateSchedulingInterface;
 }
 
-export interface ExcludedScheduling {}
+export type ExcludedScheduling = {};

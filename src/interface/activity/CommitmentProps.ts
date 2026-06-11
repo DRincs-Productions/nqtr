@@ -1,8 +1,7 @@
-import { CommitmentInterface } from "..";
-import { ExecutionType } from "../../types";
-import { OnRunEvent } from "../../types/OnRunEvent";
-import DateSchedulingInterface from "../DateSchedulingInterface";
-import TimeSchedulingInterface from "../TimeSchedulingInterface";
+import type DateSchedulingInterface from "@/interface/DateSchedulingInterface";
+import type TimeSchedulingInterface from "@/interface/TimeSchedulingInterface";
+import type { ExecutionType, OnRunEvent } from "@/types";
+import type { CommitmentInterface } from "@drincs/nqtr";
 
 export default interface CommitmentProps {
     /**

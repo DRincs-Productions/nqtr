@@ -1,5 +1,6 @@
-import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { ActiveScheduling, ActivityInterface } from "../../interface";
+import type ActiveScheduling from "@/interface/activity/ActiveScheduling";
+import type { ActivityInterface } from "@drincs/nqtr";
+import type { StoredClassModel } from "@drincs/pixi-vn/storage";
 
 export default interface NavigationAbstractInterface extends StoredClassModel {
     /**

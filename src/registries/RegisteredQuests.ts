@@ -1,6 +1,6 @@
+import type { QuestInterface } from "@/interface";
+import { logger } from "@/utils/log-utility";
 import { CachedMap } from "@drincs/pixi-vn";
-import type { QuestInterface } from "../interface";
-import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all quests registered and available to be used.
@@ -16,7 +16,9 @@ namespace RegisteredQuest {
      */
     export function add(quests: QuestInterface | QuestInterface[]) {
         if (Array.isArray(quests)) {
-            quests.forEach((quest) => RegisteredQuest.add(quest));
+            quests.forEach((quest) => {
+                RegisteredQuest.add(quest);
+            });
             return;
         }
         registeredQuests.set(quests.id, quests);
@@ -28,7 +30,7 @@ namespace RegisteredQuest {
      */
     export function get(id: string): QuestInterface | undefined {
         try {
-            let quest = registeredQuests.get(id);
+            const quest = registeredQuests.get(id);
             if (!quest) {
                 console.warn(`[NQTR] Quest ${id} not found, you should register it first`);
                 return;

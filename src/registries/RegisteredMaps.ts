@@ -1,6 +1,6 @@
+import type { MapInterface } from "@/interface";
+import { logger } from "@/utils/log-utility";
 import { CachedMap } from "@drincs/pixi-vn";
-import type { MapInterface } from "../interface";
-import { logger } from "../utils/log-utility";
 
 /**
  * A Map that contains all maps registered and available to be used.
@@ -16,7 +16,9 @@ namespace RegisteredMaps {
      */
     export function add(map: MapInterface | MapInterface[]) {
         if (Array.isArray(map)) {
-            map.forEach((c) => add(c));
+            map.forEach((c) => {
+                add(c);
+            });
             return;
         }
         // if (registeredMaps.has(map.id)) {
@@ -32,7 +34,7 @@ namespace RegisteredMaps {
      */
     export function get(id: string): MapInterface | undefined {
         try {
-            let map = registeredMaps.get(id);
+            const map = registeredMaps.get(id);
             if (!map) {
                 console.warn(`[NQTR] Map ${id} not found, you should register it first`);
                 return;

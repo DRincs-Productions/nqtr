@@ -1,4 +1,4 @@
-import TimeDataType from "./TimeDataType";
+import type TimeDataType from "@/types/TimeDataType";
 
 type LastEventType =
     | {

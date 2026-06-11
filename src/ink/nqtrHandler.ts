@@ -1,3 +1,4 @@
+import { logger } from "@/utils/log-utility";
 import { navigator, routine, timeTracker } from "@drincs/nqtr/handlers";
 import {
     RegisteredActivities,
@@ -5,9 +6,8 @@ import {
     RegisteredQuests,
     RegisteredRooms,
 } from "@drincs/nqtr/registries";
-import { HashtagHandler, VariableGetter } from "@drincs/pixi-vn-ink";
-import { PixiVNJsonStorageGet } from "@drincs/pixi-vn-json";
-import { logger } from "../utils/log-utility";
+import { type HashtagHandler, VariableGetter } from "@drincs/pixi-vn-ink";
+import type { PixiVNJsonStorageGet } from "@drincs/pixi-vn-json";
 
 interface WaitOptions {
     hours?: number;
@@ -277,7 +277,7 @@ export const nqtrHandler: () => HashtagHandler = (
                     }
                     return true;
                 } else if (script.length > 2) {
-                    let options: WaitOptions = convertListStringToObj(script.slice(1));
+                    const options: WaitOptions = convertListStringToObj(script.slice(1));
                     if (options.hours !== undefined && typeof options.hours === "string") {
                         options.hours = timeConverter(options.hours);
                     }
