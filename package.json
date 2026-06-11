@@ -60,9 +60,9 @@
   "bugs": {
     "url": "https://github.com/DRincs-Productions/nqtr-pixi-vn/issues"
   },
-  "homepage": "https://pixi-vn.web.app/nqtr",
+  "homepage": "https://pixi-vn.com/nqtr",
   "devDependencies": {
-    "@drincs/pixi-vn-ink": "^0.12.2",
+    "@biomejs/biome": "^2.4.16",
     "@drincs/pixi-vn-json": "^1.10.1",
     "jsdom": "^28.0.0",
     "ts-node": "^10.9.2",
