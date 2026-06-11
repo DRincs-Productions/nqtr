@@ -1,9 +1,9 @@
+import { TIME_DATA_KEY } from "@/constants";
+import { setLastEvent } from "@/functions/tracking-changes";
+import TimeHandlerSettings from "@/handlers/TimeHandlerSettings";
+import type TimeDataType from "@/types/TimeDataType";
+import type { TimeSettings, TimeSlotInterface } from "@/types/TimeSettings";
 import { storage } from "@drincs/pixi-vn/storage";
-import { TIME_DATA_KEY } from "../constants";
-import { setLastEvent } from "../functions/tracking-changes";
-import type TimeDataType from "../types/TimeDataType";
-import type { TimeSettings, TimeSlotInterface } from "../types/TimeSettings";
-import TimeHandlerSettings from "./TimeHandlerSettings";
 
 export default class TimeHandler {
     initialize(settings: TimeSettings) {
@@ -69,15 +69,15 @@ export default class TimeHandler {
      * It's recommended to use currentTime as if it were the current time. If you also want to manage minutes, you can use a float value.
      */
     get currentTime(): number {
-        let data = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
-        if (data.hasOwnProperty("currentTime") && typeof data.currentTime === "number") {
+        const data = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
+        if (Object.hasOwn(data, "currentTime") && typeof data.currentTime === "number") {
             return data.currentTime;
         }
         return this.dayStartTime;
     }
     set currentTime(value: number | undefined) {
-        let prev = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
-        let data = { ...prev };
+        const prev = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
+        const data = { ...prev };
         if (typeof value === "number") {
             data.currentTime = value;
         } else {
@@ -95,15 +95,15 @@ export default class TimeHandler {
      * It's recommended to use currentDate as if it were the current day.
      */
     get currentDate(): number {
-        let data = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
-        if (data.hasOwnProperty("currentDate") && typeof data.currentDate === "number") {
+        const data = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
+        if (Object.hasOwn(data, "currentDate") && typeof data.currentDate === "number") {
             return data.currentDate;
         }
         return 0;
     }
     set currentDate(value: number | undefined) {
-        let prev = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
-        let data = { ...prev };
+        const prev = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
+        const data = { ...prev };
         if (typeof value === "number") {
             data.currentDate = value;
         } else {
@@ -127,7 +127,7 @@ export default class TimeHandler {
      * For example, if the week length is 7 and the current day is 10, then the result will be 4.
      */
     get currentWeekDayNumber(): number {
-        let result = this.currentDate % this.weekLength;
+        const result = this.currentDate % this.weekLength;
         return result + 1;
     }
     /**
@@ -161,7 +161,7 @@ export default class TimeHandler {
             return 0;
         }
         for (let index = 0; index < this.timeSlots.length; index++) {
-            let slot = this.timeSlots[index];
+            const slot = this.timeSlots[index];
             if (this.timeSlots.length > index + 1) {
                 if (this.nowIsBetween(slot.startTime, this.timeSlots[index + 1].startTime)) {
                     return index;
@@ -194,7 +194,7 @@ export default class TimeHandler {
      * @returns timeTracker.currentDate
      */
     increaseDate(delta: number = 1, time: number = this.dayStartTime): number {
-        let newDate = this.currentDate + delta;
+        const newDate = this.currentDate + delta;
         this.currentDate = newDate;
         this.currentTime = time;
         return this.currentDate;
@@ -213,7 +213,7 @@ export default class TimeHandler {
         if (toTime === undefined) {
             toTime = this.dayEndTime + 1;
         }
-        let currentTime = this.currentTime;
+        const currentTime = this.currentTime;
         if (fromTime < toTime) {
             return currentTime >= fromTime && currentTime < toTime;
         }

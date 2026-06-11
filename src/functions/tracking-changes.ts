@@ -1,6 +1,6 @@
+import { LATEST_EVENT_MEMORY_KEY } from "@/constants";
+import type LastEventType from "@/types/LastEventType";
 import { storage } from "@drincs/pixi-vn/storage";
-import { LATEST_EVENT_MEMORY_KEY } from "../constants";
-import LastEventType from "../types/LastEventType";
 
 export function setLastEvent(event: LastEventType) {
     storage.set(LATEST_EVENT_MEMORY_KEY, event);

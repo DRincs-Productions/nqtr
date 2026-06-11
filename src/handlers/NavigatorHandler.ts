@@ -1,9 +1,9 @@
+import { CURRENT_ROOM_MEMORY_KEY } from "@/constants";
+import { setLastEvent } from "@/functions/tracking-changes";
+import type { LocationInterface, MapInterface, RoomInterface } from "@/interface";
+import { logger } from "@/utils/log-utility";
 import { RegisteredLocations, RegisteredMaps, RegisteredRooms } from "@drincs/nqtr/registries";
 import { storage } from "@drincs/pixi-vn/storage";
-import { CURRENT_ROOM_MEMORY_KEY } from "../constants";
-import { setLastEvent } from "../functions/tracking-changes";
-import type { LocationInterface, MapInterface, RoomInterface } from "../interface";
-import { logger } from "../utils/log-utility";
 
 export default class NavigatorHandler {
     get rooms() {
@@ -19,15 +19,15 @@ export default class NavigatorHandler {
         return storage.get<string>(CURRENT_ROOM_MEMORY_KEY);
     }
     get currentRoom(): RoomInterface | undefined {
-        let roomId = this.currentRoomId;
+        const roomId = this.currentRoomId;
         if (!roomId) {
             logger.error(`The current room has not yet been set`);
-            return;
+            return undefined;
         }
-        let room = RegisteredRooms.get(roomId);
+        const room = RegisteredRooms.get(roomId);
         if (!room) {
             logger.error(`Current room ${roomId} not found`);
-            return;
+            return undefined;
         }
         return room;
     }
@@ -35,12 +35,12 @@ export default class NavigatorHandler {
         if (typeof room !== "string") {
             room = room.id;
         }
-        let roomRegistrated = RegisteredRooms.get(room);
+        const roomRegistrated = RegisteredRooms.get(room);
         if (!roomRegistrated) {
             logger.error(`The room ${room} is not registered, so it can't be set as current room`);
             return;
         }
-        let prevRoom = storage.get<string>(CURRENT_ROOM_MEMORY_KEY);
+        const prevRoom = storage.get<string>(CURRENT_ROOM_MEMORY_KEY);
         if (prevRoom === room) {
             return;
         }

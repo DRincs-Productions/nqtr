@@ -1,7 +1,7 @@
+import StageStoredClass from "@/classes/quest/StageStoredClass";
+import type { StageProps } from "@/interface";
+import type StageFlags from "@/interface/quest/StageFlags";
 import { storage } from "@drincs/pixi-vn/storage";
-import { StageProps } from "../../interface";
-import StageFlags from "../../interface/quest/StageFlags";
-import StageStoredClass from "./StageStoredClass";
 
 export default class StageBaseModel extends StageStoredClass {
     constructor(id: string, props: StageProps) {

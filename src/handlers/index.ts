@@ -1,7 +1,7 @@
-import NavigatorHandler from "./NavigatorHandler";
-import QuestHandler from "./QuestHandler";
-import RoutineHandler from "./RoutineHandler";
-import { default as TimeManager } from "./TimeHandler";
+import NavigatorHandler from "@/handlers/NavigatorHandler";
+import QuestHandler from "@/handlers/QuestHandler";
+import RoutineHandler from "@/handlers/RoutineHandler";
+import TimeManager from "@/handlers/TimeHandler";
 
 const timeTracker = new TimeManager();
 const navigator = new NavigatorHandler();

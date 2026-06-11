@@ -1,5 +1,5 @@
-import { QuestProps, StageInterface } from "../../interface";
-import QuestStoredClass from "./QuestStoredClass";
+import QuestStoredClass from "@/classes/quest/QuestStoredClass";
+import type { QuestProps, StageInterface } from "@/interface";
 
 export default class QuestBaseModel extends QuestStoredClass {
     constructor(id: string, stages: StageInterface[], props: QuestProps) {

@@ -1,10 +1,10 @@
-import { OnRunProps } from "@drincs/nqtr";
+import type StageStoredClass from "@/classes/quest/StageStoredClass";
+import type { QuestInterface, StageInterface } from "@/interface";
+import type { QuestBaseInternalInterface } from "@/interface/quest/QuestInterface";
+import type { OnRunEvent } from "@/types";
+import { logger } from "@/utils/log-utility";
+import type { OnRunProps } from "@drincs/nqtr";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { QuestInterface, StageInterface } from "../../interface";
-import { QuestBaseInternalInterface } from "../../interface/quest/QuestInterface";
-import { OnRunEvent } from "../../types";
-import { logger } from "../../utils/log-utility";
-import StageStoredClass from "./StageStoredClass";
 
 export interface QuestStoredClassProps {
     /**
@@ -48,7 +48,7 @@ export default class QuestStoredClass
     }
 
     get currentStage(): StageInterface | undefined {
-        let index = this.currentStageIndex;
+        const index = this.currentStageIndex;
         if (index === undefined || index >= this.stages.length) {
             return undefined;
         }
@@ -106,8 +106,8 @@ export default class QuestStoredClass
             return;
         }
         this.currentStageIndex = 0;
-        let currentStage = this.currentStage;
-        if (currentStage && currentStage.start) {
+        const currentStage = this.currentStage;
+        if (currentStage?.start) {
             this.onStart && (await this.onStart(this as any as QuestInterface, props));
             return await currentStage.start(props);
         } else {
@@ -125,7 +125,7 @@ export default class QuestStoredClass
         if (!this.inProgress) {
             return false;
         }
-        let currentStage = this.currentStage;
+        const currentStage = this.currentStage;
         if (!currentStage) {
             logger.error(`Quest ${this.id} has no current stage`);
             return false;
@@ -143,7 +143,7 @@ export default class QuestStoredClass
         return await this.continue(props);
     }
     async continue(props: OnRunProps): Promise<boolean> {
-        let currentStage = this.currentStage;
+        const currentStage = this.currentStage;
         if (!currentStage) {
             logger.error(`Quest ${this.id} has no current stage`);
             return false;
@@ -163,18 +163,18 @@ export default class QuestStoredClass
             console.warn(`[NQTR] Quest ${this.id} is not in progress`);
             return false;
         }
-        let prevStage = this.currentStage;
-        let currentStageIndex = this.currentStageIndex;
+        const prevStage = this.currentStage;
+        const currentStageIndex = this.currentStageIndex;
         if (!prevStage || currentStageIndex === undefined) {
             logger.error(`Quest ${this.id} has no current stage`);
             return false;
         }
         this.currentStageIndex = currentStageIndex + 1;
         this.onContinue && (await this.onContinue(this as any as QuestInterface, props));
-        if (prevStage && prevStage.onEnd) {
+        if (prevStage?.onEnd) {
             await prevStage.onEnd(prevStage, props);
         }
-        let nextCurrentStage = this.currentStage;
+        const nextCurrentStage = this.currentStage;
         if (nextCurrentStage) {
             (nextCurrentStage as any as StageStoredClass).inizialize();
             if (this.currentStageMustStart) {
@@ -186,7 +186,7 @@ export default class QuestStoredClass
     }
 
     get currentStageMustStart(): boolean {
-        let currentStage = this.currentStage;
+        const currentStage = this.currentStage;
         if (!currentStage) {
             return false;
         }
@@ -194,7 +194,7 @@ export default class QuestStoredClass
     }
 
     async startCurrentStage(props: OnRunProps): Promise<void> {
-        let newCurrentStage = this.currentStage;
+        const newCurrentStage = this.currentStage;
         if (newCurrentStage && this.currentStageMustStart) {
             await newCurrentStage.start(props);
         } else {

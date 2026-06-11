@@ -1,6 +1,6 @@
-import { OnRunProps } from "@drincs/nqtr";
+import type { QuestInterface } from "@/interface";
+import type { OnRunProps } from "@drincs/nqtr";
 import { RegisteredQuests } from "@drincs/nqtr/registries";
-import type { QuestInterface } from "../interface";
 
 export default class QuestHandler {
     /**
@@ -52,7 +52,7 @@ export default class QuestHandler {
      * Start the quests that must start on the current stage.
      */
     async startsStageMustBeStarted(props: OnRunProps) {
-        let promises: Promise<void>[] = this.quests.map((quest) => {
+        const promises: Promise<void>[] = this.quests.map((quest) => {
             if (quest.currentStageMustStart) {
                 return quest.startCurrentStage(props);
             }

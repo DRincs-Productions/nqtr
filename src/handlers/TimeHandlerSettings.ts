@@ -1,4 +1,4 @@
-import type { TimeSettings, TimeSlotInterface } from "../types/TimeSettings";
+import type { TimeSettings, TimeSlotInterface } from "@/types/TimeSettings";
 
 export default class TimeHandlerSettings implements TimeSettings {
     static dayStartTime: number = 0;

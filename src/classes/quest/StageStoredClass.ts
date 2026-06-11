@@ -1,9 +1,9 @@
-import { OnRunProps } from "@drincs/nqtr";
+import type { StageInterface } from "@/interface";
+import type { StageBaseInternalInterface } from "@/interface/quest/StageInterface";
+import type { OnRunEvent, QuestsRequiredType } from "@/types";
+import type { OnRunProps } from "@drincs/nqtr";
 import { timeTracker } from "@drincs/nqtr/handlers";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
-import { StageInterface } from "../../interface";
-import { StageBaseInternalInterface } from "../../interface/quest/StageInterface";
-import { OnRunEvent, QuestsRequiredType } from "../../types";
 
 export interface StageStoredClassProps {
     /**
@@ -71,7 +71,7 @@ export default class StageStoredClass
     }
 
     get startDate(): number | undefined {
-        let inizializeDate = this.inizializeDate;
+        const inizializeDate = this.inizializeDate;
         if (inizializeDate === undefined) {
             return undefined;
         }
@@ -79,9 +79,9 @@ export default class StageStoredClass
     }
 
     get canStart(): boolean {
-        let deltaDateRequired = this.deltaDateRequired;
+        const deltaDateRequired = this.deltaDateRequired;
         if (deltaDateRequired > 0) {
-            let inizializeDate = this.inizializeDate;
+            const inizializeDate = this.inizializeDate;
             if (inizializeDate === undefined) {
                 return false;
             }

@@ -1,9 +1,9 @@
+import type { ActiveScheduling, CommitmentInterface } from "@/interface";
+import { logger } from "@/utils/log-utility";
 import { fixedCommitments, RegisteredCommitments } from "@drincs/nqtr/registries";
-import { type CharacterInterface } from "@drincs/pixi-vn";
+import type { CharacterInterface } from "@drincs/pixi-vn";
 import { PixiError } from "@drincs/pixi-vn/core";
 import { storage } from "@drincs/pixi-vn/storage";
-import type { ActiveScheduling, CommitmentInterface } from "../interface";
-import { logger } from "../utils/log-utility";
 
 interface StoredCommitment extends ActiveScheduling {
     id: string;
@@ -19,7 +19,7 @@ export default class RoutineHandler {
     private get temporaryRoutine(): {
         [commitmentId: string]: StoredCommitment;
     } {
-        let commitments = storage.get(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY) as
+        const commitments = storage.get(TEMPORARY_COMMITMENT_CATEGORY_MEMORY_KEY) as
             | string[]
             | {
                   [commitmentId: string]: StoredCommitment;
@@ -122,10 +122,10 @@ export default class RoutineHandler {
                 const commitment = RegisteredCommitments.get(id);
                 const temp = temporaryRoutine[id];
                 const roomId = temp?.roomId || fixedCommitments.get(id)?.[1];
-                if (roomId && commitment && commitment.isActive(temp)) {
+                if (roomId && commitment?.isActive(temp)) {
                     if (commitment.characters.length > 0) {
                         // all the characters don't already have commitments or the commitment has a higher priority
-                        let allAvailable = commitment.characters.every(
+                        const allAvailable = commitment.characters.every(
                             (ch) => !acc[ch.id] || commitment.priority > acc[ch.id][0].priority,
                         );
                         if (allAvailable) {
@@ -180,6 +180,7 @@ export default class RoutineHandler {
             if (c.characters.map((ch) => ch.id).includes(character.id)) {
                 return c;
             }
+            return undefined;
         });
     }
 }
