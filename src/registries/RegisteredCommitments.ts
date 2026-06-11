@@ -66,5 +66,14 @@ namespace RegisteredCommitments {
     export function has(id: string): boolean {
         return registeredCommitments.has(id);
     }
+
+    /**
+     * Remove all registered commitments (both scheduled and fixed).
+     * Primarily used by the Vite plugin to reset state between hot-module reloads.
+     */
+    export function clear(): void {
+        registeredCommitments.clear();
+        fixedCommitments.clear();
+    }
 }
 export default RegisteredCommitments;

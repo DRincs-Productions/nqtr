@@ -6,7 +6,7 @@ import { CachedMap } from "@drincs/pixi-vn";
  * A Map that contains all activities registered and available to be used.
  * The key is the id of the activity and the value is the activity itself.
  */
-const registeredActivities = new CachedMap<string, ActivityInterface>({ cacheSize: 20 });
+export const registeredActivities = new CachedMap<string, ActivityInterface>({ cacheSize: 20 });
 
 namespace RegisteredActivities {
     /**
@@ -58,6 +58,14 @@ namespace RegisteredActivities {
      */
     export function has(id: string): boolean {
         return registeredActivities.has(id);
+    }
+
+    /**
+     * Remove all registered activities.
+     * Primarily used by the Vite plugin to reset state between hot-module reloads.
+     */
+    export function clear(): void {
+        registeredActivities.clear();
     }
 }
 export default RegisteredActivities;

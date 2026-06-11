@@ -86,6 +86,31 @@ export default defineConfig((options) => {
             },
         }),
         createConfig({
+            target: "node18",
+            entry: {
+                vite: "src/vite/index.ts",
+            },
+            format: ["cjs", "esm"],
+            dts: false,
+            treeshake: true,
+            clean: false,
+            minify: true,
+            bundle: true,
+            // Bundle picocolors and tinyglobby; keep vite and nqtr/pixi-vn as peer externals.
+            skipNodeModulesBundle: false,
+            external: [
+                "vite",
+                "@drincs/nqtr",
+                "@drincs/nqtr/registries",
+                "@drincs/pixi-vn",
+            ],
+            outExtension({ format }) {
+                return {
+                    js: format === "esm" ? ".mjs" : ".cjs",
+                };
+            },
+        }),
+        createConfig({
             target: "es2022",
             entry: {
                 index: "src/index.ts",
@@ -111,12 +136,15 @@ export default defineConfig((options) => {
                 handlers: "src/handlers/index.ts",
                 ink: "src/ink/index.ts",
                 index: "src/index.ts",
+                vite: "src/vite/index.ts",
             },
             format: ["cjs", "esm"],
             dts: { only: true },
             clean: false,
             external: [
+                "vite",
                 "@drincs/pixi-vn",
+                "@drincs/nqtr",
                 "@drincs/nqtr/registries",
                 "@drincs/nqtr/handlers",
                 "@drincs/pixi-vn-ink",

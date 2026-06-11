@@ -6,7 +6,7 @@ import { CachedMap } from "@drincs/pixi-vn";
  * A Map that contains all quests registered and available to be used.
  * The key is the id of the quest and the value is the quest itself.
  */
-const registeredQuests = new CachedMap<string, QuestInterface>({ cacheSize: 5 });
+export const registeredQuests = new CachedMap<string, QuestInterface>({ cacheSize: 5 });
 
 namespace RegisteredQuest {
     /**
@@ -55,6 +55,14 @@ namespace RegisteredQuest {
      */
     export function has(id: string): boolean {
         return registeredQuests.has(id);
+    }
+
+    /**
+     * Remove all registered quests.
+     * Primarily used by the Vite plugin to reset state between hot-module reloads.
+     */
+    export function clear(): void {
+        registeredQuests.clear();
     }
 }
 export default RegisteredQuest;

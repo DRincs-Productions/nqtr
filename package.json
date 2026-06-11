@@ -41,6 +41,12 @@
       "import": "./dist/ink.mjs",
       "require": "./dist/ink.cjs",
       "default": "./dist/ink.mjs"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.cjs",
+      "default": "./dist/vite.mjs"
     }
   },
   "typesVersions": {
@@ -53,6 +59,9 @@
       ],
       "ink": [
         "./dist/ink.d.ts"
+      ],
+      "vite": [
+        "./dist/vite.d.ts"
       ]
     }
   },
@@ -80,10 +89,14 @@
   },
   "peerDependencies": {
     "@drincs/pixi-vn": ">=1.5.17",
-    "@drincs/pixi-vn-ink": ">=0.12.2"
+    "@drincs/pixi-vn-ink": ">=0.12.2",
+    "vite": ">=5.0.0"
   },
   "peerDependenciesMeta": {
     "@drincs/pixi-vn-ink": {
+      "optional": true
+    },
+    "vite": {
       "optional": true
     }
   },

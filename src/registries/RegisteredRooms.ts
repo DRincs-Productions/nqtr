@@ -8,7 +8,7 @@ import { CachedMap } from "@drincs/pixi-vn";
  * A Map that contains all rooms registered and available to be used.
  * The key is the id of the room and the value is the room itself.
  */
-const registeredRooms = new CachedMap<string, RoomInterface>({ cacheSize: 20 });
+export const registeredRooms = new CachedMap<string, RoomInterface>({ cacheSize: 20 });
 
 namespace RegisteredRooms {
     /**
@@ -67,6 +67,14 @@ namespace RegisteredRooms {
      */
     export function has(id: string): boolean {
         return registeredRooms.has(id);
+    }
+
+    /**
+     * Remove all registered rooms.
+     * Primarily used by the Vite plugin to reset state between hot-module reloads.
+     */
+    export function clear(): void {
+        registeredRooms.clear();
     }
 }
 export default RegisteredRooms;

@@ -16,3 +16,17 @@ export type { default as QuestProps } from "@/interface/quest/QuestProps";
 export type { default as StageInterface } from "@/interface/quest/StageInterface";
 export type { default as StageProps } from "@/interface/quest/StageProps";
 export type { default as TimeSchedulingInterface } from "@/interface/TimeSchedulingInterface";
+export type {
+    ActivityIdType,
+    CommitmentIdType,
+    LocationIdType,
+    MapIdType,
+    NqtrActivityIds,
+    NqtrCommitmentIds,
+    NqtrLocationIds,
+    NqtrMapIds,
+    NqtrQuestIds,
+    NqtrRoomIds,
+    QuestIdType,
+    RoomIdType,
+} from "@/interface/NqtrIds";

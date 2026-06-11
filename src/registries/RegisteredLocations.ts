@@ -6,7 +6,7 @@ import { CachedMap } from "@drincs/pixi-vn";
  * A Map that contains all locations registered and available to be used.
  * The key is the id of the location and the value is the location itself.
  */
-const registeredLocations = new CachedMap<string, LocationInterface>({ cacheSize: 20 });
+export const registeredLocations = new CachedMap<string, LocationInterface>({ cacheSize: 20 });
 
 namespace RegisteredLocations {
     /**
@@ -61,6 +61,14 @@ namespace RegisteredLocations {
      */
     export function has(id: string): boolean {
         return registeredLocations.has(id);
+    }
+
+    /**
+     * Remove all registered locations.
+     * Primarily used by the Vite plugin to reset state between hot-module reloads.
+     */
+    export function clear(): void {
+        registeredLocations.clear();
     }
 }
 export default RegisteredLocations;
