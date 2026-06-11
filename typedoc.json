@@ -3,6 +3,7 @@
   "plugin": ["typedoc-plugin-markdown"],
   "entryPoints": [
     "./src/index.ts",
+    "./src/ink/index.ts",
     "./src/vite/index.ts"
   ],
   "out": "doc",
