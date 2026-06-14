@@ -38,16 +38,8 @@ export default class RoomStoredClass
         } else {
             super(ROOM_CATEGORY, id, activities.activities);
             activities.routine.forEach((commitment) => {
-                const commitmentItem =
-                    typeof commitment === "string" ? routine.find(commitment) : commitment;
-                if (!commitmentItem) {
-                    logger.error(`Commitment with id ${commitment} not found.`);
-                    throw new PixiError(
-                        "unknown_element",
-                        `Commitment with id ${commitment} not found.`,
-                    );
-                }
-                fixedCommitments.set(commitmentItem.id, [commitmentItem, id]);
+                const commitmentId = typeof commitment === "string" ? commitment : commitment.id;
+                fixedCommitments.set(commitmentId, id);
             });
         }
     }

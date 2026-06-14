@@ -125,7 +125,7 @@ export default class RoutineHandler {
             (acc: { [character: string]: [CommitmentInterface, string] }, id) => {
                 const commitment = RegisteredCommitments.get(id);
                 const temp = temporaryRoutine[id];
-                const roomId = temp?.roomId || fixedCommitments.get(id)?.[1];
+                const roomId = temp?.roomId || fixedCommitments.get(id);
                 if (roomId && commitment?.isActive(temp)) {
                     if (commitment.characters.length > 0) {
                         // all the characters don't already have commitments or the commitment has a higher priority

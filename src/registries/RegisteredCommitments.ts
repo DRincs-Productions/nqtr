@@ -8,14 +8,14 @@ import { CachedMap, PixiError } from "@drincs/pixi-vn";
  */
 export const registeredCommitments = new CachedMap<string, CommitmentInterface>({ cacheSize: 20 });
 export const fixedCommitments = new CachedMap<
+    /**
+     * Commitment id.
+     */
     string,
-    [
-        CommitmentInterface,
-        /**
-         * Room id where the commitment is.
-         */
-        string,
-    ]
+    /**
+     * Room id where the commitment is.
+     */
+    string
 >({ cacheSize: 20 });
 
 namespace RegisteredCommitments {
