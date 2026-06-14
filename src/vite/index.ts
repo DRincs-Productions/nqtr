@@ -77,22 +77,6 @@ export interface VitePluginNqtrOptions {
     commitments?: string | string[];
 
     /**
-     * Glob / path of module(s) whose side effects register locations via
-     * `RegisteredLocations.add(...)`.
-     *
-     * @example "./src/locations.ts"
-     */
-    locations?: string | string[];
-
-    /**
-     * Glob / path of module(s) whose side effects register maps via
-     * `RegisteredMaps.add(...)`.
-     *
-     * @example "./src/maps.ts"
-     */
-    maps?: string | string[];
-
-    /**
      * Glob / path of module(s) whose side effects register quests via
      * `RegisteredQuests.add(...)`.
      *
@@ -226,10 +210,8 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
     const allPatterns = [
         ...asArray(options?.activities),
         ...asArray(options?.commitments),
-        ...asArray(options?.locations),
-        ...asArray(options?.maps),
-        ...asArray(options?.quests),
         ...asArray(options?.rooms),
+        ...asArray(options?.quests),
     ];
 
     const watchedFiles = new Set<string>();
@@ -497,7 +479,8 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
                             resolvedConfig?.logger.error(
                                 `${PLUGIN_PREFIX} Failed to regenerate types after pixi-vn reload.`,
                                 {
-                                    error: error instanceof Error ? error : new Error(String(error)),
+                                    error:
+                                        error instanceof Error ? error : new Error(String(error)),
                                     timestamp: true,
                                 },
                             );
