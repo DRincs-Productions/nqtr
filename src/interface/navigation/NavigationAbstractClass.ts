@@ -10,7 +10,7 @@ export default interface NavigationAbstractInterface extends StoredClassModel {
      * @param options
      * @returns
      */
-    addActivity(activity: ActivityInterface, options?: ActiveScheduling): void;
+    addActivity(activity: ActivityInterface | ActivityIdType, options?: ActiveScheduling): void;
     /**
      * Disconnects the activity from the class.
      * @param activity The activity to disconnect from the class.

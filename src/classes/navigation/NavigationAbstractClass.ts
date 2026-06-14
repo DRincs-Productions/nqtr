@@ -68,7 +68,13 @@ export default abstract class NavigationAbstractClass
     get activitiesIds(): string[] {
         return this.additionalActivitiesIds.concat(this.defaultActivitiesIds);
     }
-    addActivity(activity: ActivityInterface, options: ActiveScheduling = {}) {
+    addActivity(activity: ActivityInterface | ActivityIdType, options: ActiveScheduling = {}) {
+        const activityItem =
+            typeof activity === "string" ? RegisteredActivities.get(activity) : activity;
+        if (!activityItem) {
+            logger.error(`Activity with id ${activity} not found.`);
+            throw new PixiError("unknown_element", `Activity with id ${activity} not found.`);
+        }
         let { timeSlot, dateScheduling } = options;
         if (timeSlot && !Array.isArray(timeSlot)) {
             timeSlot = [timeSlot];
@@ -99,26 +105,26 @@ export default abstract class NavigationAbstractClass
 
         const additionalActivitiesIds = this.additionalActivitiesIds;
         if (
-            this.defaultActivitiesIds.includes(activity.id) ||
-            additionalActivitiesIds.includes(activity.id)
+            this.defaultActivitiesIds.includes(activityItem.id) ||
+            additionalActivitiesIds.includes(activityItem.id)
         ) {
             logger.info(
-                `Activity with id ${activity.id} already exists in the ${this.id}, so it will be updated with the new scheduling options if they are provided.`,
+                `Activity with id ${activityItem.id} already exists in the ${this.id}, so it will be updated with the new scheduling options if they are provided.`,
             );
         } else {
-            additionalActivitiesIds.push(activity.id);
+            additionalActivitiesIds.push(activityItem.id);
             this.setStorageProperty(`additionalActivitiesIds`, additionalActivitiesIds);
         }
 
-        if (this.excludedActivitiesIds.includes(activity.id)) {
-            this.removeActivityScheduling(activity.id);
+        if (this.excludedActivitiesIds.includes(activityItem.id)) {
+            this.removeActivityScheduling(activityItem.id);
             logger.log(
-                `Activity with id ${activity.id} was excluded from the ${this.id}, but now it will be added again with the new scheduling options. So it will be removed from the excluded activities list.`,
+                `Activity with id ${activityItem.id} was excluded from the ${this.id}, but now it will be added again with the new scheduling options. So it will be removed from the excluded activities list.`,
             );
         }
 
         if (timeSlot || dateScheduling) {
-            this.editActivityScheduling(activity.id, {
+            this.editActivityScheduling(activityItem.id, {
                 timeSlot: timeSlot,
                 dateScheduling: dateScheduling,
             });
@@ -172,8 +178,7 @@ export default abstract class NavigationAbstractClass
         ].reduce((acc: ActivityInterface[], activityId) => {
             const activity = RegisteredActivities.get(activityId);
             if (
-                activity &&
-                activity.isActive(this.activeActivityScheduling[activityId]) &&
+                activity?.isActive(this.activeActivityScheduling[activityId]) &&
                 !this.excludedActivitiesScheduling[activityId]
             ) {
                 acc.push(activity);
