@@ -9,7 +9,11 @@ import type { ExecutionType } from "@/types";
 import type { OnRunEvent } from "@/types/OnRunEvent";
 import type TimeDataType from "@/types/TimeDataType";
 import { navigator } from "@drincs/nqtr/handlers";
-import type { CharacterInterface } from "@drincs/pixi-vn";
+import {
+    RegisteredCharacters,
+    type CharacterIdType,
+    type CharacterInterface,
+} from "@drincs/pixi-vn/characters";
 import { storage } from "@drincs/pixi-vn/storage";
 
 export interface CommitmentStoredClassProps {
@@ -40,7 +44,7 @@ export default class CommitmentStoredClass
 {
     constructor(
         id: string,
-        private readonly _characters: CharacterInterface[],
+        characters: (CharacterInterface | CharacterIdType)[],
         onRun: OnRunEvent<CommitmentInterface> | undefined,
         props: CommitmentStoredClassProps,
     ) {
@@ -48,13 +52,24 @@ export default class CommitmentStoredClass
         super(id, onRun, props, COMMITMENT_CATEGORY);
         this.defaultExecutionType = props.executionType || "interaction";
         this.defaultPriority = props.priority;
+        this.characters = characters.reduce<CharacterInterface[]>((acc, character) => {
+            if (typeof character === "string") {
+                const foundCharacter = RegisteredCharacters.get(character);
+                if (foundCharacter) {
+                    acc.push(foundCharacter);
+                } else {
+                    console.warn(`Character with id ${character} not found for commitment ${id}`);
+                }
+            } else {
+                acc.push(character);
+            }
+            return acc;
+        }, []);
     }
     private readonly defaultExecutionType: ExecutionType;
     private readonly defaultPriority?: number;
 
-    get characters(): CharacterInterface[] {
-        return this._characters;
-    }
+    readonly characters: CharacterInterface[];
 
     get executionType(): ExecutionType {
         return this.getStorageProperty<ExecutionType>("executionType") || this.defaultExecutionType;

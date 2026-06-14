@@ -1,6 +1,6 @@
 import CommitmentStoredClass from "@/classes/activity/CommitmentStoredClass";
 import type { CommitmentProps } from "@/interface";
-import type { CharacterInterface } from "@drincs/pixi-vn";
+import type { CharacterIdType, CharacterInterface } from "@drincs/pixi-vn";
 import { storage } from "@drincs/pixi-vn/storage";
 
 /**
@@ -27,7 +27,10 @@ export default class CommitmentBaseModel extends CommitmentStoredClass {
      */
     constructor(
         id: string,
-        character: CharacterInterface | CharacterInterface[] | undefined,
+        character:
+            | (CharacterInterface | CharacterIdType)
+            | (CharacterInterface | CharacterIdType)[]
+            | undefined,
         props: CommitmentProps,
     ) {
         super(

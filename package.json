@@ -88,7 +88,7 @@
     "vitest": "^4.1.8"
   },
   "peerDependencies": {
-    "@drincs/pixi-vn": ">=1.5.17",
+    "@drincs/pixi-vn": ">=1.8.9",
     "@drincs/pixi-vn-ink": ">=0.12.2",
     "vite": ">=5.0.0"
   },
