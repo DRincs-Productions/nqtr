@@ -1,6 +1,6 @@
 import { CURRENT_ROOM_MEMORY_KEY } from "@/constants";
 import { setLastEvent } from "@/functions/tracking-changes";
-import type { LocationInterface, MapInterface, RoomInterface } from "@/interface";
+import type { LocationInterface, MapInterface, RoomIdType, RoomInterface } from "@/interface";
 import { logger } from "@/utils/log-utility";
 import { RegisteredLocations, RegisteredMaps, RegisteredRooms } from "@drincs/nqtr/registries";
 import { storage } from "@drincs/pixi-vn/storage";
@@ -31,7 +31,7 @@ export default class NavigatorHandler {
         }
         return room;
     }
-    set currentRoom(room: RoomInterface | string) {
+    set currentRoom(room: RoomInterface | RoomIdType) {
         if (typeof room !== "string") {
             room = room.id;
         }

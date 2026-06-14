@@ -1,4 +1,4 @@
-import type { ActiveScheduling, CommitmentInterface } from "@/interface";
+import type { ActiveScheduling, CommitmentIdType, CommitmentInterface } from "@/interface";
 import { logger } from "@/utils/log-utility";
 import { fixedCommitments, RegisteredCommitments } from "@drincs/nqtr/registries";
 import type { CharacterInterface } from "@drincs/pixi-vn";
@@ -87,7 +87,7 @@ export default class RoutineHandler {
      * @param commitment The commitment or commitment id to remove.
      * @param roomId The id of the room where the commitment is.
      */
-    remove(commitment: CommitmentInterface | string, roomId?: string) {
+    remove(commitment: CommitmentInterface | CommitmentIdType, roomId?: string) {
         if (typeof commitment !== "string") {
             commitment = commitment.id;
         }

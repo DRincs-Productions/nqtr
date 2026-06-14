@@ -1,3 +1,4 @@
+import type { ActivityIdType } from "@/interface";
 import type ActiveScheduling from "@/interface/activity/ActiveScheduling";
 import type { ActivityInterface } from "@drincs/nqtr";
 import type { StoredClassModel } from "@drincs/pixi-vn/storage";
@@ -15,7 +16,7 @@ export default interface NavigationAbstractInterface extends StoredClassModel {
      * @param activity The activity to disconnect from the class.
      * @param options
      */
-    removeActivity(activity: ActivityInterface | string): void;
+    removeActivity(activity: ActivityInterface | ActivityIdType): void;
     /**
      * Removes the useless activities.
      */

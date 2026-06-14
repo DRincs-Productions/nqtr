@@ -1,4 +1,4 @@
-import type { ActiveScheduling, ActivityInterface } from "@/interface";
+import type { ActiveScheduling, ActivityIdType, ActivityInterface } from "@/interface";
 import type { ExcludedScheduling } from "@/interface/activity/ActiveScheduling";
 import type NavigationAbstractInterface from "@/interface/navigation/NavigationAbstractClass";
 import { logger } from "@/utils/log-utility";
@@ -124,7 +124,7 @@ export default abstract class NavigationAbstractClass
             });
         }
     }
-    removeActivity(activity: ActivityInterface | string) {
+    removeActivity(activity: ActivityInterface | ActivityIdType) {
         const activityId = typeof activity === "string" ? activity : activity.id;
 
         let additionalActivitiesIds = this.additionalActivitiesIds;

@@ -2,6 +2,7 @@ import NavigationAbstractClass from "@/classes/navigation/NavigationAbstractClas
 import type {
     ActiveScheduling,
     ActivityInterface,
+    CommitmentIdType,
     CommitmentInterface,
     LocationInterface,
 } from "@/interface";
@@ -77,7 +78,7 @@ export default class RoomStoredClass
             dateScheduling: dateScheduling,
         });
     }
-    removeCommitment(commitment: CommitmentInterface | string) {
+    removeCommitment(commitment: CommitmentInterface | CommitmentIdType) {
         routine.remove(commitment, this.id);
     }
 

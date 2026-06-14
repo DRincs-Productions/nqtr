@@ -11,11 +11,6 @@ export type { default as MapBaseModelProps } from "@/interface/navigation/MapBas
 export type { default as MapInterface } from "@/interface/navigation/MapInterface";
 export type { default as RoomBaseModelProps } from "@/interface/navigation/RoomBaseModelProps";
 export type { default as RoomInterface } from "@/interface/navigation/RoomInterface";
-export type { default as QuestInterface } from "@/interface/quest/QuestInterface";
-export type { default as QuestProps } from "@/interface/quest/QuestProps";
-export type { default as StageInterface } from "@/interface/quest/StageInterface";
-export type { default as StageProps } from "@/interface/quest/StageProps";
-export type { default as TimeSchedulingInterface } from "@/interface/TimeSchedulingInterface";
 export type {
     ActivityIdType,
     CommitmentIdType,
@@ -30,3 +25,8 @@ export type {
     QuestIdType,
     RoomIdType,
 } from "@/interface/NqtrIds";
+export type { default as QuestInterface } from "@/interface/quest/QuestInterface";
+export type { default as QuestProps } from "@/interface/quest/QuestProps";
+export type { default as StageInterface } from "@/interface/quest/StageInterface";
+export type { default as StageProps } from "@/interface/quest/StageProps";
+export type { default as TimeSchedulingInterface } from "@/interface/TimeSchedulingInterface";

@@ -23,18 +23,3 @@ export {
     registeredRooms,
     default as RegisteredRooms,
 } from "@/registries/RegisteredRooms";
-
-export type {
-    ActivityIdType,
-    CommitmentIdType,
-    LocationIdType,
-    MapIdType,
-    NqtrActivityIds,
-    NqtrCommitmentIds,
-    NqtrLocationIds,
-    NqtrMapIds,
-    NqtrQuestIds,
-    NqtrRoomIds,
-    QuestIdType,
-    RoomIdType,
-} from "@/interface/NqtrIds";

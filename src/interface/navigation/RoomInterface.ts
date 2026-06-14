@@ -1,4 +1,4 @@
-import type { LocationInterface as LocationInterfaceInt } from "@/interface";
+import type { CommitmentIdType, LocationInterface as LocationInterfaceInt } from "@/interface";
 import type ActiveScheduling from "@/interface/activity/ActiveScheduling";
 import type NavigationAbstractInterface from "@/interface/navigation/NavigationAbstractClass";
 import type { OnRunAsyncFunction } from "@/types";
@@ -28,7 +28,7 @@ export interface RoomBaseInternalInterface extends NavigationAbstractInterface {
      * @param commitment The commitment to disconnect from the class.
      * @param options
      */
-    removeCommitment(commitment: CommitmentInterface | string): void;
+    removeCommitment(commitment: CommitmentInterface | CommitmentIdType): void;
     /**
      * Get the character commitments of the room.
      */
