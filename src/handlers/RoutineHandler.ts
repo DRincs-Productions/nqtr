@@ -1,7 +1,7 @@
 import type { ActiveScheduling, CommitmentIdType, CommitmentInterface } from "@/interface";
 import { logger } from "@/utils/log-utility";
 import { fixedCommitments, RegisteredCommitments } from "@drincs/nqtr/registries";
-import type { CharacterInterface } from "@drincs/pixi-vn";
+import type { CharacterIdType, CharacterInterface } from "@drincs/pixi-vn";
 import { PixiError } from "@drincs/pixi-vn/core";
 import { storage } from "@drincs/pixi-vn/storage";
 
@@ -49,7 +49,10 @@ export default class RoutineHandler {
      * @param roomId The id of the room where the commitment is.
      */
     add(
-        commitment: CommitmentInterface[] | CommitmentInterface,
+        commitment:
+            | (CommitmentInterface | CommitmentIdType)[]
+            | CommitmentInterface
+            | CommitmentIdType,
         roomId: string,
         options: ActiveScheduling = {},
     ) {
@@ -58,14 +61,15 @@ export default class RoutineHandler {
         }
         const temporaryRoutine = this.temporaryRoutine;
         commitment.forEach((commitment) => {
-            if (RegisteredCommitments.get(commitment.id)) {
+            const commitmentId = typeof commitment === "string" ? commitment : commitment.id;
+            if (RegisteredCommitments.get(commitmentId)) {
                 logger.warn(
-                    `The commitment ${commitment.id} is already registered, it will be overwritten`,
+                    `The commitment ${commitmentId} is already registered, it will be overwritten`,
                 );
             }
             RegisteredCommitments.add(commitment);
-            temporaryRoutine[commitment.id] = {
-                id: commitment.id,
+            temporaryRoutine[commitmentId] = {
+                id: commitmentId,
                 roomId,
                 ...options,
             };
@@ -175,9 +179,12 @@ export default class RoutineHandler {
      * @param character The character.
      * @returns The commitment or undefined if not found.
      */
-    getCommitmentByCharacter(character: CharacterInterface): CommitmentInterface | undefined {
+    getCommitmentByCharacter(
+        character: CharacterInterface | CharacterIdType,
+    ): CommitmentInterface | undefined {
+        const characterId = typeof character === "string" ? character : character.id;
         return this.currentRoutine.find((c) => {
-            if (c.characters.map((ch) => ch.id).includes(character.id)) {
+            if (c.characters.map((ch) => ch.id).includes(characterId)) {
                 return c;
             }
             return undefined;

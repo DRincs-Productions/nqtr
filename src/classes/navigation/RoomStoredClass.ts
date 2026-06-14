@@ -1,6 +1,7 @@
 import NavigationAbstractClass from "@/classes/navigation/NavigationAbstractClass";
 import type {
     ActiveScheduling,
+    ActivityIdType,
     ActivityInterface,
     CommitmentIdType,
     CommitmentInterface,
@@ -26,10 +27,10 @@ export default class RoomStoredClass
          */
         private readonly _location: LocationInterface,
         activities:
-            | ActivityInterface[]
+            | (ActivityInterface | ActivityIdType)[]
             | {
-                  activities: ActivityInterface[];
-                  routine: CommitmentInterface[];
+                  activities: (ActivityInterface | ActivityIdType)[];
+                  routine: (CommitmentInterface | CommitmentIdType)[];
               } = [],
     ) {
         if (Array.isArray(activities)) {
@@ -37,14 +38,26 @@ export default class RoomStoredClass
         } else {
             super(ROOM_CATEGORY, id, activities.activities);
             activities.routine.forEach((commitment) => {
-                fixedCommitments.set(commitment.id, [commitment, id]);
+                const commitmentItem =
+                    typeof commitment === "string" ? routine.find(commitment) : commitment;
+                if (!commitmentItem) {
+                    logger.error(`Commitment with id ${commitment} not found.`);
+                    throw new PixiError(
+                        "unknown_element",
+                        `Commitment with id ${commitment} not found.`,
+                    );
+                }
+                fixedCommitments.set(commitmentItem.id, [commitmentItem, id]);
             });
         }
     }
     get routine(): CommitmentInterface[] {
         return routine.roomCommitments[this.id] || [];
     }
-    addCommitment(commitment: CommitmentInterface, options: ActiveScheduling = {}) {
+    addCommitment(
+        commitment: CommitmentInterface | CommitmentIdType,
+        options: ActiveScheduling = {},
+    ) {
         let { timeSlot, dateScheduling } = options;
         if (timeSlot && !Array.isArray(timeSlot)) {
             timeSlot = [timeSlot];

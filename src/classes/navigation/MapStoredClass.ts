@@ -1,5 +1,5 @@
 import NavigationAbstractClass from "@/classes/navigation/NavigationAbstractClass";
-import type { ActivityInterface, LocationInterface } from "@/interface";
+import type { ActivityIdType, ActivityInterface, LocationInterface } from "@/interface";
 import type { MapBaseInternalInterface } from "@/interface/navigation/MapInterface";
 import { navigator } from "@drincs/nqtr/handlers";
 
@@ -8,7 +8,7 @@ export default class MapStoredClass
     extends NavigationAbstractClass
     implements MapBaseInternalInterface
 {
-    constructor(id: string, activities: ActivityInterface[] = []) {
+    constructor(id: string, activities: (ActivityInterface | ActivityIdType)[] = []) {
         super(MAP_CATEGORY, id, activities);
     }
 

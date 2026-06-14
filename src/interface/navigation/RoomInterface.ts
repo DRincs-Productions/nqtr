@@ -22,7 +22,10 @@ export interface RoomBaseInternalInterface extends NavigationAbstractInterface {
      * @param options
      * @returns
      */
-    addCommitment(commitment: CommitmentInterface, options?: ActiveScheduling): void;
+    addCommitment(
+        commitment: CommitmentInterface | CommitmentIdType,
+        options?: ActiveScheduling,
+    ): void;
     /**
      * Disconnects the commitment from the class.
      * @param commitment The commitment to disconnect from the class.

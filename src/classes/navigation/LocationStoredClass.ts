@@ -1,5 +1,5 @@
 import NavigationAbstractClass from "@/classes/navigation/NavigationAbstractClass";
-import type { ActivityInterface, MapInterface, RoomInterface } from "@/interface";
+import type { ActivityIdType, ActivityInterface, MapInterface, RoomInterface } from "@/interface";
 import type { LocationInternalInterface } from "@/interface/navigation/LocationInterface";
 import { navigator } from "@drincs/nqtr/handlers";
 
@@ -14,7 +14,7 @@ export default class LocationStoredClass
          * The map where the location is.
          */
         private readonly _map: MapInterface,
-        activities: ActivityInterface[] = [],
+        activities: (ActivityInterface | ActivityIdType)[] = [],
     ) {
         super(LOCATION_CATEGORY, id, activities);
     }

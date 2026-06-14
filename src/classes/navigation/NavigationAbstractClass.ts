@@ -14,10 +14,21 @@ export default abstract class NavigationAbstractClass
     constructor(
         categoryId: string,
         id: string,
-        private defaultActivities: ActivityInterface[] = [],
+        activities: (ActivityInterface | ActivityIdType)[] = [],
     ) {
         super(categoryId, id);
+        this.defaultActivities = activities.reduce((acc: ActivityInterface[], activity) => {
+            const activityItem =
+                typeof activity === "string" ? RegisteredActivities.get(activity) : activity;
+            if (!activityItem) {
+                logger.error(`Activity with id ${activity} not found.`);
+                throw new PixiError("unknown_element", `Activity with id ${activity} not found.`);
+            }
+            acc.push(activityItem);
+            return acc;
+        }, []);
     }
+    private defaultActivities: ActivityInterface[];
     private get defaultActivitiesIds(): string[] {
         return this.defaultActivities.map((activity) => activity.id);
     }
