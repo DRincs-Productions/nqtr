@@ -1,4 +1,4 @@
-import type { CommitmentInterface } from "@drincs/nqtr";
+import type CommitmentInterface from "@/interface/activity/CommitmentInterface";
 
 export default interface CommitmentInfo {
     commitment: CommitmentInterface;

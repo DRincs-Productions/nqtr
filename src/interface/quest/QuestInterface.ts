@@ -1,10 +1,8 @@
 import type { QuestInterface as QuestInterfaceInt, StageInterface } from "@/interface";
 import type { OnRunEvent } from "@/types";
-import type { OnRunProps, QuestInterface as OverrideQuestInterface } from "@drincs/nqtr";
+import type { OnRunProps } from "@/types";
 
-export default interface QuestInterface
-    extends QuestBaseInternalInterface,
-        OverrideQuestInterface {}
+export default interface QuestInterface extends QuestBaseInternalInterface {}
 
 export interface QuestBaseInternalInterface {
     /**

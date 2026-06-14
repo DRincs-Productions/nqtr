@@ -1,3 +1,17 @@
+export type {
+    NqtrActivityIds,
+    NqtrCommitmentIds,
+    NqtrLocationIds,
+    NqtrMapIds,
+    NqtrQuestIds,
+    NqtrRoomIds,
+    ActivityIdType,
+    CommitmentIdType,
+    LocationIdType,
+    MapIdType,
+    QuestIdType,
+    RoomIdType,
+} from "@/registries/NqtrIds";
 export {
     registeredActivities,
     default as RegisteredActivities,

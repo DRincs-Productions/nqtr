@@ -1,11 +1,8 @@
 import type { ActivityBaseInternalInterface } from "@/interface/activity/ActivityInterface";
 import type { ExecutionType } from "@/types";
-import type { CommitmentInterface as OverrideCommitmentInterface } from "@drincs/nqtr";
 import type { CharacterInterface } from "@drincs/pixi-vn";
 
-export default interface CommitmentInterface
-    extends CommitmentBaseInternalInterface,
-        OverrideCommitmentInterface {}
+export default interface CommitmentInterface extends CommitmentBaseInternalInterface {}
 
 export interface CommitmentBaseInternalInterface extends ActivityBaseInternalInterface {
     /**

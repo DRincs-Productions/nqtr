@@ -1,6 +1,4 @@
-import type { OnRunProps as OnRunPropsOverride } from "@drincs/nqtr";
-
-export type OnRunProps = OnRunPropsOverride;
+export interface OnRunProps {}
 
 /**
  * The function that is called when the class is runned.

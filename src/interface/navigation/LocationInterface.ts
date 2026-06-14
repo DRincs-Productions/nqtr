@@ -1,10 +1,8 @@
 import type { MapInterface } from "@/interface";
 import type NavigationAbstractInterface from "@/interface/navigation/NavigationAbstractClass";
-import type { LocationInterface as OverrideLocationInterface, RoomInterface } from "@drincs/nqtr";
+import type RoomInterface from "@/interface/navigation/RoomInterface";
 
-export default interface LocationInterface
-    extends LocationInternalInterface,
-        OverrideLocationInterface {}
+export default interface LocationInterface extends LocationInternalInterface {}
 
 export interface LocationInternalInterface extends NavigationAbstractInterface {
     /**

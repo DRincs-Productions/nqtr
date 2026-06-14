@@ -3,7 +3,7 @@ import type { QuestInterface, StageInterface } from "@/interface";
 import type { QuestBaseInternalInterface } from "@/interface/quest/QuestInterface";
 import type { OnRunEvent } from "@/types";
 import { logger } from "@/utils/log-utility";
-import type { OnRunProps } from "@drincs/nqtr";
+import type { OnRunProps } from "@/types";
 import { StoredClassModel } from "@drincs/pixi-vn/storage";
 
 export interface QuestStoredClassProps {
