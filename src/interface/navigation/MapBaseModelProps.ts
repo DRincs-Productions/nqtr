@@ -1,4 +1,4 @@
-import type { ActivityInterface } from "@/interface";
+import type { ActivityIdType, ActivityInterface } from "@/interface";
 
 export default interface MapBaseModelProps {
     /**
@@ -15,5 +15,5 @@ export default interface MapBaseModelProps {
      * The activities that are available in this map.
      * @default []
      */
-    activities?: ActivityInterface[];
+    activities?: (ActivityInterface | ActivityIdType)[];
 }

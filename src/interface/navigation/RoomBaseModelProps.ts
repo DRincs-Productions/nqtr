@@ -1,4 +1,9 @@
-import type { ActivityInterface, CommitmentInterface } from "@/interface";
+import type {
+    ActivityIdType,
+    ActivityInterface,
+    CommitmentIdType,
+    CommitmentInterface,
+} from "@/interface";
 
 export default interface RoomBaseModelProps {
     /**
@@ -15,12 +20,12 @@ export default interface RoomBaseModelProps {
      * The activities that are available in this room.
      * @default []
      */
-    activities?: ActivityInterface[];
+    activities?: (ActivityInterface | ActivityIdType)[];
     /**
      * The routine of the room, it is an array of commitments that are executed in the room. You can also add commitments during the game session, but this property is useful to set the initial routine of the room.
      * @default undefined
      */
-    routine?: CommitmentInterface[];
+    routine?: (CommitmentInterface | CommitmentIdType)[];
     /**
      * Whether is disabled. You can also pass a Pixi'VN flag name.
      * @default false

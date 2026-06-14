@@ -1,4 +1,4 @@
-import type { ActivityInterface } from "@/interface";
+import type { ActivityIdType, ActivityInterface } from "@/interface";
 
 export default interface LocationBaseModelProps {
     /**
@@ -25,5 +25,5 @@ export default interface LocationBaseModelProps {
      * The activities that are available in this location.
      * @default []
      */
-    activities?: ActivityInterface[];
+    activities?: (ActivityInterface | ActivityIdType)[];
 }
