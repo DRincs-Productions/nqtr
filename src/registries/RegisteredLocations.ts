@@ -11,20 +11,17 @@ export const registeredLocations = new CachedMap<string, LocationInterface>({ ca
 namespace RegisteredLocations {
     /**
      * Save a location in the registered locations. If the location already exists, it will be overwritten.
-     * @param location The location to save.
+     * @param locations The location to save.
      * @returns
      */
-    export function add(location: LocationInterface | LocationInterface[]) {
-        if (Array.isArray(location)) {
-            location.forEach((c) => {
-                add(c);
-            });
-            return;
+    export function add(...locations: (LocationInterface | LocationInterface[])[]) {
+        for (const location of locations) {
+            if (Array.isArray(location)) {
+                add(...location);
+                return;
+            }
+            registeredLocations.set(location.id, location);
         }
-        // if (registeredLocations.has(location.id)) {
-        //     console.warn(`[NQTR] Location id ${location.id} already exists, it will be overwritten`);
-        // }
-        registeredLocations.set(location.id, location);
     }
 
     /**

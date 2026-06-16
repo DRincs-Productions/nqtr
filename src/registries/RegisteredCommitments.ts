@@ -1,6 +1,6 @@
-import type { CommitmentIdType, CommitmentInterface } from "@/interface";
+import type { CommitmentInterface } from "@/interface";
 import { logger } from "@/utils/log-utility";
-import { CachedMap, PixiError } from "@drincs/pixi-vn";
+import { CachedMap } from "@drincs/pixi-vn";
 
 /**
  * A Map that contains all commitments registered and available to be used.
@@ -21,28 +21,17 @@ export const fixedCommitments = new CachedMap<
 namespace RegisteredCommitments {
     /**
      * Save a commitment in the registered commitments. If the commitment already exists, it will be overwritten.
-     * @param commitment The commitment to save.
+     * @param commitments The commitment to save.
      * @returns
      */
-    export function add(
-        commitment:
-            | CommitmentInterface
-            | CommitmentIdType
-            | (CommitmentInterface | CommitmentIdType)[],
-    ) {
-        if (Array.isArray(commitment)) {
-            commitment.forEach((commitment) => {
-                RegisteredCommitments.add(commitment);
-            });
-            return;
+    export function add(...commitments: (CommitmentInterface | CommitmentInterface[])[]) {
+        for (const commitment of commitments) {
+            if (Array.isArray(commitment)) {
+                add(...commitment);
+                return;
+            }
+            registeredCommitments.set(commitment.id, commitment);
         }
-        const commitmentItem =
-            typeof commitment === "string" ? RegisteredCommitments.get(commitment) : commitment;
-        if (!commitmentItem) {
-            logger.error(`Commitment with id ${commitment} not found.`);
-            throw new PixiError("unknown_element", `Commitment with id ${commitment} not found.`);
-        }
-        registeredCommitments.set(commitmentItem.id, commitmentItem);
     }
     /**
      * Get a commitment by its id.

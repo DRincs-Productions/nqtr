@@ -14,22 +14,22 @@ namespace RegisteredRooms {
     /**
      * Save a room in the registered rooms, and their location and map if they are not already registered.
      * If the room already exists, it will be overwritten.
-     * @param room The room to save.
+     * @param rooms The room to save.
      * @returns
      */
-    export function add(room: RoomInterface | RoomInterface[]) {
-        if (Array.isArray(room)) {
-            room.forEach((c) => {
-                add(c);
-            });
-            return;
-        }
-        registeredRooms.set(room.id, room);
-        const location = room.location;
-        RegisteredLocations.add(location);
-        const map = location?.map;
-        if (map) {
-            RegisteredMaps.add(map);
+    export function add(...rooms: (RoomInterface | RoomInterface[])[]) {
+        for (const room of rooms) {
+            if (Array.isArray(room)) {
+                add(...room);
+                return;
+            }
+            registeredRooms.set(room.id, room);
+            const location = room.location;
+            RegisteredLocations.add(location);
+            const map = location?.map;
+            if (map) {
+                RegisteredMaps.add(map);
+            }
         }
     }
 

@@ -11,17 +11,17 @@ export const registeredActivities = new CachedMap<string, ActivityInterface>({ c
 namespace RegisteredActivities {
     /**
      * Save an activity in the registered activities. If the activity already exists, it will be overwritten.
-     * @param activity The activity to save.
+     * @param activities The activity to save.
      * @returns
      */
-    export function add(activities: ActivityInterface | ActivityInterface[]) {
-        if (Array.isArray(activities)) {
-            activities.forEach((activity) => {
-                RegisteredActivities.add(activity);
-            });
-            return;
+    export function add(...activities: (ActivityInterface | ActivityInterface[])[]) {
+        for (const activity of activities) {
+            if (Array.isArray(activity)) {
+                add(...activity);
+                continue;
+            }
+            registeredActivities.set(activity.id, activity);
         }
-        registeredActivities.set(activities.id, activities);
     }
 
     /**

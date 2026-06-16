@@ -11,17 +11,17 @@ export const registeredQuests = new CachedMap<string, QuestInterface>({ cacheSiz
 namespace RegisteredQuest {
     /**
      * Save a quest in the registered quests. If the quest already exists, it will be overwritten.
-     * @param quest The quest to save.
+     * @param quests The quest to save.
      * @returns
      */
-    export function add(quests: QuestInterface | QuestInterface[]) {
-        if (Array.isArray(quests)) {
-            quests.forEach((quest) => {
-                RegisteredQuest.add(quest);
-            });
-            return;
+    export function add(...quests: (QuestInterface | QuestInterface[])[]) {
+        for (const quest of quests) {
+            if (Array.isArray(quest)) {
+                add(...quest);
+                return;
+            }
+            registeredQuests.set(quest.id, quest);
         }
-        registeredQuests.set(quests.id, quests);
     }
     /**
      * Get a quest by its id.

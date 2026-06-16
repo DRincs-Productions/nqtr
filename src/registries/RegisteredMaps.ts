@@ -11,20 +11,17 @@ export const registeredMaps = new CachedMap<string, MapInterface>({ cacheSize: 2
 namespace RegisteredMaps {
     /**
      * Save a map in the registered maps. If the map already exists, it will be overwritten.
-     * @param map The map to save.
+     * @param maps The map to save.
      * @returns
      */
-    export function add(map: MapInterface | MapInterface[]) {
-        if (Array.isArray(map)) {
-            map.forEach((c) => {
-                add(c);
-            });
-            return;
+    export function add(...maps: (MapInterface | MapInterface[])[]) {
+        for (const map of maps) {
+            if (Array.isArray(map)) {
+                add(...map);
+                return;
+            }
+            registeredMaps.set(map.id, map);
         }
-        // if (registeredMaps.has(map.id)) {
-        //     console.warn(`[NQTR] Map id ${map.id} already exists, it will be overwritten`);
-        // }
-        registeredMaps.set(map.id, map);
     }
 
     /**
