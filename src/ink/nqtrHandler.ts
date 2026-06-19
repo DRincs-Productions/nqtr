@@ -6,8 +6,9 @@ import {
     RegisteredQuests,
     RegisteredRooms,
 } from "@drincs/nqtr/registries";
-import { type HashtagHandler, VariableGetter } from "@drincs/pixi-vn-ink";
+import { HashtagCommands, type HashtagHandler, VariableGetter } from "@drincs/pixi-vn-ink";
 import type { PixiVNJsonStorageGet } from "@drincs/pixi-vn-json";
+import { z } from "zod";
 
 interface WaitOptions {
     hours?: number;
@@ -64,6 +65,12 @@ export const nqtrHandler: () => HashtagHandler = (
         wait?: (delta?: WaitOptions | number) => void;
     } = {},
 ) => {
+    const {
+        timeConverter = (time: string) => Number(time.replace(":", ".")),
+        dateConverter = (date: string) => Number(date),
+        wait = waitInternal,
+    } = options;
+
     VariableGetter.add((v: any, next: any) => {
         if (
             v &&
@@ -114,181 +121,300 @@ export const nqtrHandler: () => HashtagHandler = (
         }
         return next(v);
     });
-    const {
-        timeConverter = (time: string) => Number(time.replace(":", ".")),
-        dateConverter = (date: string) => Number(date),
-        wait = waitInternal,
-    } = options;
-    return (script, props, convertListStringToObj) => {
-        switch (script[1]) {
-            case "room":
-                switch (script[0]) {
-                    case "enter":
-                        if (script.length > 2) {
-                            const room = RegisteredRooms.get(script[2]);
-                            if (!room) {
-                                logger.warn(`Room ${script[2]} not found`);
-                            } else {
-                                navigator.currentRoom = room;
-                            }
-                            return true;
-                        }
-                        break;
-                }
-                break;
-            case "time":
-                switch (script[0]) {
-                    case "set":
-                        if (script.length > 2) {
-                            const time = timeConverter(script[2]);
-                            if (isNaN(time)) {
-                                logger.warn(`Invalid time format: ${script[2]}`);
-                            } else {
-                                timeTracker.currentTime = time;
-                            }
-                            return true;
-                        }
-                        break;
-                }
-                break;
-            case "date":
-                switch (script[0]) {
-                    case "set":
-                        if (script.length > 2) {
-                            const date = dateConverter(script[2]);
-                            if (isNaN(date)) {
-                                logger.warn(`Invalid date format: ${script[2]}`);
-                            } else {
-                                timeTracker.currentDate = date;
-                            }
-                            return true;
-                        }
-                        break;
-                }
-                break;
-            case "activity":
-                switch (script[0]) {
-                    case "add":
-                        if (script.length == 5) {
-                            const activity = RegisteredActivities.get(script[2]);
-                            if (!activity) {
-                                logger.warn(`Activity ${script[2]} not found`);
-                                return true;
-                            }
-                            const { in: into } = convertListStringToObj(script.slice(3)) as {
-                                in: string;
-                            };
-                            const room = RegisteredRooms.get(into);
-                            if (!room) {
-                                logger.warn(`Room ${into} not found`);
-                            } else {
-                                room.addActivity(activity);
-                            }
-                            return true;
-                        }
-                    case "remove":
-                        if (script.length == 5) {
-                            const activity = RegisteredActivities.get(script[2]);
-                            if (!activity) {
-                                logger.warn(`Activity ${script[2]} not found`);
-                                return true;
-                            }
-                            const { from } = convertListStringToObj(script.slice(3)) as {
-                                from: string;
-                            };
-                            const room = RegisteredRooms.get(from);
-                            if (!room) {
-                                logger.warn(`Room ${from} not found`);
-                            } else {
-                                room.removeActivity(activity);
-                            }
-                            return true;
-                        }
-                }
-                break;
-            case "routine":
-                switch (script[0]) {
-                    case "add":
-                        if (script.length == 5) {
-                            const commitments = RegisteredCommitments.get(script[2]);
-                            if (!commitments) {
-                                logger.warn(`Commitment ${script[2]} not found`);
-                                return true;
-                            }
-                            const { in: into } = convertListStringToObj(script.slice(3)) as {
-                                in: string;
-                            };
-                            const room = RegisteredRooms.get(into);
-                            if (!room) {
-                                logger.warn(`Room ${into} not found`);
-                            } else {
-                                room.addCommitment(commitments);
-                            }
-                            return true;
-                        }
-                    case "remove":
-                        if (script.length == 3) {
-                            const commitments = RegisteredCommitments.get(script[2]);
-                            if (!commitments) {
-                                logger.warn(`Commitment ${script[2]} not found`);
-                                return true;
-                            }
-                            routine.remove(commitments);
-                            return true;
-                        }
-                }
-                break;
-            case "quest":
-                switch (script[0]) {
-                    case "start":
-                        if (script.length == 3) {
-                            const quest = RegisteredQuests.get(script[2]);
-                            if (!quest) {
-                                logger.warn(`Quest ${script[2]} not found`);
-                                return true;
-                            }
-                            quest.start(props);
-                            return true;
-                        }
-                    case "continue":
-                        if (script.length == 3) {
-                            const quest = RegisteredQuests.get(script[2]);
-                            if (!quest) {
-                                logger.warn(`Quest ${script[2]} not found`);
-                                return true;
-                            }
-                            quest.continue(props);
-                            return true;
-                        }
-                }
-                break;
-        }
-        switch (script[0]) {
-            case "wait":
-                if (script.length == 1) {
-                    wait();
-                    return true;
-                } else if (script.length == 2) {
-                    const delta = timeConverter(script[1]);
-                    if (isNaN(delta)) {
-                        logger.warn(`Invalid time format: ${script[1]}`);
-                    } else {
-                        wait(delta);
-                    }
-                    return true;
-                } else if (script.length > 2) {
-                    const options: WaitOptions = convertListStringToObj(script.slice(1));
-                    if (options.hours !== undefined && typeof options.hours === "string") {
-                        options.hours = timeConverter(options.hours);
-                    }
-                    if (options.days !== undefined && typeof options.days === "string") {
-                        options.days = dateConverter(options.days);
-                    }
-                    wait(options);
-                    return true;
-                }
-                break;
-        }
-        return false;
-    };
+
+    HashtagCommands.add(
+        (list) => {
+            const room = RegisteredRooms.get(list[2]);
+            if (!room) {
+                logger.warn(`Room ${list[2]} not found`);
+            } else {
+                navigator.currentRoom = room;
+            }
+            return true;
+        },
+        {
+            name: "Enter room",
+            description: `Enter a room by its ID. This command sets the current room in the navigator to the specified room.
+
+\`\`\`ink
+# enter room <roomId>
+\`\`\``,
+            validation: z.tuple([z.literal("enter"), z.literal("room"), z.string()]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list) => {
+            const time = timeConverter(list[2]);
+            if (Number.isNaN(time)) {
+                logger.warn(`Invalid time format: ${list[2]}`);
+            } else {
+                timeTracker.currentTime = time;
+            }
+            return true;
+        },
+        {
+            name: "Set time",
+            description: `Set the current time in the time tracker. The time should be provided in a valid format (e.g., "HH:MM").
+
+\`\`\`ink
+# set time <time>
+\`\`\``,
+            validation: z.tuple([z.literal("set"), z.literal("time"), z.string()]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list) => {
+            const date = dateConverter(list[2]);
+            if (Number.isNaN(date)) {
+                logger.warn(`Invalid date format: ${list[2]}`);
+            } else {
+                timeTracker.currentDate = date;
+            }
+            return true;
+        },
+        {
+            name: "Set date",
+            description: `Set the current date in the time tracker. The date should be provided in a valid format (e.g., "YYYY-MM-DD").
+
+\`\`\`ink
+# set date <date>
+\`\`\``,
+            validation: z.tuple([z.literal("set"), z.literal("date"), z.string()]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list) => {
+            const delta = timeConverter(list[1]);
+            if (Number.isNaN(delta)) {
+                logger.warn(`Invalid time format: ${list[1]}`);
+            } else {
+                wait(delta);
+            }
+            return true;
+        },
+        {
+            name: "Wait for time",
+            description: `Wait for a specified amount of time. The time should be provided in a valid format (e.g., "HH:MM").
+
+\`\`\`ink
+# wait <time>
+\`\`\``,
+            validation: z.tuple([z.literal("wait"), z.string()]),
+        },
+    );
+
+    HashtagCommands.add(
+        (_list) => {
+            wait();
+            return true;
+        },
+        {
+            name: "Wait",
+            description: `Wait for the default amount of time specified in the time tracker.
+
+\`\`\`ink
+# wait
+\`\`\``,
+            validation: z.tuple([z.literal("wait")]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list, _props, convertListStringToObj) => {
+            let res = false;
+            const options: WaitOptions = convertListStringToObj(list.slice(1));
+            if (options.hours !== undefined && typeof options.hours === "string") {
+                options.hours = timeConverter(options.hours);
+                res = true;
+            }
+            if (options.days !== undefined && typeof options.days === "string") {
+                options.days = dateConverter(options.days);
+                res = true;
+            }
+            if (res) {
+                wait(options);
+            }
+            return res;
+        },
+        {
+            name: "Wait with options",
+            description: `Wait for a specified amount of time and/or days. You can provide options for hours and days in the format "hours=<time>" and "days=<date>".
+
+\`\`\`ink
+# wait hours <time> days <date>
+\`\`\``,
+            validation: z.tuple([z.literal("wait"), z.string(), z.string()]).rest(z.string()),
+        },
+    );
+
+    HashtagCommands.add(
+        (list, _props, convertListStringToObj) => {
+            const activity = RegisteredActivities.get(list[2]);
+            if (!activity) {
+                logger.warn(`Activity ${list[2]} not found`);
+                return true;
+            }
+            const { in: into } = convertListStringToObj(list.slice(3)) as {
+                in: string;
+            };
+            const room = RegisteredRooms.get(into);
+            if (!room) {
+                logger.warn(`Room ${into} not found`);
+            } else {
+                room.addActivity(activity);
+            }
+            return true;
+        },
+        {
+            name: "Add activity to room",
+            description: `Add an activity to a specified room. You need to provide the activity ID and the room ID.
+
+\`\`\`ink
+# add activity <activityId> in <roomId>
+\`\`\``,
+            validation: z.tuple([
+                z.literal("add"),
+                z.literal("activity"),
+                z.string(),
+                z.literal("in"),
+                z.string(),
+            ]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list, _props, convertListStringToObj) => {
+            const activity = RegisteredActivities.get(list[2]);
+            if (!activity) {
+                logger.warn(`Activity ${list[2]} not found`);
+                return true;
+            }
+            const { from } = convertListStringToObj(list.slice(3)) as {
+                from: string;
+            };
+            const room = RegisteredRooms.get(from);
+            if (!room) {
+                logger.warn(`Room ${from} not found`);
+            } else {
+                room.removeActivity(activity);
+            }
+            return true;
+        },
+        {
+            name: "Remove activity from room",
+            description: `Remove an activity from a specified room. You need to provide the activity ID and the room ID.
+
+\`\`\`ink
+# remove activity <activityId> from <roomId>
+\`\`\``,
+            validation: z.tuple([
+                z.literal("remove"),
+                z.literal("activity"),
+                z.string(),
+                z.literal("from"),
+                z.string(),
+            ]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list, _props, convertListStringToObj) => {
+            const commitments = RegisteredCommitments.get(list[2]);
+            if (!commitments) {
+                logger.warn(`Commitment ${list[2]} not found`);
+                return true;
+            }
+            const { in: into } = convertListStringToObj(list.slice(3)) as {
+                in: string;
+            };
+            const room = RegisteredRooms.get(into);
+            if (!room) {
+                logger.warn(`Room ${into} not found`);
+            } else {
+                room.addCommitment(commitments);
+            }
+            return true;
+        },
+        {
+            name: "Add commitment to room",
+            description: `Add a commitment to a specified room. You need to provide the commitment ID and the room ID.
+
+\`\`\`ink
+# add routine <commitmentId> in <roomId>
+\`\`\``,
+            validation: z.tuple([
+                z.literal("add"),
+                z.literal("routine"),
+                z.string(),
+                z.literal("in"),
+                z.string(),
+            ]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list) => {
+            const commitments = RegisteredCommitments.get(list[2]);
+            if (!commitments) {
+                logger.warn(`Commitment ${list[2]} not found`);
+                return true;
+            }
+            routine.remove(commitments);
+            return true;
+        },
+        {
+            name: "Remove commitment from room",
+            description: `Remove a commitment from the routine. You need to provide the commitment ID.
+
+\`\`\`ink
+# remove routine <commitmentId>
+\`\`\``,
+            validation: z.tuple([z.literal("remove"), z.literal("routine"), z.string()]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list, props) => {
+            const quest = RegisteredQuests.get(list[2]);
+            if (!quest) {
+                logger.warn(`Quest ${list[2]} not found`);
+                return true;
+            }
+            quest.start(props);
+            return true;
+        },
+        {
+            name: "Start quest",
+            description: `Start a quest by its ID. This command will initiate the quest and set it as started.
+
+\`\`\`ink
+# start quest <questId>
+\`\`\``,
+            validation: z.tuple([z.literal("start"), z.literal("quest"), z.string()]),
+        },
+    );
+
+    HashtagCommands.add(
+        (list, props) => {
+            const quest = RegisteredQuests.get(list[2]);
+            if (!quest) {
+                logger.warn(`Quest ${list[2]} not found`);
+                return true;
+            }
+            quest.continue(props);
+            return true;
+        },
+        {
+            name: "Continue quest",
+            description: `Continue a quest by its ID. This command will proceed with the quest if it has been started.
+
+\`\`\`ink
+# continue quest <questId>
+\`\`\``,
+            validation: z.tuple([z.literal("continue"), z.literal("quest"), z.string()]),
+        },
+    );
 };
