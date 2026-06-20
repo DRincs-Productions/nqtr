@@ -255,8 +255,26 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
             `export const nqtrQuestIds = ${JSON.stringify(ids.questIds)} as const;`,
             `export const nqtrRoomIds = ${JSON.stringify(ids.roomIds)} as const;`,
             "",
-            `declare module "@drincs/nqtr/registries" {`,
         ];
+
+        const enumSections: Array<[string, string[]]> = [
+            ["nqtrActivityIdsEnum", ids.activityIds],
+            ["nqtrCommitmentIdsEnum", ids.commitmentIds],
+            ["nqtrLocationIdsEnum", ids.locationIds],
+            ["nqtrMapIdsEnum", ids.mapIds],
+            ["nqtrQuestIdsEnum", ids.questIds],
+            ["nqtrRoomIdsEnum", ids.roomIds],
+        ];
+
+        for (const [enumName, idList] of enumSections) {
+            if (idList.length > 0) {
+                const entries = idList.map((id) => `${JSON.stringify(id)}: ${JSON.stringify(id)}`).join(", ");
+                lines.push(`export const ${enumName} = { ${entries} } as const;`);
+            }
+        }
+
+        lines.push("");
+        lines.push(`declare module "@drincs/nqtr/registries" {`,);
 
         const sections: Array<[string, string[]]> = [
             ["NqtrActivityIds", ids.activityIds],
