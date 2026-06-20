@@ -77,6 +77,22 @@ export interface VitePluginNqtrOptions {
     commitments?: string | string[];
 
     /**
+     * Glob / path of module(s) whose side effects register locations via
+     * `RegisteredLocations.add(...)`.
+     *
+     * @example "./src/locations.ts"
+     */
+    locations?: string | string[];
+
+    /**
+     * Glob / path of module(s) whose side effects register maps via
+     * `RegisteredMaps.add(...)`.
+     *
+     * @example "./src/maps.ts"
+     */
+    maps?: string | string[];
+
+    /**
      * Glob / path of module(s) whose side effects register quests via
      * `RegisteredQuests.add(...)`.
      *
@@ -168,8 +184,10 @@ export interface VitePluginNqtrOptions {
  *
  * ```ts
  * vitePluginNqtr({
- *   rooms:        "./src/rooms.ts",
  *   activities:   "./src/activities/*.ts",
+ *   rooms:        "./src/rooms.ts",
+ *   locations:    "./src/locations.ts",
+ *   maps:         "./src/maps.ts",
  *   typeFilePath: "./src/nqtr.keys.gen.ts",
  * })
  * ```
@@ -217,8 +235,10 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
     const allPatterns = [
         ...asArray(options?.activities),
         ...asArray(options?.commitments),
-        ...asArray(options?.rooms),
+        ...asArray(options?.locations),
+        ...asArray(options?.maps),
         ...asArray(options?.quests),
+        ...asArray(options?.rooms),
     ];
 
     const watchedFiles = new Set<string>();
