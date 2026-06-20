@@ -94,9 +94,13 @@ export interface VitePluginNqtrOptions {
     rooms?: string | string[];
 
     /**
-     * Path to the auto-generated TypeScript declaration file that augments
-     * the six `Nqtr*Ids` interfaces in `@drincs/nqtr/registries` with all
-     * currently known entity IDs.
+     * Path to the auto-generated TypeScript file that contains both:
+     * - `as const` runtime arrays of all currently known entity IDs
+     *   (e.g. `nqtrActivityIds`, `nqtrRoomIds`, …) — import these into
+     *   {@link createNqtrHandler} for runtime validation of Ink hashtag commands.
+     * - a `declare module` augmentation of the six `Nqtr*Ids` interfaces in
+     *   `@drincs/nqtr/registries` — gives compile-time–safe ID types once the
+     *   file is included in the project's TypeScript compilation.
      *
      * When provided, the plugin generates (or overwrites) this file:
      * - after all content modules have been loaded at startup,
@@ -107,30 +111,9 @@ export interface VitePluginNqtrOptions {
      *
      * The path may be absolute or relative to Vite `root`.
      *
-     * @example "./src/nqtr.gen.d.ts"
+     * @example "./src/nqtr.keys.gen.ts"
      */
     typeFilePath?: string;
-
-    /**
-     * Path to the auto-generated TypeScript file that exports runtime arrays
-     * of all currently known entity IDs, one `as const` array per entity type.
-     *
-     * When provided, the plugin generates (or overwrites) this file alongside
-     * {@link typeFilePath} (the two options are independent — you can use one
-     * or both).
-     *
-     * The generated arrays can be passed directly to {@link nqtrHandler} so
-     * that the Ink hashtag-command validation uses `z.enum` (runtime check)
-     * instead of a plain `z.string`.
-     *
-     * The generated file is **excluded from HMR** so that regenerating it
-     * never triggers a full-page reload.
-     *
-     * The path may be absolute or relative to Vite `root`.
-     *
-     * @example "./src/nqtr-list.gen.ts"
-     */
-    listFilePath?: string;
 }
 
 // ── Plugin ────────────────────────────────────────────────────────────────────
@@ -169,7 +152,7 @@ export interface VitePluginNqtrOptions {
  * export default defineConfig({
  *   plugins: [
  *     vitePluginPixivn({ content: "./src/content/index.ts" }),
- *     vitePluginNqtr({ typeFilePath: "./src/nqtr.gen.d.ts" }),
+ *     vitePluginNqtr({ typeFilePath: "./src/nqtr.keys.gen.ts" }),
  *   ],
  * });
  * ```
@@ -187,7 +170,7 @@ export interface VitePluginNqtrOptions {
  * vitePluginNqtr({
  *   rooms:        "./src/rooms.ts",
  *   activities:   "./src/activities/*.ts",
- *   typeFilePath: "./src/nqtr.gen.d.ts",
+ *   typeFilePath: "./src/nqtr.keys.gen.ts",
  * })
  * ```
  *
@@ -198,19 +181,22 @@ export interface VitePluginNqtrOptions {
  * The file written to {@link VitePluginNqtrOptions.typeFilePath} looks like:
  *
  * ```ts
- * // nqtr.gen.d.ts  — auto-generated, do not edit manually
+ * // nqtr.keys.gen.ts  — auto-generated, do not edit manually
+ * export const nqtrActivityIds = ["study", "cook"] as const;
+ * export const nqtrRoomIds = ["bedroom", "kitchen"] as const;
+ * // …
+ *
  * declare module "@drincs/nqtr/registries" {
  *     interface NqtrActivityIds { "study": never; "cook": never; }
  *     interface NqtrRoomIds     { "bedroom": never; "kitchen": never; }
  *     // …
  * }
- * export {};
  * ```
  *
- * Once the file is included in the project's TypeScript compilation, the
- * corresponding `*IdType` helpers (`ActivityIdType`, `RoomIdType`, …) narrow
- * from `string` to the union of known literal IDs, giving compile-time
- * safety for all entity-ID parameters.
+ * The `as const` arrays can be passed to {@link createNqtrHandler} for runtime
+ * validation of Ink hashtag commands. The `declare module` augmentation narrows
+ * the `*IdType` helpers (`ActivityIdType`, `RoomIdType`, …) from `string` to
+ * the union of known literal IDs at compile time.
  *
  * @param options - Optional plugin configuration.
  * @returns A Vite plugin.
@@ -253,13 +239,7 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
         return isAbsolute(p) ? p : resolve(resolvedConfig.root, p);
     }
 
-    function getAbsListFilePath(): string | null {
-        if (!options?.listFilePath || !resolvedConfig) return null;
-        const p = options.listFilePath;
-        return isAbsolute(p) ? p : resolve(resolvedConfig.root, p);
-    }
-
-    function writeListFile(filePath: string, ids: NqtrIds): void {
+    function writeTypeFile(filePath: string, ids: NqtrIds): void {
         mkdirSync(dirname(filePath), { recursive: true });
 
         const lines: string[] = [
@@ -275,35 +255,6 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
             `export const nqtrQuestIds = ${JSON.stringify(ids.questIds)} as const;`,
             `export const nqtrRoomIds = ${JSON.stringify(ids.roomIds)} as const;`,
             "",
-        ];
-
-        writeFileSync(filePath, lines.join("\n"), "utf-8");
-    }
-
-    function tryWriteListFile(): void {
-        const absPath = getAbsListFilePath();
-        if (!absPath) return;
-        try {
-            writeListFile(absPath, state);
-        } catch (error) {
-            resolvedConfig?.logger.error(
-                `${PLUGIN_PREFIX} Failed to write list file "${absPath}".`,
-                {
-                    error: error instanceof Error ? error : new Error(String(error)),
-                    timestamp: true,
-                },
-            );
-        }
-    }
-
-    function writeTypeFile(filePath: string, ids: NqtrIds): void {
-        mkdirSync(dirname(filePath), { recursive: true });
-
-        const lines: string[] = [
-            "// @ts-nocheck",
-            "/* eslint-disable */",
-            "// noinspection JSUnusedGlobalSymbols",
-            "// This file is auto-generated by @drincs/nqtr vite plugin. Do not edit manually.",
             `declare module "@drincs/nqtr/registries" {`,
         ];
 
@@ -326,7 +277,6 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
         }
 
         lines.push(`}`);
-        lines.push("export {};");
         lines.push("");
 
         writeFileSync(filePath, lines.join("\n"), "utf-8");
@@ -429,7 +379,6 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
         await loadOwnModules((p) => server.ssrLoadModule(p), resolvedConfig!.root);
         await readSsrState((p) => server.ssrLoadModule(p));
         tryWriteTypeFile();
-        tryWriteListFile();
     }
 
     // ── Plugin hooks ──────────────────────────────────────────────────────────
@@ -492,8 +441,7 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
                     await loadOwnModules((p) => tempServer.ssrLoadModule(p), resolvedConfig!.root);
                     await readSsrState((p) => tempServer.ssrLoadModule(p));
                     tryWriteTypeFile();
-                    tryWriteListFile();
-                    contentLoadedResolve();
+                                contentLoadedResolve();
                 } catch {
                     contentLoadedResolve();
                 } finally {
@@ -513,8 +461,7 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
                         roomIds: mod.RegisteredRooms?.values().map((r) => r.id) ?? [],
                     };
                     tryWriteTypeFile();
-                    tryWriteListFile();
-                } catch {
+                            } catch {
                     /* ignore */
                 }
                 contentLoadedResolve();
@@ -535,14 +482,13 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
 
                 await readSsrState((p) => server.ssrLoadModule(p));
                 tryWriteTypeFile();
-                tryWriteListFile();
-                contentLoadedResolve();
+                        contentLoadedResolve();
 
                 // Re-generate types whenever pixi-vn reloads content (HMR for
                 // pixi-vn-owned content files).
                 pixivnPlugin?.api?.onReload?.(() => {
                     void readSsrState((p) => server.ssrLoadModule(p))
-                        .then(() => { tryWriteTypeFile(); tryWriteListFile(); })
+                        .then(() => tryWriteTypeFile())
                         .catch((error) => {
                             resolvedConfig?.logger.error(
                                 `${PLUGIN_PREFIX} Failed to regenerate types after pixi-vn reload.`,
@@ -560,14 +506,10 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
         },
 
         hotUpdate({ file, server }) {
-            // Never send HMR for the generated type/list files — regenerating them
+            // Never send HMR for the generated file — regenerating it
             // should not trigger a full-page reload.
             const absTypeFilePath = getAbsTypeFilePath();
             if (absTypeFilePath && file === absTypeFilePath) {
-                return [];
-            }
-            const absListFilePath = getAbsListFilePath();
-            if (absListFilePath && file === absListFilePath) {
                 return [];
             }
 
