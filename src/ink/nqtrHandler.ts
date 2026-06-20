@@ -92,12 +92,11 @@ export function createNqtrHandler(options: NqtrHandlerOptions = {}): void {
         wait = waitInternal,
     } = options;
 
-    function idSchema(ids: readonly string[] | undefined): z.ZodType<string> {
+    function idSchema(
+        ids: readonly string[] | undefined,
+    ): z.ZodString | z.ZodEnum<Record<string, string>> {
         if (ids && ids.length > 0) {
-            const valid = new Set(ids);
-            return z.string().refine((v) => valid.has(v), {
-                message: `Expected one of: ${ids.join(", ")}`,
-            });
+            return z.enum(Object.fromEntries(ids.map((id) => [id, id])));
         }
         return z.string();
     }
@@ -403,7 +402,11 @@ export function createNqtrHandler(options: NqtrHandlerOptions = {}): void {
 \`\`\`ink
 # remove routine <commitmentId>
 \`\`\``,
-            validation: z.tuple([z.literal("remove"), z.literal("routine"), idSchema(options.commitmentIds)]),
+            validation: z.tuple([
+                z.literal("remove"),
+                z.literal("routine"),
+                idSchema(options.commitmentIds),
+            ]),
         },
     );
 
@@ -424,7 +427,11 @@ export function createNqtrHandler(options: NqtrHandlerOptions = {}): void {
 \`\`\`ink
 # start quest <questId>
 \`\`\``,
-            validation: z.tuple([z.literal("start"), z.literal("quest"), idSchema(options.questIds)]),
+            validation: z.tuple([
+                z.literal("start"),
+                z.literal("quest"),
+                idSchema(options.questIds),
+            ]),
         },
     );
 
@@ -445,7 +452,11 @@ export function createNqtrHandler(options: NqtrHandlerOptions = {}): void {
 \`\`\`ink
 # continue quest <questId>
 \`\`\``,
-            validation: z.tuple([z.literal("continue"), z.literal("quest"), idSchema(options.questIds)]),
+            validation: z.tuple([
+                z.literal("continue"),
+                z.literal("quest"),
+                idSchema(options.questIds),
+            ]),
         },
     );
 }
