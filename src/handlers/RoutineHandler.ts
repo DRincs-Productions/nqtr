@@ -61,26 +61,7 @@ export default class RoutineHandler {
         }
         const temporaryRoutine = this.temporaryRoutine;
         commitment.forEach((commitment) => {
-            if (typeof commitment === "string") {
-                const item = RegisteredCommitments.get(commitment);
-                if (!item) {
-                    logger.error(
-                        `The commitment ${commitment} is not registered, you should register it first or add the commitment object instead of the id.`,
-                    );
-                    throw new PixiError(
-                        "unknown_element",
-                        `The commitment ${commitment} is not registered, you should register it first or add the commitment object instead of the id.`,
-                    );
-                }
-                commitment = item;
-            }
             const commitmentId = typeof commitment === "string" ? commitment : commitment.id;
-            if (RegisteredCommitments.get(commitmentId)) {
-                logger.warn(
-                    `The commitment ${commitmentId} is already registered, it will be overwritten`,
-                );
-            }
-            RegisteredCommitments.add(commitment);
             temporaryRoutine[commitmentId] = {
                 id: commitmentId,
                 roomId,
