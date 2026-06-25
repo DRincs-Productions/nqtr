@@ -6,9 +6,9 @@ import type { CommitmentBaseInternalInterface } from "@/interface/activity/Commi
 import type DateSchedulingInterface from "@/interface/DateSchedulingInterface";
 import type TimeSchedulingInterface from "@/interface/TimeSchedulingInterface";
 import type { ExecutionType } from "@/types";
-import type { OnRunEvent } from "@/types/OnRunEvent";
+import type { OnRunAsyncFunction, OnRunEvent } from "@/types/OnRunEvent";
 import type TimeDataType from "@/types/TimeDataType";
-import { navigator } from "@drincs/nqtr/handlers";
+import { navigator, routine } from "@drincs/nqtr/handlers";
 import {
     RegisteredCharacters,
     type CharacterIdType,
@@ -104,5 +104,12 @@ export default class CommitmentStoredClass
                 break;
             }
         }
+    }
+    override get run(): OnRunAsyncFunction {
+        return async (props) => {
+            this.addTempHistoryItem();
+            routine.remove("alice_quest_talk");
+            return await this._onRun(this, props);
+        };
     }
 }

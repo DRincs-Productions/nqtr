@@ -16,7 +16,7 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
 {
     constructor(
         id: string,
-        private readonly _onRun: OnRunEvent<OnRunEventType>,
+        protected readonly _onRun: OnRunEvent<OnRunEventType>,
         props: ActivityStoredClassProps,
         category: string = ACTIVITY_CATEGORY,
     ) {
