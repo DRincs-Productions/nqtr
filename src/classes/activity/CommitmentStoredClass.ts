@@ -105,10 +105,17 @@ export default class CommitmentStoredClass
             }
         }
     }
+    /**
+     * Executes the commitment's `onRun` callback.
+     * If {@link executionType} is `"automatic"`, the commitment removes itself from the routine
+     * before running, so it does not repeat on every subsequent room visit.
+     */
     override get run(): OnRunAsyncFunction {
         return async (props) => {
             this.addTempHistoryItem();
-            routine.remove("alice_quest_talk");
+            if (this.executionType === "automatic") {
+                routine.remove(this.id);
+            }
             return await this._onRun(this, props);
         };
     }
