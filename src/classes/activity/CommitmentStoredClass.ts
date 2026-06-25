@@ -6,7 +6,7 @@ import type { CommitmentBaseInternalInterface } from "@/interface/activity/Commi
 import type DateSchedulingInterface from "@/interface/DateSchedulingInterface";
 import type TimeSchedulingInterface from "@/interface/TimeSchedulingInterface";
 import type { ExecutionType } from "@/types";
-import type { OnRunAsyncFunction, OnRunEvent } from "@/types/OnRunEvent";
+import type { OnRunEvent, OnRunProps } from "@/types/OnRunEvent";
 import type TimeDataType from "@/types/TimeDataType";
 import { navigator, routine } from "@drincs/nqtr/handlers";
 import {
@@ -106,17 +106,37 @@ export default class CommitmentStoredClass
         }
     }
     /**
-     * Executes the commitment's `onRun` callback.
-     * If {@link executionType} is `"automatic"`, the commitment removes itself from the routine
-     * before running, so it does not repeat on every subsequent room visit.
+     * Options for {@link run}.
      */
-    override get run(): OnRunAsyncFunction {
-        return async (props) => {
+    runOptions?: CommitmentRunOptions;
+
+    /**
+     * Executes the commitment's `onRun` callback.
+     * @param props - Standard run props.
+     * @param options - Additional options.
+     * @param options.removeFromRoutine - Whether to call `routine.remove` for this commitment.
+     *   Defaults to `true` when {@link executionType} is `"automatic"`, `false` otherwise.
+     */
+    override get run(): (props: OnRunProps, options?: CommitmentRunOptions) => Promise<any> {
+        return async (props, options) => {
+            const removeFromRoutine =
+                options?.removeFromRoutine ?? this.executionType === "automatic";
             this.addTempHistoryItem();
-            if (this.executionType === "automatic") {
+            if (removeFromRoutine) {
                 routine.remove(this.id);
             }
             return await this._onRun(this, props);
         };
     }
+}
+
+/**
+ * Options accepted by {@link CommitmentStoredClass.run}.
+ */
+export interface CommitmentRunOptions {
+    /**
+     * Whether to call `routine.remove` for this commitment after running.
+     * Defaults to `true` when {@link CommitmentStoredClass.executionType} is `"automatic"`, `false` otherwise.
+     */
+    removeFromRoutine?: boolean;
 }
