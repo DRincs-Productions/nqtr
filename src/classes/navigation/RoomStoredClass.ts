@@ -20,12 +20,13 @@ export default class RoomStoredClass
     extends NavigationAbstractClass
     implements RoomBaseInternalInterface
 {
+    private readonly _location: LocationInterface;
     constructor(
         id: string,
         /**
          * The location where the room is.
          */
-        private readonly _location: LocationInterface,
+        location: LocationInterface,
         activities:
             | (ActivityInterface | ActivityIdType)[]
             | {
@@ -42,6 +43,7 @@ export default class RoomStoredClass
                 fixedCommitments.set(commitmentId, id);
             });
         }
+        this._location = location;
     }
     get routine(): CommitmentInterface[] {
         return routine.roomCommitments[this.id] || [];
