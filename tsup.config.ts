@@ -73,11 +73,16 @@ export default defineConfig((options) => {
             minify: true,
             bundle: true,
             skipNodeModulesBundle: false,
+            // `zod` must stay external: bundling it here would create a second `ZodType`
+            // class distinct from the one `@drincs/pixi-vn-ink` uses for its
+            // `instanceof ZodType` validation checks, silently breaking every hashtag
+            // command registered via `createNqtrHandler` (they'd always report as invalid).
             external: [
                 "@drincs/pixi-vn",
                 "@drincs/nqtr/registries",
                 "@drincs/nqtr/handlers",
                 "@drincs/pixi-vn-ink",
+                "zod",
             ],
             outExtension({ format }) {
                 return {

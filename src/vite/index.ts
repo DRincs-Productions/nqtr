@@ -286,11 +286,18 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
             ["nqtrRoomIdsEnum", ids.roomIds],
         ];
 
+        // Always emit every enum, even when its id list is empty: consumers such as
+        // `zod.enum(nqtrRoomIdsEnum)` throw at import time if the export is missing
+        // entirely (`Object.values(undefined)`), which would abort evaluation of every
+        // sibling module still queued behind that import (e.g. other content files
+        // glob-imported by the same barrel module).
         for (const [enumName, idList] of enumSections) {
-            if (idList.length > 0) {
-                const entries = idList.map((id) => `${JSON.stringify(id)}: ${JSON.stringify(id)}`).join(", ");
-                lines.push(`export const ${enumName} = { ${entries} } as const;`);
+            if (idList.length === 0) {
+                lines.push(`export const ${enumName} = {} as const;`);
+                continue;
             }
+            const entries = idList.map((id) => `${JSON.stringify(id)}: ${JSON.stringify(id)}`).join(", ");
+            lines.push(`export const ${enumName} = { ${entries} } as const;`);
         }
 
         lines.push("");
