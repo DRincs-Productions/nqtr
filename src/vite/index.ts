@@ -430,8 +430,17 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
 
     return {
         name: "vite-plugin-nqtr",
-        // Run after vite-plugin-pixi-vn so its content is loaded first.
-        enforce: "post",
+        // Actual ordering relative to vite-plugin-pixi-vn is enforced via the explicit
+        // `contentLoaded` await chain below, not via `enforce` (this plugin defines no
+        // resolveId/load/transform hooks, so `enforce` has no effect on those anyway).
+        // `enforce: "post"` must NOT be used here: Vite/Rollup batches the async `buildStart`
+        // hook by enforce tier (all "pre" plugins' buildStart calls are awaited together before
+        // any "post" plugin's buildStart is even invoked). `vite-plugin-ink` (enforce: "pre")
+        // awaits this plugin's `contentLoaded` inside its own `buildStart` — if this plugin were
+        // "post", that create a cross-tier deadlock during `vite build`: ink's "pre"-tier
+        // buildStart never settles (waiting on nqtr), so the "post" tier — including this
+        // plugin's own buildStart — never even starts.
+        enforce: "pre",
 
         api: {
             /** Resolves once NQTR content has been loaded and types generated. */
@@ -476,6 +485,14 @@ export function vitePluginNqtr(options?: VitePluginNqtrOptions): Plugin {
                 const tempServer = await createServer({
                     root: resolvedConfig!.root,
                     configFile: false,
+                    // Forward the project's resolved alias configuration (e.g. `@/...` from
+                    // `resolve.tsconfigPaths` or a manual `resolve.alias`). Without this, the
+                    // temp server can't resolve those imports — activities/rooms/quests/etc.
+                    // content files almost always use them — so every content file silently
+                    // fails to load and every NQTR registry ends up empty in the generated
+                    // keys file, breaking `vite build` / `tsc -b` (and, if `tsc -b` isn't run,
+                    // silently shipping wrong data instead of erroring).
+                    resolve: resolvedConfig!.resolve,
                     server: { middlewareMode: true },
                     appType: "custom",
                     logLevel: "silent",

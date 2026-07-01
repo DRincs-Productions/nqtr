@@ -1,8 +1,24 @@
 import { existsSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { vitePluginNqtr } from "../src/vite";
+
+let capturedTempServerConfig: any;
+
+vi.mock("vite", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("vite")>();
+    return {
+        ...actual,
+        createServer: vi.fn(async (config: any) => {
+            capturedTempServerConfig = config;
+            return {
+                ssrLoadModule: async () => ({}),
+                close: async () => {},
+            };
+        }),
+    };
+});
 
 /** Registries reported as fully empty, as if no activity/room/quest/etc. has been registered yet. */
 function createEmptyRegistriesServer() {
@@ -25,6 +41,22 @@ function createEmptyRegistriesServer() {
         config: { plugins: [] },
     };
 }
+
+describe("vitePluginNqtr enforce tier", () => {
+    test("must not be 'post' — vite-plugin-ink awaits this plugin's contentLoaded from its own 'pre'-tier buildStart", () => {
+        // Regression test: `vite build` batches the async `buildStart` Rollup hook by Vite's
+        // enforce tier — every "pre"-tier plugin's `buildStart` must settle before any "post"
+        // plugin's `buildStart` is even invoked. `vite-plugin-ink` (enforce: "pre") awaits this
+        // plugin's `api.contentLoaded` inside its own `buildStart`. If this plugin were "post",
+        // ink's "pre"-tier buildStart would never settle (it's waiting on a plugin whose
+        // buildStart hasn't started yet), and the "post" tier — including this plugin's own
+        // buildStart — would never start either: a permanent deadlock that hangs `vite build`
+        // indefinitely. This plugin defines no resolveId/load/transform hook, so `enforce` has
+        // no effect on anything else here — there is no reason to ever set it back to "post".
+        const plugin = vitePluginNqtr();
+        expect(plugin.enforce).not.toBe("post");
+    });
+});
 
 describe("vitePluginNqtr keys file generation", () => {
     let typeFilePath: string;
@@ -64,5 +96,33 @@ describe("vitePluginNqtr keys file generation", () => {
         expect(content).toContain("export const nqtrMapIdsEnum = {} as const;");
         expect(content).toContain("export const nqtrQuestIdsEnum = {} as const;");
         expect(content).toContain("export const nqtrRoomIdsEnum = {} as const;");
+    });
+});
+
+describe("vitePluginNqtr buildStart (build mode)", () => {
+    afterEach(() => {
+        capturedTempServerConfig = undefined;
+    });
+
+    test("forwards the project's resolved alias config to the temp SSR server", async () => {
+        // Regression test: `buildStart` (build mode) loads content via a bare `createServer()`
+        // call with `configFile: false`. Without forwarding `resolve` from the real
+        // `resolvedConfig`, that temp server has no idea how to resolve path aliases (e.g. `@/`
+        // from `resolve.tsconfigPaths` or a manual `resolve.alias`) — so activities/rooms/
+        // quests/etc. content files (which almost always use them) silently fail to load, and
+        // every NQTR registry ends up empty in the generated keys file.
+        const fakeResolve = { alias: [{ find: "@", replacement: "/fake/src" }] };
+        const plugin: any = vitePluginNqtr({ activities: "./src/content/activities.tsx" });
+        plugin.configResolved({
+            root: tmpdir(),
+            command: "build",
+            plugins: [],
+            resolve: fakeResolve,
+            logger: { info() {}, error() {}, warn() {} },
+        });
+
+        await plugin.buildStart();
+
+        expect(capturedTempServerConfig?.resolve).toBe(fakeResolve);
     });
 });
