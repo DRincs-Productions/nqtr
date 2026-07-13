@@ -77,8 +77,8 @@
   "homepage": "https://pixi-vn.com/nqtr",
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
-    "@drincs/pixi-vn-ink": "^1.0.6",
-    "@drincs/pixi-vn-json": "^1.13.9",
+    "@drincs/pixi-vn-ink": "^1.1.6",
+    "@drincs/pixi-vn-json": "^1.13.15",
     "jsdom": "^29.1.1",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.1",

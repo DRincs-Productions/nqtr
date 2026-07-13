@@ -277,6 +277,16 @@ export function createNqtrHandler(options: NqtrHandlerOptions = {}): void {
 # wait hours <time> days <date>
 \`\`\``,
             validation: z.tuple([z.literal("wait"), z.string(), z.string()]).rest(z.string()),
+            keySchemas: {
+                wait: {
+                    type: "object",
+                    properties: {
+                        hours: { type: ["string", "number"] },
+                        days: { type: ["string", "number"] },
+                    },
+                    additionalProperties: false,
+                },
+            },
         },
     );
 
