@@ -84,22 +84,22 @@ export default class CommitmentStoredClass
     set priority(value: number) {
         this.setStorageProperty("priority", value);
     }
-    protected override addTempHistoryItem() {
+    protected override async addTempHistoryItem() {
         const currentRoom = navigator.currentRoom;
         if (!currentRoom || this.executionType !== "automatic") {
-            return super.addTempHistoryItem();
+            return await super.addTempHistoryItem();
         }
         const lastEvent = getLastEvent();
         switch (lastEvent?.type) {
             case "editroom":
                 storage.set(CURRENT_ROOM_MEMORY_KEY, lastEvent.prev);
-                super.addTempHistoryItem();
+                await super.addTempHistoryItem();
                 storage.set(CURRENT_ROOM_MEMORY_KEY, currentRoom.id);
                 break;
             case "edittime": {
                 const currentTime = storage.get<TimeDataType>(TIME_DATA_KEY) || {};
                 storage.set(TIME_DATA_KEY, lastEvent.prev);
-                super.addTempHistoryItem();
+                await super.addTempHistoryItem();
                 storage.set(TIME_DATA_KEY, currentTime);
                 break;
             }
@@ -121,7 +121,7 @@ export default class CommitmentStoredClass
         return async (props, options) => {
             const removeFromRoutine =
                 options?.removeFromRoutine ?? this.executionType === "automatic";
-            this.addTempHistoryItem();
+            await this.addTempHistoryItem();
             if (removeFromRoutine) {
                 routine.remove(this.id);
             }

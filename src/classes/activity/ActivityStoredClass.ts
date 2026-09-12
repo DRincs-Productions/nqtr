@@ -35,12 +35,12 @@ export default class ActivityStoredClass<OnRunEventType = ActivityInterface>
         return this._dateScheduling;
     }
 
-    protected addTempHistoryItem() {
-        return narration.addCurrentStepToHistory();
+    protected async addTempHistoryItem(): Promise<void> {
+        return await narration.addCurrentStepToHistory();
     }
     get run(): OnRunAsyncFunction {
         return async (props) => {
-            this.addTempHistoryItem();
+            await this.addTempHistoryItem();
             return await this._onRun(this as any, props);
         };
     }
