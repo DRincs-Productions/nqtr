@@ -1,6 +1,6 @@
 # Navigation Quest Time Routine (NQTR)
 
-![cover](https://github.com/user-attachments/assets/71f8b168-6b0c-436b-99ea-3c10474677c6)
+![cover](https://github.com/user-attachments/assets/bf362f78-ea75-4b91-8dcb-4f8e7dbf9e9f)
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@drincs/nqtr" rel="noopener noreferrer nofollow"><img src="https://img.shields.io/npm/v/@drincs/nqtr?label=version" alt="npm version"></a>
