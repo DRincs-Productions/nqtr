@@ -9,6 +9,7 @@ export type { default as LocationBaseModelProps } from "@/interface/navigation/L
 export type { default as LocationInterface } from "@/interface/navigation/LocationInterface";
 export type { default as MapBaseModelProps } from "@/interface/navigation/MapBaseModelProps";
 export type { default as MapInterface } from "@/interface/navigation/MapInterface";
+export type { default as NavigatorHandlerInterface } from "@/interface/navigation/NavigatorHandlerInterface";
 export type { default as RoomBaseModelProps } from "@/interface/navigation/RoomBaseModelProps";
 export type { default as RoomInterface } from "@/interface/navigation/RoomInterface";
 export type {
@@ -30,3 +31,6 @@ export type { default as QuestProps } from "@/interface/quest/QuestProps";
 export type { default as StageInterface } from "@/interface/quest/StageInterface";
 export type { default as StageProps } from "@/interface/quest/StageProps";
 export type { default as TimeSchedulingInterface } from "@/interface/TimeSchedulingInterface";
+export type { default as RoutineHandlerInterface } from "@/interface/activity/RoutineHandlerInterface";
+export type { default as QuestHandlerInterface } from "@/interface/quest/QuestHandlerInterface";
+export type { default as TimeHandlerInterface } from "@/interface/TimeHandlerInterface";

@@ -1,56 +1,30 @@
-import type { QuestInterface } from "@/interface";
+import type { QuestHandlerInterface, QuestInterface } from "@/interface";
 import type { OnRunProps } from "@drincs/nqtr";
 import { RegisteredQuests } from "@drincs/nqtr/registries";
 
-export default class QuestHandler {
-    /**
-     * The quests registered in the game.
-     */
+export default class QuestHandler implements QuestHandlerInterface {
     get quests(): QuestInterface[] {
         return RegisteredQuests.values();
     }
-    /**
-     * The quests that are started, so they are in progress or completed or failed.
-     */
     get startedQuests(): QuestInterface[] {
         return this.quests.filter((quest) => quest.started);
     }
-    /**
-     * The quests that are in progress.
-     */
     get inProgressQuests(): QuestInterface[] {
         return this.quests.filter((quest) => quest.inProgress);
     }
-    /**
-     * The quests that are completed.
-     */
     get completedQuests(): QuestInterface[] {
         return this.quests.filter((quest) => quest.completed);
     }
-    /**
-     * The quests that are failed.
-     */
     get failedQuests(): QuestInterface[] {
         return this.quests.filter((quest) => quest.failed);
     }
-    /**
-     * The quests that are not started.
-     */
     get notStartedQuests(): QuestInterface[] {
         return this.quests.filter((quest) => !quest.started);
     }
-    /**
-     * Get the quest by the id.
-     * @param id The id of the quest.
-     * @returns The quest with the id.
-     */
     find(id: string): QuestInterface | undefined {
         return RegisteredQuests.get(id);
     }
 
-    /**
-     * Start the quests that must start on the current stage.
-     */
     async startsStageMustBeStarted(props: OnRunProps) {
         const promises: Promise<void>[] = this.quests.map((quest) => {
             if (quest.currentStageMustStart) {
