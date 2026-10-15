@@ -1,3 +1,23 @@
+/** biome-ignore-all lint/suspicious/noEmptyInterface: <explanation> */
+
+/**
+ * Object passed to the functions triggered by the system (e.g. {@link OnRunEvent}),
+ * allowing you to customize and access properties inside them.
+ *
+ * By default it is an empty interface. You can override it in your `.d.ts` file
+ * (module augmentation) to specify the required properties.
+ *
+ * @example
+ * ```ts title="nqtr.d.ts"
+ * import "@drincs/nqtr";
+ *
+ * declare module "@drincs/nqtr" {
+ *     interface OnRunProps {
+ *         navigate: (route: string) => void;
+ *     }
+ * }
+ * ```
+ */
 export interface OnRunProps {}
 
 /**
