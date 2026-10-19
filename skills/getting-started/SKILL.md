@@ -126,3 +126,7 @@ Use the `*BaseModel` classes directly only for quick prototypes. Per-entity exam
 - Forgetting `Registered*.add(...)`: the entity is neither saved nor reachable from ink.
 - Referencing an id in ink that is not registered: the handler logs a warning (`Room x not found`) and does nothing; with the id lists/Vite plugin it fails validation instead.
 - Initialization-time links (`activities: [...]`, `routine: [...]` in the constructor) are not saved, runtime links (`addActivity`/`addCommitment`) are. See [nqtr-activity](../activity/SKILL.md) and [nqtr-routine](../routine/SKILL.md).
+
+## AI-driven testing
+
+For the opt-in browser bridge and React query refresh integration, read `../testing/SKILL.md`.
