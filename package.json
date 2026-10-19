@@ -80,6 +80,7 @@
     "@biomejs/biome": "^2.5.13",
     "@drincs/pixi-vn-ink": "^1.2.0",
     "@drincs/pixi-vn-json": "^1.14.0",
+    "@types/node": "^26.6.5",
     "jsdom": "^30.0.1",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.1",

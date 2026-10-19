@@ -1,3 +1,5 @@
+export { testing } from "./testing";
+export type { NqtrTestingAPI, NqtrTestingActions } from "./testing";
 export * from "@drincs/nqtr/handlers";
 export {
     RegisteredActivities,
@@ -17,7 +19,10 @@ import * as handlers from "./handlers";
 import * as interfaceNqtr from "./interface";
 import * as types from "./types";
 
+import { testing } from "./testing";
+
 const nqtr = {
+    testing,
     ...classes,
     ...interfaceNqtr,
     ...types,
