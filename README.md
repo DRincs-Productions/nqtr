@@ -31,3 +31,39 @@ NQTR provides the following features (the order is important):
 3. [Activity](https://pixi-vn.com/nqtr/activity)
 4. [Routine](https://pixi-vn.com/nqtr/routine)
 5. [Quest system](https://pixi-vn.com/nqtr/quest)
+
+## Agent Skills
+
+NQTR ships a set of [Agent Skills](https://www.skills.sh/) that teach AI coding assistants how to correctly use each part of the library. When a project uses Pixi’VN with ink, the skills prefer ink (hashtag commands such as `# enter room`, `# wait`, `# start quest`) over TypeScript labels.
+
+> In LM Studio Bionic, ask the agent to install skills from `https://github.com/DRincs-Productions/nqtr`, or add the skill files in **Settings → Skills**. To reuse skills installed for Codex or Claude Code, enable **Settings → Skills → Use skills found in other apps**.
+
+**Codex**:
+
+```npm
+npx skills@latest add DRincs-Productions/nqtr@latest --skill '*' --agent codex -g -y
+```
+
+**Claude Code**:
+
+```npm
+npx skills@latest add DRincs-Productions/nqtr@latest --skill '*' --agent claude-code -g -y
+```
+
+**Other agents**:
+
+```npm
+npx skills@latest add DRincs-Productions/nqtr@latest --all -y
+```
+
+Available skills:
+
+- `getting-started` (skill `nqtr`) — the index of the skill set: skill map, installation, registries, the Vite plugin, `OnRunProps`, custom classes
+- `ink` — every NQTR hashtag command and quest variable for `.ink` files
+- `navigation` — rooms, locations, maps and `navigator`
+- `time` — `timeTracker`, time slots, `wait`
+- `activity` — player actions linked to rooms
+- `routine` — character commitments (schedules)
+- `quest` — quests, stages and state queries
+
+Install them together with the [Pixi’VN](https://github.com/DRincs-Productions/pixi-vn) and [Pixi’VN ink](https://github.com/DRincs-Productions/pixi-vn-ink) skills.
