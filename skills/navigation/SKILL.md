@@ -95,6 +95,12 @@ export default class Room extends RoomStoredClass implements RoomInterface {
 }
 ```
 
+### Graphical elements (`background`, `sprite`, `icon`)
+
+- `background` accepts a string (the **alias of a linked asset**) or a `TimeSlotsImage` (see [time](../time/SKILL.md)) to change the image by time of day.
+- `sprite` accepts either a **string** (the alias of a linked asset) or a function returning a PixiJS element (e.g. a `Sprite` with `eventMode: "static"` and a `pointerdown` handler) when you need full control.
+- `icon` is a function returning a UI element (e.g. a React button).
+
 ### Default ("entrance") room of a location
 
 Add `isEntrance` to `Room` (and `RoomInterface`), and in `Location` expose `get entrance()` returning `super.rooms.find((r) => r.isEntrance) || super.rooms[0]` (or `undefined` if empty). A map UI then does `navigator.currentRoom = location.entrance` when the location icon is clicked.
