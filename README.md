@@ -22,6 +22,16 @@ To install the NQTR package in an existing JavaScript project, use one of the fo
 npm install @drincs/nqtr
 ```
 
+## Development
+
+Use Node.js 20.19.0 or newer to run the tests and use Vite 8. The release build uses `tsup@9` and requires Node.js 22.18.0 or newer. Package metadata does not enforce these versions.
+
+```sh
+npm ci
+npm test
+npm run build
+```
+
 ## Features
 
 NQTR provides the following features (the order is important):

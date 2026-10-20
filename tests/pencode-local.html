@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>NQTR local package smoke test</title>
+        <script type="importmap">
+            {
+                "imports": {
+                    "@drincs/nqtr": "/dist/index.mjs"
+                }
+            }
+        </script>
+    </head>
+    <body data-status="loading">
+        <main id="result">Loading local NQTR package…</main>
+        <script type="module">
+            const result = document.querySelector("#result");
+
+            try {
+                const nqtr = await import("@drincs/nqtr");
+                if (typeof nqtr.MapBaseModel !== "function" || typeof nqtr.RegisteredMaps !== "object") {
+                    throw new Error("The local NQTR package is missing expected browser exports");
+                }
+
+                document.body.dataset.status = "passed";
+                result.textContent = "Loaded the local NQTR bundle and verified its map exports.";
+            } catch (error) {
+                document.body.dataset.status = "failed";
+                result.textContent = error instanceof Error ? error.stack || error.message : String(error);
+            }
+        </script>
+    </body>
+</html>
