@@ -82,7 +82,7 @@
     "@drincs/pixi-vn-ink": "^1.3.0",
     "@drincs/pixi-vn-json": "^1.15.0",
     "@types/node": "^26.6.5",
-    "jsdom": "^27.4.0",
+    "jsdom": "^30.1.3",
     "ts-node": "^10.9.2",
     "tsup": "^9.0.0",
     "typedoc": "^0.28.20",
