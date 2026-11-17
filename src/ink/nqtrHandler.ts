@@ -31,6 +31,8 @@ function waitInternal(delta?: WaitOptions | number): void {
 }
 
 export interface NqtrHandlerOptions {
+    /** Omit to enable all categories; otherwise only categories set to true are registered. */
+    sections?: Partial<Record<"navigation" | "time" | "activity" | "routine" | "quest", boolean>>;
     /**
      * Custom time converter function to convert time strings to numbers. The default implementation converts "HH:MM" format to hours as a number (e.g. "01:30" => 1.5).
      * @default (time: string) => Number(time.replace(":", "."))
@@ -101,374 +103,391 @@ export function createNqtrHandler(options: NqtrHandlerOptions = {}): void {
         return z.string();
     }
 
-    VariableGetter.add((v: any, next: any) => {
-        if (
-            v &&
-            typeof v === "object" &&
-            "type" in v &&
-            "key" in v &&
-            "storageOperationType" in v &&
-            "storageType" in v &&
-            v.storageOperationType === "get" &&
-            (v.storageType === "storage" ||
-                v.storageType === "tempstorage" ||
-                v.storageType === "flagStorage")
-        ) {
-            const model: PixiVNJsonStorageGet = v as PixiVNJsonStorageGet;
-            if (model.key.endsWith("_currentStageIndex")) {
-                const id = model.key.replace("_currentStageIndex", "");
-                const quest = RegisteredQuests.get(id);
-                if (!quest) {
-                    logger.warn(`Quest ${id} not found`);
-                    return next(v);
+    if (options.sections === undefined || options.sections.quest)
+        VariableGetter.add((v: any, next: any) => {
+            if (
+                v &&
+                typeof v === "object" &&
+                "type" in v &&
+                "key" in v &&
+                "storageOperationType" in v &&
+                "storageType" in v &&
+                v.storageOperationType === "get" &&
+                (v.storageType === "storage" ||
+                    v.storageType === "tempstorage" ||
+                    v.storageType === "flagStorage")
+            ) {
+                const model: PixiVNJsonStorageGet = v as PixiVNJsonStorageGet;
+                if (model.key.endsWith("_currentStageIndex")) {
+                    const id = model.key.replace("_currentStageIndex", "");
+                    const quest = RegisteredQuests.get(id);
+                    if (!quest) {
+                        logger.warn(`Quest ${id} not found`);
+                        return next(v);
+                    }
+                    return quest.currentStageIndex;
+                } else if (model.key.endsWith("_started")) {
+                    const id = model.key.replace("_started", "");
+                    const quest = RegisteredQuests.get(id);
+                    if (!quest) {
+                        logger.warn(`Quest ${id} not found`);
+                        return next(v);
+                    }
+                    return quest.started;
+                } else if (model.key.endsWith("_completed")) {
+                    const id = model.key.replace("_completed", "");
+                    const quest = RegisteredQuests.get(id);
+                    if (!quest) {
+                        logger.warn(`Quest ${id} not found`);
+                        return next(v);
+                    }
+                    return quest.completed;
+                } else if (model.key.endsWith("_failed")) {
+                    const id = model.key.replace("_failed", "");
+                    const quest = RegisteredQuests.get(id);
+                    if (!quest) {
+                        logger.warn(`Quest ${id} not found`);
+                        return next(v);
+                    }
+                    return quest.failed;
                 }
-                return quest.currentStageIndex;
-            } else if (model.key.endsWith("_started")) {
-                const id = model.key.replace("_started", "");
-                const quest = RegisteredQuests.get(id);
-                if (!quest) {
-                    logger.warn(`Quest ${id} not found`);
-                    return next(v);
-                }
-                return quest.started;
-            } else if (model.key.endsWith("_completed")) {
-                const id = model.key.replace("_completed", "");
-                const quest = RegisteredQuests.get(id);
-                if (!quest) {
-                    logger.warn(`Quest ${id} not found`);
-                    return next(v);
-                }
-                return quest.completed;
-            } else if (model.key.endsWith("_failed")) {
-                const id = model.key.replace("_failed", "");
-                const quest = RegisteredQuests.get(id);
-                if (!quest) {
-                    logger.warn(`Quest ${id} not found`);
-                    return next(v);
-                }
-                return quest.failed;
             }
-        }
-        return next(v);
-    });
+            return next(v);
+        });
 
-    HashtagCommands.add(
-        (list) => {
-            const room = RegisteredRooms.get(list[2]);
-            if (!room) {
-                logger.warn(`Room ${list[2]} not found`);
-            } else {
-                navigator.currentRoom = room;
-            }
-            return true;
-        },
-        {
-            name: "Enter room",
-            description: `Enter a room by its ID. This command sets the current room in the navigator to the specified room.
+    if (options.sections === undefined || options.sections.navigation)
+        HashtagCommands.add(
+            (list) => {
+                const room = RegisteredRooms.get(list[2]);
+                if (!room) {
+                    logger.warn(`Room ${list[2]} not found`);
+                } else {
+                    navigator.currentRoom = room;
+                }
+                return true;
+            },
+            {
+                name: "Enter room",
+                description: `Enter a room by its ID. This command sets the current room in the navigator to the specified room.
 
 \`\`\`ink
 # enter room <roomId>
 \`\`\``,
-            validation: z.tuple([z.literal("enter"), z.literal("room"), idSchema(options.roomIds)]),
-        },
-    );
+                validation: z.tuple([
+                    z.literal("enter"),
+                    z.literal("room"),
+                    idSchema(options.roomIds),
+                ]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list) => {
-            const time = timeConverter(list[2]);
-            if (Number.isNaN(time)) {
-                logger.warn(`Invalid time format: ${list[2]}`);
-            } else {
-                timeTracker.currentTime = time;
-            }
-            return true;
-        },
-        {
-            name: "Set time",
-            description: `Set the current time in the time tracker. The time should be provided in a valid format (e.g., "HH:MM").
+    if (options.sections === undefined || options.sections.time)
+        HashtagCommands.add(
+            (list) => {
+                const time = timeConverter(list[2]);
+                if (Number.isNaN(time)) {
+                    logger.warn(`Invalid time format: ${list[2]}`);
+                } else {
+                    timeTracker.currentTime = time;
+                }
+                return true;
+            },
+            {
+                name: "Set time",
+                description: `Set the current time in the time tracker. The time should be provided in a valid format (e.g., "HH:MM").
 
 \`\`\`ink
 # set time <time>
 \`\`\``,
-            validation: z.tuple([z.literal("set"), z.literal("time"), z.string()]),
-        },
-    );
+                validation: z.tuple([z.literal("set"), z.literal("time"), z.string()]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list) => {
-            const date = dateConverter(list[2]);
-            if (Number.isNaN(date)) {
-                logger.warn(`Invalid date format: ${list[2]}`);
-            } else {
-                timeTracker.currentDate = date;
-            }
-            return true;
-        },
-        {
-            name: "Set date",
-            description: `Set the current date in the time tracker. The date should be provided in a valid format (e.g., "YYYY-MM-DD").
+    if (options.sections === undefined || options.sections.time)
+        HashtagCommands.add(
+            (list) => {
+                const date = dateConverter(list[2]);
+                if (Number.isNaN(date)) {
+                    logger.warn(`Invalid date format: ${list[2]}`);
+                } else {
+                    timeTracker.currentDate = date;
+                }
+                return true;
+            },
+            {
+                name: "Set date",
+                description: `Set the current date in the time tracker. The date should be provided in a valid format (e.g., "YYYY-MM-DD").
 
 \`\`\`ink
 # set date <date>
 \`\`\``,
-            validation: z.tuple([z.literal("set"), z.literal("date"), z.string()]),
-        },
-    );
+                validation: z.tuple([z.literal("set"), z.literal("date"), z.string()]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list) => {
-            const delta = timeConverter(list[1]);
-            if (Number.isNaN(delta)) {
-                logger.warn(`Invalid time format: ${list[1]}`);
-            } else {
-                wait(delta);
-            }
-            return true;
-        },
-        {
-            name: "Wait for time",
-            description: `Wait for a specified amount of time. The time should be provided in a valid format (e.g., "HH:MM").
+    if (options.sections === undefined || options.sections.time)
+        HashtagCommands.add(
+            (list) => {
+                const delta = timeConverter(list[1]);
+                if (Number.isNaN(delta)) {
+                    logger.warn(`Invalid time format: ${list[1]}`);
+                } else {
+                    wait(delta);
+                }
+                return true;
+            },
+            {
+                name: "Wait for time",
+                description: `Wait for a specified amount of time. The time should be provided in a valid format (e.g., "HH:MM").
 
 \`\`\`ink
 # wait <time>
 \`\`\``,
-            validation: z.tuple([z.literal("wait"), z.string()]),
-        },
-    );
+                validation: z.tuple([z.literal("wait"), z.string()]),
+            },
+        );
 
-    HashtagCommands.add(
-        (_list) => {
-            wait();
-            return true;
-        },
-        {
-            name: "Wait",
-            description: `Wait for the default amount of time specified in the time tracker.
+    if (options.sections === undefined || options.sections.time)
+        HashtagCommands.add(
+            (_list) => {
+                wait();
+                return true;
+            },
+            {
+                name: "Wait",
+                description: `Wait for the default amount of time specified in the time tracker.
 
 \`\`\`ink
 # wait
 \`\`\``,
-            validation: z.tuple([z.literal("wait")]),
-        },
-    );
+                validation: z.tuple([z.literal("wait")]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list, _props, convertListStringToObj) => {
-            let res = false;
-            const options: WaitOptions = convertListStringToObj(list.slice(1));
-            if (options.hours !== undefined && typeof options.hours === "string") {
-                options.hours = timeConverter(options.hours);
-                res = true;
-            }
-            if (options.days !== undefined && typeof options.days === "string") {
-                options.days = dateConverter(options.days);
-                res = true;
-            }
-            if (res) {
-                wait(options);
-            }
-            return res;
-        },
-        {
-            name: "Wait with options",
-            description: `Wait for a specified amount of time and/or days. You can provide options for hours and days in the format "hours=<time>" and "days=<date>".
+    if (options.sections === undefined || options.sections.time)
+        HashtagCommands.add(
+            (list, _props, convertListStringToObj) => {
+                let res = false;
+                const options: WaitOptions = convertListStringToObj(list.slice(1));
+                if (options.hours !== undefined && typeof options.hours === "string") {
+                    options.hours = timeConverter(options.hours);
+                    res = true;
+                }
+                if (options.days !== undefined && typeof options.days === "string") {
+                    options.days = dateConverter(options.days);
+                    res = true;
+                }
+                if (res) {
+                    wait(options);
+                }
+                return res;
+            },
+            {
+                name: "Wait with options",
+                description: `Wait for a specified amount of time and/or days. You can provide options for hours and days in the format "hours=<time>" and "days=<date>".
 
 \`\`\`ink
 # wait hours <time> days <date>
 \`\`\``,
-            validation: z.tuple([z.literal("wait"), z.string(), z.string()]).rest(z.string()),
-            keySchemas: {
-                wait: {
-                    type: "object",
-                    properties: {
-                        hours: { type: ["string", "number"] },
-                        days: { type: ["string", "number"] },
+                validation: z.tuple([z.literal("wait"), z.string(), z.string()]).rest(z.string()),
+                keySchemas: {
+                    wait: {
+                        type: "object",
+                        properties: {
+                            hours: { type: ["string", "number"] },
+                            days: { type: ["string", "number"] },
+                        },
+                        additionalProperties: false,
                     },
-                    additionalProperties: false,
                 },
             },
-        },
-    );
+        );
 
-    HashtagCommands.add(
-        (list, _props, convertListStringToObj) => {
-            const activity = RegisteredActivities.get(list[2]);
-            if (!activity) {
-                logger.warn(`Activity ${list[2]} not found`);
+    if (options.sections === undefined || options.sections.activity)
+        HashtagCommands.add(
+            (list, _props, convertListStringToObj) => {
+                const activity = RegisteredActivities.get(list[2]);
+                if (!activity) {
+                    logger.warn(`Activity ${list[2]} not found`);
+                    return true;
+                }
+                const { in: into } = convertListStringToObj(list.slice(3)) as {
+                    in: string;
+                };
+                const room = RegisteredRooms.get(into);
+                if (!room) {
+                    logger.warn(`Room ${into} not found`);
+                } else {
+                    room.addActivity(activity);
+                }
                 return true;
-            }
-            const { in: into } = convertListStringToObj(list.slice(3)) as {
-                in: string;
-            };
-            const room = RegisteredRooms.get(into);
-            if (!room) {
-                logger.warn(`Room ${into} not found`);
-            } else {
-                room.addActivity(activity);
-            }
-            return true;
-        },
-        {
-            name: "Add activity to room",
-            description: `Add an activity to a specified room. You need to provide the activity ID and the room ID.
+            },
+            {
+                name: "Add activity to room",
+                description: `Add an activity to a specified room. You need to provide the activity ID and the room ID.
 
 \`\`\`ink
 # add activity <activityId> in <roomId>
 \`\`\``,
-            validation: z.tuple([
-                z.literal("add"),
-                z.literal("activity"),
-                idSchema(options.activityIds),
-                z.literal("in"),
-                idSchema(options.roomIds),
-            ]),
-        },
-    );
+                validation: z.tuple([
+                    z.literal("add"),
+                    z.literal("activity"),
+                    idSchema(options.activityIds),
+                    z.literal("in"),
+                    idSchema(options.roomIds),
+                ]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list, _props, convertListStringToObj) => {
-            const activity = RegisteredActivities.get(list[2]);
-            if (!activity) {
-                logger.warn(`Activity ${list[2]} not found`);
+    if (options.sections === undefined || options.sections.activity)
+        HashtagCommands.add(
+            (list, _props, convertListStringToObj) => {
+                const activity = RegisteredActivities.get(list[2]);
+                if (!activity) {
+                    logger.warn(`Activity ${list[2]} not found`);
+                    return true;
+                }
+                const { from } = convertListStringToObj(list.slice(3)) as {
+                    from: string;
+                };
+                const room = RegisteredRooms.get(from);
+                if (!room) {
+                    logger.warn(`Room ${from} not found`);
+                } else {
+                    room.removeActivity(activity);
+                }
                 return true;
-            }
-            const { from } = convertListStringToObj(list.slice(3)) as {
-                from: string;
-            };
-            const room = RegisteredRooms.get(from);
-            if (!room) {
-                logger.warn(`Room ${from} not found`);
-            } else {
-                room.removeActivity(activity);
-            }
-            return true;
-        },
-        {
-            name: "Remove activity from room",
-            description: `Remove an activity from a specified room. You need to provide the activity ID and the room ID.
+            },
+            {
+                name: "Remove activity from room",
+                description: `Remove an activity from a specified room. You need to provide the activity ID and the room ID.
 
 \`\`\`ink
 # remove activity <activityId> from <roomId>
 \`\`\``,
-            validation: z.tuple([
-                z.literal("remove"),
-                z.literal("activity"),
-                idSchema(options.activityIds),
-                z.literal("from"),
-                idSchema(options.roomIds),
-            ]),
-        },
-    );
+                validation: z.tuple([
+                    z.literal("remove"),
+                    z.literal("activity"),
+                    idSchema(options.activityIds),
+                    z.literal("from"),
+                    idSchema(options.roomIds),
+                ]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list, _props, convertListStringToObj) => {
-            const commitments = RegisteredCommitments.get(list[2]);
-            if (!commitments) {
-                logger.warn(`Commitment ${list[2]} not found`);
+    if (options.sections === undefined || options.sections.routine)
+        HashtagCommands.add(
+            (list, _props, convertListStringToObj) => {
+                const commitments = RegisteredCommitments.get(list[2]);
+                if (!commitments) {
+                    logger.warn(`Commitment ${list[2]} not found`);
+                    return true;
+                }
+                const { in: into } = convertListStringToObj(list.slice(3)) as {
+                    in: string;
+                };
+                const room = RegisteredRooms.get(into);
+                if (!room) {
+                    logger.warn(`Room ${into} not found`);
+                } else {
+                    room.addCommitment(commitments);
+                }
                 return true;
-            }
-            const { in: into } = convertListStringToObj(list.slice(3)) as {
-                in: string;
-            };
-            const room = RegisteredRooms.get(into);
-            if (!room) {
-                logger.warn(`Room ${into} not found`);
-            } else {
-                room.addCommitment(commitments);
-            }
-            return true;
-        },
-        {
-            name: "Add commitment to room",
-            description: `Add a commitment to a specified room. You need to provide the commitment ID and the room ID.
+            },
+            {
+                name: "Add commitment to room",
+                description: `Add a commitment to a specified room. You need to provide the commitment ID and the room ID.
 
 \`\`\`ink
 # add routine <commitmentId> in <roomId>
 \`\`\``,
-            validation: z.tuple([
-                z.literal("add"),
-                z.literal("routine"),
-                idSchema(options.commitmentIds),
-                z.literal("in"),
-                idSchema(options.roomIds),
-            ]),
-        },
-    );
+                validation: z.tuple([
+                    z.literal("add"),
+                    z.literal("routine"),
+                    idSchema(options.commitmentIds),
+                    z.literal("in"),
+                    idSchema(options.roomIds),
+                ]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list) => {
-            const commitments = RegisteredCommitments.get(list[2]);
-            if (!commitments) {
-                logger.warn(`Commitment ${list[2]} not found`);
+    if (options.sections === undefined || options.sections.routine)
+        HashtagCommands.add(
+            (list) => {
+                const commitments = RegisteredCommitments.get(list[2]);
+                if (!commitments) {
+                    logger.warn(`Commitment ${list[2]} not found`);
+                    return true;
+                }
+                routine.remove(commitments);
                 return true;
-            }
-            routine.remove(commitments);
-            return true;
-        },
-        {
-            name: "Remove commitment from room",
-            description: `Remove a commitment from the routine. You need to provide the commitment ID.
+            },
+            {
+                name: "Remove commitment from room",
+                description: `Remove a commitment from the routine. You need to provide the commitment ID.
 
 \`\`\`ink
 # remove routine <commitmentId>
 \`\`\``,
-            validation: z.tuple([
-                z.literal("remove"),
-                z.literal("routine"),
-                idSchema(options.commitmentIds),
-            ]),
-        },
-    );
+                validation: z.tuple([
+                    z.literal("remove"),
+                    z.literal("routine"),
+                    idSchema(options.commitmentIds),
+                ]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list, props) => {
-            const quest = RegisteredQuests.get(list[2]);
-            if (!quest) {
-                logger.warn(`Quest ${list[2]} not found`);
+    if (options.sections === undefined || options.sections.quest)
+        HashtagCommands.add(
+            (list, props) => {
+                const quest = RegisteredQuests.get(list[2]);
+                if (!quest) {
+                    logger.warn(`Quest ${list[2]} not found`);
+                    return true;
+                }
+                quest.start(props);
                 return true;
-            }
-            quest.start(props);
-            return true;
-        },
-        {
-            name: "Start quest",
-            description: `Start a quest by its ID. This command will initiate the quest and set it as started.
+            },
+            {
+                name: "Start quest",
+                description: `Start a quest by its ID. This command will initiate the quest and set it as started.
 
 \`\`\`ink
 # start quest <questId>
 \`\`\``,
-            validation: z.tuple([
-                z.literal("start"),
-                z.literal("quest"),
-                idSchema(options.questIds),
-            ]),
-        },
-    );
+                validation: z.tuple([
+                    z.literal("start"),
+                    z.literal("quest"),
+                    idSchema(options.questIds),
+                ]),
+            },
+        );
 
-    HashtagCommands.add(
-        (list, props) => {
-            const quest = RegisteredQuests.get(list[2]);
-            if (!quest) {
-                logger.warn(`Quest ${list[2]} not found`);
+    if (options.sections === undefined || options.sections.quest)
+        HashtagCommands.add(
+            (list, props) => {
+                const quest = RegisteredQuests.get(list[2]);
+                if (!quest) {
+                    logger.warn(`Quest ${list[2]} not found`);
+                    return true;
+                }
+                quest.continue(props);
                 return true;
-            }
-            quest.continue(props);
-            return true;
-        },
-        {
-            name: "Continue quest",
-            description: `Continue a quest by its ID. This command will proceed with the quest if it has been started.
+            },
+            {
+                name: "Continue quest",
+                description: `Continue a quest by its ID. This command will proceed with the quest if it has been started.
 
 \`\`\`ink
 # continue quest <questId>
 \`\`\``,
-            validation: z.tuple([
-                z.literal("continue"),
-                z.literal("quest"),
-                idSchema(options.questIds),
-            ]),
-        },
-    );
+                validation: z.tuple([
+                    z.literal("continue"),
+                    z.literal("quest"),
+                    idSchema(options.questIds),
+                ]),
+            },
+        );
 }
 
 /**
